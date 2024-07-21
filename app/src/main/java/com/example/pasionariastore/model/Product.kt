@@ -6,3 +6,8 @@ data class Product(
     val priceList: Double,
     val unit: Unit
 )
+
+data class Unit(
+    val name: String,
+    val value: Double
+)

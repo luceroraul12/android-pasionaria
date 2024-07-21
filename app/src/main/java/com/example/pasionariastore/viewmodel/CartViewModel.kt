@@ -15,6 +15,9 @@ class CartViewModel : ViewModel() {
     val uiState: StateFlow<CartUIState> = _uiState.asStateFlow()
 
 
+    /**
+     * Indica si es posible utilizar el buscador y restablece valores
+     */
     fun initProductScreen(navController: NavHostController, canSearchProducts: Boolean) {
         navController.navigate(MyScreens.CartProduct.name)
         _uiState.update { currentStates ->
@@ -25,6 +28,9 @@ class CartViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Actualiza el valor del buscador al momento de tipear
+     */
     fun updateCurrentSearch(newValue: String) {
         _uiState.update {
             it.copy(currentSearch = newValue)
