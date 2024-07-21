@@ -3,7 +3,11 @@ package com.example.pasionariastore
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -51,6 +55,17 @@ fun PasionariaStore(
                 ), modifier
             )
         },
+        floatingActionButton = {
+            // El floating button solo se ve en la vista de pedidos
+            if (backStackEntry?.destination?.route.equals(MyScreens.Cart.name))
+                FloatingActionButton(
+                    onClick = {
+                        initNewProduct(navController)
+                    },
+                ) {
+                    Icon(Icons.Filled.Add, "Floating action button.")
+                }
+        },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
         NavHost(
@@ -72,11 +87,18 @@ fun PasionariaStore(
             }
             composable(route = MyScreens.CartProduct.name) {
                 CartProductScreen(modifier = modifier,
-                    onCancelButtonClicked = {navController.navigate(MyScreens.Cart.name)},
+                    onCancelButtonClicked = { navController.navigate(MyScreens.Cart.name) },
                     onAddButtonClicked = {})
             }
         }
     }
+}
+
+fun initNewProduct(navController: NavHostController) {
+    // Me lleva a la vista de productos del pedido
+    navController.navigate(MyScreens.CartProduct.name)
+    // TODO: Hacer que el viewmodel sepa que es para buscar producto y no editar
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

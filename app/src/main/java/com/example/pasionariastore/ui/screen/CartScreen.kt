@@ -8,11 +8,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -33,7 +37,9 @@ import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 @Composable
 fun CartPreview() {
     PasionariaStoreTheme {
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+        Scaffold(
+            modifier = Modifier.fillMaxSize()
+        ) { innerPadding ->
             CartScreen(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
                 onCardProductButtonClicked = { })
@@ -49,7 +55,6 @@ fun CartScreen(modifier: Modifier = Modifier, onCardProductButtonClicked: () -> 
             modifier = modifier,
             onCardProductButtonClicked = onCardProductButtonClicked
         )
-        CartGlobalActions(modifier)
     }
 }
 
@@ -92,7 +97,12 @@ fun CartHeaderRow(firstLabel: String, secondLabel: String, modifier: Modifier) {
 
 @Composable
 fun CartGlobalActions(modifier: Modifier) {
-
+    FloatingActionButton(
+        onClick = { },
+        modifier = modifier
+    ) {
+        Icon(Icons.Filled.Add, "Floating action button.")
+    }
 }
 
 
