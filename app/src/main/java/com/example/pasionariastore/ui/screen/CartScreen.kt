@@ -7,15 +7,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontStyle
@@ -47,10 +51,27 @@ fun CartScreen(modifier: Modifier = Modifier) {
 
 @Composable
 fun CartHeader(modifier: Modifier) {
-    Column(modifier = modifier.padding(10.dp)) {
-        CartHeaderRow("Identificador de producto", "1234", modifier)
-        CartHeaderRow("Fecha de creación", "20/07/2024 17:35", modifier)
-        CartHeaderRow("Precio total", "ARS 13500", modifier)
+    Card(
+        shape = RoundedCornerShape(
+            topStart = 0.dp,
+            topEnd = 0.dp,
+            bottomStart = 25.dp,
+            bottomEnd = 25.dp
+        ),
+        colors = CardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            disabledContainerColor = Color.Gray,
+            disabledContentColor = Color.Gray,
+            contentColor = MaterialTheme.colorScheme.secondary
+        ),
+        elevation = CardDefaults.cardElevation(5.dp),
+        modifier = modifier.padding(top = 0.dp, end = 5.dp, start = 5.dp, bottom = 5.dp),
+    ) {
+        Column(modifier = modifier.padding(5.dp)) {
+            CartHeaderRow("Identificador de producto", "1234", modifier)
+            CartHeaderRow("Fecha de creación", "20/07/2024 17:35", modifier)
+            CartHeaderRow("Precio total", "ARS 13500", modifier)
+        }
     }
 }
 
@@ -76,7 +97,7 @@ fun CartListProducts(modifier: Modifier) {
     LazyColumn(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
+        modifier = modifier,
     ) {
         items(100) {
             CartProductItem(modifier, it)
