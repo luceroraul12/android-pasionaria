@@ -15,6 +15,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pasionariastore.R
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
+import com.example.pasionariastore.viewmodel.CartViewModel
 
 
 @Preview
@@ -36,8 +38,9 @@ fun ProductScreenPreview() {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             CartProductScreen(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
+                onAddButtonClicked = {},
                 onCancelButtonClicked = {},
-                onAddButtonClicked = {}
+                cartViewModel = CartViewModel()
             )
         }
     }
@@ -47,8 +50,10 @@ fun ProductScreenPreview() {
 fun CartProductScreen(
     modifier: Modifier = Modifier,
     onAddButtonClicked: () -> Unit,
-    onCancelButtonClicked: () -> Unit
+    onCancelButtonClicked: () -> Unit,
+    cartViewModel: CartViewModel
 ) {
+    val cartUiState = cartViewModel.uiState.collectAsState()
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -56,7 +61,7 @@ fun CartProductScreen(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Card {
-            ProductSearcher(modifier.fillMaxWidth())
+            ProductSearcher(modifier.fillMaxWidth(), cartUiState.value.canSearchProducts)
         }
         Spacer(modifier = modifier.padding(10.dp))
         Card(modifier = modifier.weight(1f)) {
@@ -130,9 +135,10 @@ fun DescriptionItem(title: String, description: String, modifier: Modifier) {
 }
 
 @Composable
-fun ProductSearcher(modifier: Modifier) {
+fun ProductSearcher(modifier: Modifier, canSearch: Boolean) {
     TextField(
-        value = "",
+        readOnly = !canSearch,
+        value = "EXAMPLE",
         onValueChange = {},
         singleLine = true,
         label = { Text(text = "Buscador de productos") },

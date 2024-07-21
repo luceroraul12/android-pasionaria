@@ -14,12 +14,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -28,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.ui.screen.CartProductScreen
 import com.example.pasionariastore.ui.screen.CartScreen
 import com.example.pasionariastore.ui.screen.ResumeScreen
+import com.example.pasionariastore.viewmodel.CartViewModel
 
 enum class MyScreens(@StringRes val title: Int) {
     Resume(title = R.string.resume),
@@ -42,10 +45,12 @@ enum class MyScreens(@StringRes val title: Int) {
 @Composable
 fun PasionariaStore(
     modifier: Modifier = Modifier,
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    cartViewModel: CartViewModel = viewModel()
 ) {
     // Intento recuperar ultimo valor de navegacion
     val backStackEntry by navController.currentBackStackEntryAsState()
+    val uiState = cartViewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -60,7 +65,10 @@ fun PasionariaStore(
             if (backStackEntry?.destination?.route.equals(MyScreens.Cart.name))
                 FloatingActionButton(
                     onClick = {
-                        initNewProduct(navController)
+                        cartViewModel.initProductScreen(
+                            navController = navController,
+                            canSearchProducts = true
+                        )
                     },
                 ) {
                     Icon(Icons.Filled.Add, "Floating action button.")
@@ -83,10 +91,17 @@ fun PasionariaStore(
             composable(route = MyScreens.Cart.name) {
                 CartScreen(
                     modifier = modifier,
-                    onCardProductButtonClicked = { navController.navigate(MyScreens.CartProduct.name) })
+                    onCardProductButtonClicked = {
+                        cartViewModel.initProductScreen(
+                            navController = navController,
+                            canSearchProducts = false
+                        )
+                    })
             }
             composable(route = MyScreens.CartProduct.name) {
-                CartProductScreen(modifier = modifier,
+                CartProductScreen(
+                    cartViewModel = cartViewModel,
+                    modifier = modifier,
                     onCancelButtonClicked = { navController.navigate(MyScreens.Cart.name) },
                     onAddButtonClicked = {})
             }
@@ -94,12 +109,6 @@ fun PasionariaStore(
     }
 }
 
-fun initNewProduct(navController: NavHostController) {
-    // Me lleva a la vista de productos del pedido
-    navController.navigate(MyScreens.CartProduct.name)
-    // TODO: Hacer que el viewmodel sepa que es para buscar producto y no editar
-
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

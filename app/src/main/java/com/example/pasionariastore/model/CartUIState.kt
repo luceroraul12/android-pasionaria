@@ -1,0 +1,5 @@
+package com.example.pasionariastore.model
+
+data class CartUIState(
+    val canSearchProducts: Boolean = false
+)
