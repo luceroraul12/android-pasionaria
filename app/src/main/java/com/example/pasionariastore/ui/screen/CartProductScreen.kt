@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,14 +19,11 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -46,8 +44,6 @@ import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.CartViewModel
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 
 
 @Preview
@@ -72,9 +68,6 @@ fun CartProductScreen(
     onCancelButtonClicked: () -> Unit,
     cartViewModel: CartViewModel
 ) {
-    val snackbarHostState = remember {
-        SnackbarHostState()
-    }
     val cartUiState = cartViewModel.uiState.collectAsState()
     if (cartUiState.value.showModalProductSearch) {
         // Antes de abrir el modal tengo que ver si existen coincidencias
@@ -83,6 +76,7 @@ fun CartProductScreen(
             onProductSearchClicked = { cartViewModel.selectProductSearched(it) },
             search = cartUiState.value.currentSearch,
             modifier = modifier,
+            onCancelSearch = { cartViewModel.cancelProductSearch() }
         )
     }
     Column(
@@ -254,7 +248,8 @@ fun ModalSearchProductPreview(modifier: Modifier = Modifier) {
     ModalSearchProduct(
         productList = Datasource.apiProducts,
         "prueba",
-        onProductSearchClicked = { /*TODO*/ })
+        onProductSearchClicked = { },
+        onCancelSearch = {})
 }
 
 @Composable
@@ -262,16 +257,25 @@ fun ModalSearchProduct(
     productList: List<Product>,
     search: String,
     onProductSearchClicked: (Product) -> Unit,
+    onCancelSearch: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Dialog(onDismissRequest = { /*TODO*/ }) {
+    Dialog(onDismissRequest = onCancelSearch) {
         Card {
             Column {
                 Text(text = "Buscando ... $search ...")
-                LazyColumn {
+                LazyColumn(modifier = modifier.height(400.dp)) {
                     items(productList) {
                         ModalSearchProductItem(it, onProductSearchClicked, modifier)
                     }
+                }
+                Button(
+                    onClick = onCancelSearch, modifier = modifier
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.delete))
+                ) {
+                    Text(text = "Cancelar")
                 }
             }
         }

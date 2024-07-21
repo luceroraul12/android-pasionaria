@@ -66,4 +66,8 @@ class CartViewModel : ViewModel() {
 
     }
 
+    fun cancelProductSearch() {
+        _uiState.update { it.copy(showModalProductSearch = false) }
+    }
+
 }
