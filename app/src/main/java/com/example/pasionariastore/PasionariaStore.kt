@@ -90,6 +90,7 @@ fun PasionariaStore(
             }
             composable(route = MyScreens.Cart.name) {
                 CartScreen(
+                    cartViewModel = cartViewModel,
                     modifier = modifier,
                     onCardProductButtonClicked = {
                         cartViewModel.initProductScreen(

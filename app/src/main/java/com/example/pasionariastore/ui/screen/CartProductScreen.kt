@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pasionariastore.R
 import com.example.pasionariastore.model.CartUIState
+import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.CartViewModel
 
@@ -67,7 +68,7 @@ fun CartProductScreen(
         }
         Spacer(modifier = modifier.padding(10.dp))
         Card(modifier = modifier.weight(1f)) {
-            ProductDescription(modifier.fillMaxWidth())
+            ProductDescription(modifier.fillMaxWidth(), cartViewModel.currentProductCart)
         }
         Spacer(modifier = modifier.padding(10.dp))
         Card {
@@ -82,11 +83,11 @@ fun CartProductScreen(
 }
 
 @Composable
-fun ProductDescription(modifier: Modifier = Modifier) {
+fun ProductDescription(modifier: Modifier = Modifier, productCart: ProductCart?) {
     Card(modifier = modifier) {
         Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceEvenly) {
             DescriptionItem(
-                title = "Producto", description = "Nombre del producto", modifier = modifier
+                title = "Producto", description = productCart?.product?.name ?: "Nombre del producto", modifier = modifier
             )
             DescriptionItem(
                 title = "Descripcion", description = "Descripcion del producto", modifier = modifier

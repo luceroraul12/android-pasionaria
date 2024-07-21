@@ -4,16 +4,18 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.example.pasionariastore.MyScreens
 import com.example.pasionariastore.model.CartUIState
+import com.example.pasionariastore.model.ProductCart
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class CartViewModel : ViewModel() {
-
     private val _uiState = MutableStateFlow(CartUIState())
     val uiState: StateFlow<CartUIState> = _uiState.asStateFlow()
 
+    var productCartList: List<ProductCart> = mutableListOf()
+    lateinit var currentProductCart: ProductCart
 
     /**
      * Indica si es posible utilizar el buscador y restablece valores
