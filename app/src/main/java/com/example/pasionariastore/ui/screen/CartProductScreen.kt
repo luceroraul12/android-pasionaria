@@ -2,7 +2,6 @@ package com.example.pasionariastore.ui.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,11 +18,14 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -44,6 +46,8 @@ import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.CartViewModel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 
 @Preview
@@ -68,6 +72,9 @@ fun CartProductScreen(
     onCancelButtonClicked: () -> Unit,
     cartViewModel: CartViewModel
 ) {
+    val snackbarHostState = remember {
+        SnackbarHostState()
+    }
     val cartUiState = cartViewModel.uiState.collectAsState()
     if (cartUiState.value.showModalProductSearch) {
         // Antes de abrir el modal tengo que ver si existen coincidencias
@@ -257,7 +264,7 @@ fun ModalSearchProduct(
     onProductSearchClicked: (Product) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Dialog(onDismissRequest = { /*TODO*/ }, ) {
+    Dialog(onDismissRequest = { /*TODO*/ }) {
         Card {
             Column {
                 Text(text = "Buscando ... $search ...")
