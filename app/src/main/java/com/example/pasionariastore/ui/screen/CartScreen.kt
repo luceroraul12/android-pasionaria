@@ -19,7 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontStyle
@@ -35,16 +34,21 @@ import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 fun CartPreview() {
     PasionariaStoreTheme {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            CartScreen(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
+            CartScreen(
+                modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
+                onCardProductButtonClicked = { })
         }
     }
 }
 
 @Composable
-fun CartScreen(modifier: Modifier = Modifier) {
+fun CartScreen(modifier: Modifier = Modifier, onCardProductButtonClicked: () -> Unit) {
     Column(modifier = modifier.padding(horizontal = 10.dp)) {
         CartHeader(modifier)
-        CartListProducts(modifier)
+        CartListProducts(
+            modifier = modifier,
+            onCardProductButtonClicked = onCardProductButtonClicked
+        )
         CartGlobalActions(modifier)
     }
 }
@@ -93,20 +97,29 @@ fun CartGlobalActions(modifier: Modifier) {
 
 
 @Composable
-fun CartListProducts(modifier: Modifier) {
+fun CartListProducts(modifier: Modifier, onCardProductButtonClicked: () -> Unit) {
     LazyColumn(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier,
     ) {
         items(100) {
-            CartProductItem(modifier, it)
+            CartProductItem(
+                onCartProductClicked = onCardProductButtonClicked,
+                onDeleteProductClicked = { },
+                modifier = modifier,
+                data = it
+            )
         }
     }
 }
 
 @Composable
-fun CartProductItem(modifier: Modifier, data: Int) {
+fun CartProductItem(
+    onCartProductClicked: () -> Unit,
+    onDeleteProductClicked: () -> Unit,
+    modifier: Modifier, data: Int
+) {
     Card(modifier = modifier.padding(5.dp), elevation = CardDefaults.cardElevation(3.dp)) {
         Column(modifier = modifier.padding(5.dp)) {
             Row(
@@ -121,27 +134,22 @@ fun CartProductItem(modifier: Modifier, data: Int) {
 
             }
             Text(text = "Descripcion lo bastante larga para ver como se acomoda en el apartado${data + 1}")
-            ActionButtons(modifier.padding(5.dp))
+            ActionButtons(
+                onCartProductClicked = onCartProductClicked,
+                onDeleteProductClicked = onDeleteProductClicked,
+                modifier.padding(horizontal = 15.dp)
+            )
         }
     }
 }
 
 @Composable
-fun ActionButtons(modifier: Modifier = Modifier) {
+fun ActionButtons(
+    onCartProductClicked: () -> Unit,
+    onDeleteProductClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Row() {
-        Button(
-            onClick = { /*TODO*/ },
-            modifier = modifier
-                .weight(1f),
-            colors = ButtonColors(
-                containerColor = colorResource(id = R.color.update),
-                contentColor = Color.White,
-                disabledContentColor = Color.Black,
-                disabledContainerColor = Color.Gray
-            )
-        ) {
-            Text(text = "Editar")
-        }
         Button(
             onClick = { /*TODO*/ },
             modifier = modifier
@@ -154,6 +162,19 @@ fun ActionButtons(modifier: Modifier = Modifier) {
             )
         ) {
             Text(text = "Quitar")
+        }
+        Button(
+            onClick = onCartProductClicked,
+            modifier = modifier
+                .weight(1f),
+            colors = ButtonColors(
+                containerColor = colorResource(id = R.color.update),
+                contentColor = Color.White,
+                disabledContentColor = Color.Black,
+                disabledContainerColor = Color.Gray
+            )
+        ) {
+            Text(text = "Editar")
         }
     }
 }

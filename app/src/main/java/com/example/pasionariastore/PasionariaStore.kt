@@ -21,6 +21,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.pasionariastore.ui.screen.CartProductScreen
 import com.example.pasionariastore.ui.screen.CartScreen
 import com.example.pasionariastore.ui.screen.ResumeScreen
 
@@ -65,7 +66,14 @@ fun PasionariaStore(
                     onCartButtonClicked = { navController.navigate(MyScreens.Cart.name) })
             }
             composable(route = MyScreens.Cart.name) {
-                CartScreen(modifier = modifier)
+                CartScreen(
+                    modifier = modifier,
+                    onCardProductButtonClicked = { navController.navigate(MyScreens.CartProduct.name) })
+            }
+            composable(route = MyScreens.CartProduct.name) {
+                CartProductScreen(modifier = modifier,
+                    onCancelButtonClicked = {navController.navigate(MyScreens.Cart.name)},
+                    onAddButtonClicked = {})
             }
         }
     }
