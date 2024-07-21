@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.example.pasionariastore.R
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.CartUIState
@@ -68,41 +69,39 @@ fun CartProductScreen(
     cartViewModel: CartViewModel
 ) {
     val cartUiState = cartViewModel.uiState.collectAsState()
-    Box(modifier = modifier) {
-        if (cartUiState.value.showModalProductSearch) {
-            // Antes de abrir el modal tengo que ver si existen coincidencias
-            ModalSearchProduct(
-                productList = cartViewModel.currentProductSearcheds,
-                onProductSearchClicked = { cartViewModel.selectProductSearched(it) },
-                search = cartUiState.value.currentSearch,
-                modifier = modifier,
+    if (cartUiState.value.showModalProductSearch) {
+        // Antes de abrir el modal tengo que ver si existen coincidencias
+        ModalSearchProduct(
+            productList = cartViewModel.currentProductSearcheds,
+            onProductSearchClicked = { cartViewModel.selectProductSearched(it) },
+            search = cartUiState.value.currentSearch,
+            modifier = modifier,
+        )
+    }
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(10.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Card {
+            ProductSearcher(modifier.fillMaxWidth(), cartUiState, cartViewModel)
+        }
+        Spacer(modifier = modifier.padding(10.dp))
+        Card(modifier = modifier.weight(1f)) {
+            ProductDescription(modifier.fillMaxWidth(), cartViewModel.currentProductCart)
+        }
+        Spacer(modifier = modifier.padding(10.dp))
+        Card {
+            ProductFormCalculator(modifier)
+            CartProductActionButtons(
+                modifier = modifier.padding(15.dp),
+                onAddButtonClicked = onAddButtonClicked,
+                onCancelButtonClicked = onCancelButtonClicked,
             )
-        } else {
-            Column(
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(10.dp),
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
-                Card {
-                    ProductSearcher(modifier.fillMaxWidth(), cartUiState, cartViewModel)
-                }
-                Spacer(modifier = modifier.padding(10.dp))
-                Card(modifier = modifier.weight(1f)) {
-                    ProductDescription(modifier.fillMaxWidth(), cartViewModel.currentProductCart)
-                }
-                Spacer(modifier = modifier.padding(10.dp))
-                Card {
-                    ProductFormCalculator(modifier)
-                    CartProductActionButtons(
-                        modifier = modifier.padding(15.dp),
-                        onAddButtonClicked = onAddButtonClicked,
-                        onCancelButtonClicked = onCancelButtonClicked,
-                    )
-                }
-            }
         }
     }
+
 }
 
 @Composable
@@ -258,11 +257,15 @@ fun ModalSearchProduct(
     onProductSearchClicked: (Product) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column {
-        Text(text = "Buscando ... $search ...")
-        LazyColumn {
-            items(productList) {
-                ModalSearchProductItem(it, onProductSearchClicked, modifier)
+    Dialog(onDismissRequest = { /*TODO*/ }, ) {
+        Card {
+            Column {
+                Text(text = "Buscando ... $search ...")
+                LazyColumn {
+                    items(productList) {
+                        ModalSearchProductItem(it, onProductSearchClicked, modifier)
+                    }
+                }
             }
         }
     }
