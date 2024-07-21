@@ -94,7 +94,11 @@ fun CartProductScreen(
         }
         Spacer(modifier = modifier.padding(10.dp))
         Card {
-            ProductFormCalculator(modifier)
+            ProductFormCalculator(
+                modifier = modifier,
+                viewModel = cartViewModel,
+                uiState = cartUiState
+            )
             CartProductActionButtons(
                 modifier = modifier.padding(15.dp),
                 onAddButtonClicked = onAddButtonClicked,
@@ -218,7 +222,7 @@ fun CartProductActionButtons(
 }
 
 @Composable
-fun ProductFormCalculator(modifier: Modifier) {
+fun ProductFormCalculator(viewModel: CartViewModel, uiState: State<CartUIState>, modifier: Modifier) {
     Card(modifier = modifier.padding(10.dp)) {
         Column(
             verticalArrangement = Arrangement.SpaceAround,
@@ -227,16 +231,16 @@ fun ProductFormCalculator(modifier: Modifier) {
         ) {
             DescriptionItem(
                 title = "Precio Estimado",
-                description = "ARS 1550",
+                description = "ARS ${viewModel.calculatePrice()}",
                 modifier = modifier
             )
             TextField(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                value = "99.66",
-                onValueChange = {},
+                value = uiState.value.currentQuantity,
+                onValueChange = { viewModel.updateCurrentQuantity(it)},
                 modifier = modifier.fillMaxWidth(),
                 singleLine = true,
-                label = { Text(text = "Cantidad del producto") },
+                label = { Text(text = "Cantidad del producto") }
             )
         }
     }

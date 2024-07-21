@@ -1,6 +1,5 @@
 package com.example.pasionariastore.viewmodel
 
-import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.example.pasionariastore.MyScreens
@@ -8,7 +7,6 @@ import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.CartUIState
 import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.ProductCart
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -68,6 +66,16 @@ class CartViewModel : ViewModel() {
 
     fun cancelProductSearch() {
         _uiState.update { it.copy(showModalProductSearch = false) }
+    }
+
+    fun updateCurrentQuantity(newValue: String) {
+        _uiState.update { it.copy(currentQuantity = newValue ) }
+    }
+
+    fun calculatePrice(): String {
+        var result = "0"
+        result = uiState.value.currentQuantity
+        return result
     }
 
 }
