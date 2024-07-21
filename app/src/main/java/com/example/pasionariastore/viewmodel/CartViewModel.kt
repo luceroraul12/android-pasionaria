@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.example.pasionariastore.MyScreens
 import com.example.pasionariastore.model.CartUIState
+import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.ProductCart
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,6 +37,19 @@ class CartViewModel : ViewModel() {
     fun updateCurrentSearch(newValue: String) {
         _uiState.update {
             it.copy(currentSearch = newValue)
+        }
+    }
+
+    fun selectProductSearched(productSearched: Product) {
+        currentProductCart = ProductCart(product = productSearched)
+    }
+
+    fun searchProducts() {
+        // Abre el modal
+        _uiState.update {
+            it.copy(
+                showModalProductSearch = true
+            )
         }
     }
 
