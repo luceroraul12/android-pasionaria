@@ -71,14 +71,12 @@ fun CartProductScreen(
     Box(modifier = modifier) {
         if (cartUiState.value.showModalProductSearch) {
             // Antes de abrir el modal tengo que ver si existen coincidencias
-            if (cartViewModel.hasSearchValues()) {
-                ModalSearchProduct(
-                    productList = cartViewModel.currentProductSearcheds,
-                    onProductSearchClicked = { cartViewModel.selectProductSearched(it) },
-                    search = cartUiState.value.currentSearch,
-                    modifier = modifier,
-                )
-            }
+            ModalSearchProduct(
+                productList = cartViewModel.currentProductSearcheds,
+                onProductSearchClicked = { cartViewModel.selectProductSearched(it) },
+                search = cartUiState.value.currentSearch,
+                modifier = modifier,
+            )
         } else {
             Column(
                 modifier = modifier

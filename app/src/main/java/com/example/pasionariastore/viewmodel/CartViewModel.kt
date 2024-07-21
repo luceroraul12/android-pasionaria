@@ -50,19 +50,14 @@ class CartViewModel : ViewModel() {
 
     fun searchProducts() {
         // Filtro los productos en base parametro de busqueda
-        currentProductSearcheds = Datasource.apiProducts.filter {
-            String.format("%s %s", it.name, it.description).contains(uiState.value.currentSearch)
-        }
+        currentProductSearcheds = Datasource.apiProducts.filter { String.format("%s %s", it.name, it.description).contains(uiState.value.currentSearch) }
         // Si existen valores para mostrar sigo, caso contrario tengo que emitir el mensaje
-        if (!currentProductSearcheds.isNullOrEmpty())
-        // Abre el modal
-            _uiState.update {
-                it.copy(
-                    showModalProductSearch = true
-                )
-            }
-        else {
 
+        // Abre el modal
+        _uiState.update {
+            it.copy(
+                showModalProductSearch = true
+            )
         }
 
     }
