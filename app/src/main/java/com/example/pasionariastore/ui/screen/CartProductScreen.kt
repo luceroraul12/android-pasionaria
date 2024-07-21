@@ -15,6 +15,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pasionariastore.R
+import com.example.pasionariastore.model.CartUIState
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.CartViewModel
 
@@ -61,7 +63,7 @@ fun CartProductScreen(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Card {
-            ProductSearcher(modifier.fillMaxWidth(), cartUiState.value.canSearchProducts)
+            ProductSearcher(modifier.fillMaxWidth(), cartUiState, cartViewModel)
         }
         Spacer(modifier = modifier.padding(10.dp))
         Card(modifier = modifier.weight(1f)) {
@@ -135,11 +137,13 @@ fun DescriptionItem(title: String, description: String, modifier: Modifier) {
 }
 
 @Composable
-fun ProductSearcher(modifier: Modifier, canSearch: Boolean) {
+fun ProductSearcher(modifier: Modifier, uiState: State<CartUIState>, viewModel: CartViewModel) {
     TextField(
-        readOnly = !canSearch,
-        value = "EXAMPLE",
-        onValueChange = {},
+        enabled = uiState.value.canSearchProducts,
+        value = uiState.value.currentSearch,
+        onValueChange = {
+            viewModel.updateCurrentSearch(it)
+        },
         singleLine = true,
         label = { Text(text = "Buscador de productos") },
         modifier = modifier

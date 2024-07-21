@@ -19,8 +19,15 @@ class CartViewModel : ViewModel() {
         navController.navigate(MyScreens.CartProduct.name)
         _uiState.update { currentStates ->
             currentStates.copy(
-                canSearchProducts = canSearchProducts
+                canSearchProducts = canSearchProducts,
+                currentSearch = ""
             )
+        }
+    }
+
+    fun updateCurrentSearch(newValue: String) {
+        _uiState.update {
+            it.copy(currentSearch = newValue)
         }
     }
 
