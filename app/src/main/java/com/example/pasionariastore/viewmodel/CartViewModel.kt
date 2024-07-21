@@ -3,6 +3,7 @@ package com.example.pasionariastore.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.example.pasionariastore.MyScreens
+import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.CartUIState
 import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.ProductCart
@@ -16,6 +17,7 @@ class CartViewModel : ViewModel() {
     val uiState: StateFlow<CartUIState> = _uiState.asStateFlow()
 
     var productCartList: List<ProductCart> = mutableListOf()
+    var currentProductSearcheds: List<Product> = mutableListOf()
     var currentProductCart: ProductCart? = null
 
     /**
@@ -42,15 +44,27 @@ class CartViewModel : ViewModel() {
 
     fun selectProductSearched(productSearched: Product) {
         currentProductCart = ProductCart(product = productSearched)
+        // dejo de mostrar el modal
+        _uiState.update { it.copy(showModalProductSearch = false) }
     }
 
     fun searchProducts() {
-        // Abre el modal
-        _uiState.update {
-            it.copy(
-                showModalProductSearch = true
-            )
+        // Filtro los productos en base parametro de busqueda
+        currentProductSearcheds = Datasource.apiProducts.filter {
+            String.format("%s %s", it.name, it.description).contains(uiState.value.currentSearch)
         }
+        // Si existen valores para mostrar sigo, caso contrario tengo que emitir el mensaje
+        if (!currentProductSearcheds.isNullOrEmpty())
+        // Abre el modal
+            _uiState.update {
+                it.copy(
+                    showModalProductSearch = true
+                )
+            }
+        else {
+
+        }
+
     }
 
 }

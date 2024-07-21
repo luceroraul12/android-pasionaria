@@ -8,14 +8,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -24,7 +21,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
@@ -74,12 +70,15 @@ fun CartProductScreen(
     val cartUiState = cartViewModel.uiState.collectAsState()
     Box(modifier = modifier) {
         if (cartUiState.value.showModalProductSearch) {
-            ModalSearchProduct(
-                productList = Datasource.apiProducts,
-                onProductSearchClicked = { cartViewModel.selectProductSearched(it) },
-                search = cartUiState.value.currentSearch,
-                modifier = modifier,
-            )
+            // Antes de abrir el modal tengo que ver si existen coincidencias
+            if (cartViewModel.hasSearchValues()) {
+                ModalSearchProduct(
+                    productList = cartViewModel.currentProductSearcheds,
+                    onProductSearchClicked = { cartViewModel.selectProductSearched(it) },
+                    search = cartUiState.value.currentSearch,
+                    modifier = modifier,
+                )
+            }
         } else {
             Column(
                 modifier = modifier
@@ -110,15 +109,25 @@ fun CartProductScreen(
 
 @Composable
 fun ProductDescription(modifier: Modifier = Modifier, productCart: ProductCart?) {
+    var name: String = "Nombre del producto"
+    var description: String = "Descripcion del producto"
+    var price: String = "0.0"
+    var unit: String = "SIN UNIDAD"
+    productCart?.product?.let {
+        name = it.name
+        description = it.description
+        price = String.format("%.2f", (it.priceList * it.unit.value))
+        unit = it.unit.name
+    }
     Card(modifier = modifier) {
         Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceEvenly) {
             DescriptionItem(
                 title = "Producto",
-                description = productCart?.product?.name ?: "Nombre del producto",
+                description = name,
                 modifier = modifier
             )
             DescriptionItem(
-                title = "Descripcion", description = "Descripcion del producto", modifier = modifier
+                title = "Descripcion", description = description, modifier = modifier
             )
             Row(horizontalArrangement = Arrangement.SpaceBetween) {
                 Column(
@@ -128,7 +137,7 @@ fun ProductDescription(modifier: Modifier = Modifier, productCart: ProductCart?)
                 ) {
                     DescriptionItem(
                         title = "Precio",
-                        description = "ARS 14500",
+                        description = "ARS $price",
                         modifier = modifier
                     )
                 }
@@ -137,7 +146,7 @@ fun ProductDescription(modifier: Modifier = Modifier, productCart: ProductCart?)
                     verticalArrangement = Arrangement.Center,
                     modifier = modifier.weight(1f)
                 ) {
-                    DescriptionItem(title = "Unidad", description = "x100gr", modifier = modifier)
+                    DescriptionItem(title = "Unidad", description = unit, modifier = modifier)
                 }
             }
         }
@@ -238,7 +247,10 @@ fun ProductFormCalculator(modifier: Modifier) {
 @Preview
 @Composable
 fun ModalSearchProductPreview(modifier: Modifier = Modifier) {
-    ModalSearchProduct(productList = Datasource.apiProducts, "prueba",onProductSearchClicked = { /*TODO*/ })
+    ModalSearchProduct(
+        productList = Datasource.apiProducts,
+        "prueba",
+        onProductSearchClicked = { /*TODO*/ })
 }
 
 @Composable
