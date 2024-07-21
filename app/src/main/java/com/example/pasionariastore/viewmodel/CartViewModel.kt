@@ -15,7 +15,7 @@ class CartViewModel : ViewModel() {
     val uiState: StateFlow<CartUIState> = _uiState.asStateFlow()
 
     var productCartList: List<ProductCart> = mutableListOf()
-    lateinit var currentProductCart: ProductCart
+    var currentProductCart: ProductCart? = null
 
     /**
      * Indica si es posible utilizar el buscador y restablece valores
