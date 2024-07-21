@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">PasionariaStore</string>
+    <string name="resume">Resumen de tienda</string>
+    <string name="cart">Pedidos</string>
+    <string name="cart_product">Producto de pedido</string>
+    <string name="cart_resume">Resumen de pedido</string>
+    <string name="cart_resumes">Historial de pedidos</string>
 </resources>

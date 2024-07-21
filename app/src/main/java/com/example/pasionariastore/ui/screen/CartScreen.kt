@@ -14,6 +14,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -72,8 +73,12 @@ fun CartGlobalActions(modifier: Modifier) {
 
 @Composable
 fun CartListProducts(modifier: Modifier) {
-    LazyColumn {
-        items(10) {
+    LazyColumn(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        items(100) {
             CartProductItem(modifier, it)
         }
     }
@@ -88,7 +93,10 @@ fun CartProductItem(modifier: Modifier, data: Int) {
                 modifier = modifier.fillMaxWidth()
             ) {
                 Text(text = "Producto ${data + 1}", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                Text(text = "300gr = ARS 1250")
+                Row {
+                    Text(text = "300gr x ")
+                    Text(text = "ARS 1250", fontWeight = FontWeight.Bold)
+                }
 
             }
             Text(text = "Descripcion lo bastante larga para ver como se acomoda en el apartado${data + 1}")
