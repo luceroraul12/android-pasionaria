@@ -28,7 +28,8 @@ class CartViewModel : ViewModel() {
         _uiState.update { currentStates ->
             currentStates.copy(
                 canSearchProducts = canSearchProducts,
-                currentSearch = ""
+                currentSearch = "",
+                showModalProductSearch = false
             )
         }
     }
