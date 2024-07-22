@@ -40,9 +40,12 @@ fun CartPreview() {
         Scaffold(
             modifier = Modifier.fillMaxSize()
         ) { innerPadding ->
-            CartScreen(cartViewModel = CartViewModel(),
+            CartScreen(
+                cartViewModel = CartViewModel(),
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-                onCardProductButtonClicked = { })
+                onCardProductButtonClicked = { },
+                onProductCartDelete = { }
+            )
         }
     }
 }
@@ -51,14 +54,16 @@ fun CartPreview() {
 fun CartScreen(
     cartViewModel: CartViewModel,
     modifier: Modifier = Modifier,
-    onCardProductButtonClicked: () -> Unit
+    onCardProductButtonClicked: () -> Unit,
+    onProductCartDelete: () -> Unit
 ) {
     Column(modifier = modifier.padding(horizontal = 10.dp)) {
         CartHeader(modifier)
         CartListProducts(
             productCartList = cartViewModel.state.productCartList,
             modifier = modifier,
-            onCardProductButtonClicked = onCardProductButtonClicked
+            onCardProductButtonClicked = onCardProductButtonClicked,
+            onDeleteProductCart = onProductCartDelete
         )
     }
 }
@@ -99,7 +104,10 @@ fun CartHeaderRow(firstLabel: String, secondLabel: String, modifier: Modifier) {
 
 @Composable
 fun CartListProducts(
-    productCartList: List<ProductCart>, modifier: Modifier, onCardProductButtonClicked: () -> Unit
+    productCartList: List<ProductCart>,
+    modifier: Modifier,
+    onCardProductButtonClicked: () -> Unit,
+    onDeleteProductCart: () -> Unit
 ) {
     if (productCartList.isNullOrEmpty()) {
         Card(
@@ -130,7 +138,7 @@ fun CartListProducts(
             items(productCartList) {
                 CartProductItem(
                     onCartProductClicked = onCardProductButtonClicked,
-                    onDeleteProductClicked = { },
+                    onDeleteProductClicked = onDeleteProductCart,
                     modifier = modifier,
                     data = it
                 )
@@ -183,7 +191,7 @@ fun ActionButtons(
 ) {
     Row() {
         Button(
-            onClick = { /*TODO*/ }, modifier = modifier.weight(1f), colors = ButtonColors(
+            onClick = onDeleteProductClicked, modifier = modifier.weight(1f), colors = ButtonColors(
                 containerColor = colorResource(id = R.color.delete),
                 contentColor = Color.White,
                 disabledContentColor = Color.Black,

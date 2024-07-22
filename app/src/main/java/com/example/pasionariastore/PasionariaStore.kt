@@ -10,15 +10,11 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -34,8 +30,6 @@ import com.example.pasionariastore.ui.screen.CartProductScreen
 import com.example.pasionariastore.ui.screen.CartScreen
 import com.example.pasionariastore.ui.screen.ResumeScreen
 import com.example.pasionariastore.viewmodel.CartViewModel
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 
 enum class MyScreens(@StringRes val title: Int) {
     Resume(title = R.string.resume),
@@ -101,7 +95,11 @@ fun PasionariaStore(
                             navController = navController,
                             canSearchProducts = false
                         )
-                    })
+                    },
+                    onProductCartDelete = {
+                        
+                    }
+                )
             }
             composable(route = MyScreens.CartProduct.name) {
                 CartProductScreen(
