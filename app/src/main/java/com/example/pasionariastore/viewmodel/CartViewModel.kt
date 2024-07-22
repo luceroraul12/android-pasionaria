@@ -65,7 +65,17 @@ class CartViewModel : ViewModel() {
     }
 
     fun calculatePrice(): String {
-        return "ARS ${state.currentProductCart?.amount?.quantity?.toDoubleOrNull() ?: "0"}"
+        var result = "0.0"
+        var quantity = 0.0
+        var price = 0.0
+        var unitValue = 0.0
+        state.currentProductCart?.let {
+            quantity = it.amount.quantity.toDoubleOrNull() ?: 0.0
+            price = it.product.priceList
+            unitValue = it.product.unit.value
+            result = (quantity * price * unitValue).toString()
+        }
+        return "ARS $result"
     }
 
     fun canAddProductToCart(): Boolean {
