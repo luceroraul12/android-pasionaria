@@ -23,7 +23,8 @@ class CartViewModel : ViewModel() {
         state = state.copy(
             canSearchProducts = canSearchProducts,
             currentSearch = "",
-            showModalProductSearch = false
+            showModalProductSearch = false,
+            currentProductCart = null
         )
     }
 
@@ -55,14 +56,23 @@ class CartViewModel : ViewModel() {
         state = state.copy(showModalProductSearch = false)
     }
 
-    fun updateCurrentQuantity(newValue: String) {
+    fun updateCurrentQuantity(newQuantity: String) {
         state = state.copy(
-            currentAmount = state.currentAmount.copy(quantity = newValue.toDouble())
+            currentProductCart = state.currentProductCart!!.copy(
+                amount = state.currentProductCart!!.amount.copy(quantity = newQuantity.toDouble())
+            )
         )
     }
 
     fun calculatePrice(): String {
-        return state.currentAmount.quantity.toString()
+        return state.currentProductCart?.amount?.quantity.toString() ?: "0"
+    }
+
+    fun canAddProductToCart(): Boolean {
+        var result = false
+        if (state.currentProductCart != null)
+            result = state.currentProductCart!!.amount.quantity != 0.0
+        return result
     }
 
 }

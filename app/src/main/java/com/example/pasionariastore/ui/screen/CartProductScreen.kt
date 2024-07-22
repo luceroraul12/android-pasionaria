@@ -95,12 +95,13 @@ fun CartProductScreen(
             ProductFormCalculator(
                 modifier = modifier,
                 viewModel = cartViewModel,
-                uiState = state
+                state = state
             )
             CartProductActionButtons(
                 modifier = modifier.padding(15.dp),
-                onAddButtonClicked = onAddButtonClicked,
                 onCancelButtonClicked = onCancelButtonClicked,
+                onAddButtonClicked = onAddButtonClicked,
+                enabled = cartViewModel.canAddProductToCart()
             )
         }
     }
@@ -200,10 +201,12 @@ fun ProductSearcher(modifier: Modifier, uiState: CartUIState, viewModel: CartVie
 fun CartProductActionButtons(
     modifier: Modifier,
     onCancelButtonClicked: () -> Unit,
-    onAddButtonClicked: () -> Unit
+    onAddButtonClicked: () -> Unit,
+    enabled: Boolean
 ) {
     Row {
         Button(
+            enabled = enabled,
             onClick = onAddButtonClicked,
             modifier = modifier.weight(1f),
             colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.update))
@@ -220,7 +223,7 @@ fun CartProductActionButtons(
 }
 
 @Composable
-fun ProductFormCalculator(viewModel: CartViewModel, uiState: CartUIState, modifier: Modifier) {
+fun ProductFormCalculator(viewModel: CartViewModel, state: CartUIState, modifier: Modifier) {
     Card(modifier = modifier.padding(10.dp)) {
         Column(
             verticalArrangement = Arrangement.SpaceAround,
@@ -234,10 +237,11 @@ fun ProductFormCalculator(viewModel: CartViewModel, uiState: CartUIState, modifi
             )
             TextField(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                value = uiState.currentAmount.quantity.toString(),
+                value = state.currentProductCart?.amount?.quantity.toString(),
                 onValueChange = { viewModel.updateCurrentQuantity(it) },
                 modifier = modifier.fillMaxWidth(),
                 singleLine = true,
+                enabled = state.currentProductCart != null,
                 label = { Text(text = "Cantidad del producto") }
             )
         }
