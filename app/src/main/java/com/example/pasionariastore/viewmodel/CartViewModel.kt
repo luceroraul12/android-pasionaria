@@ -87,4 +87,8 @@ class CartViewModel : ViewModel() {
         state.productCartList.add(state.currentProductCart!!)
     }
 
+    fun removeProductFromCart(product: ProductCart) {
+        state.productCartList.remove(product)
+    }
+
 }

@@ -96,9 +96,6 @@ fun PasionariaStore(
                             canSearchProducts = false
                         )
                     },
-                    onProductCartDelete = {
-                        
-                    }
                 )
             }
             composable(route = MyScreens.CartProduct.name) {

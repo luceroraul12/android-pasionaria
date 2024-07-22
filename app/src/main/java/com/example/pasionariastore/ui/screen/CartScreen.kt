@@ -44,7 +44,6 @@ fun CartPreview() {
                 cartViewModel = CartViewModel(),
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
                 onCardProductButtonClicked = { },
-                onProductCartDelete = { }
             )
         }
     }
@@ -55,7 +54,6 @@ fun CartScreen(
     cartViewModel: CartViewModel,
     modifier: Modifier = Modifier,
     onCardProductButtonClicked: () -> Unit,
-    onProductCartDelete: () -> Unit
 ) {
     Column(modifier = modifier.padding(horizontal = 10.dp)) {
         CartHeader(modifier)
@@ -63,7 +61,7 @@ fun CartScreen(
             productCartList = cartViewModel.state.productCartList,
             modifier = modifier,
             onCardProductButtonClicked = onCardProductButtonClicked,
-            onDeleteProductCart = onProductCartDelete
+            onProductCartDete = { cartViewModel.removeProductFromCart(it) }
         )
     }
 }
@@ -107,7 +105,7 @@ fun CartListProducts(
     productCartList: List<ProductCart>,
     modifier: Modifier,
     onCardProductButtonClicked: () -> Unit,
-    onDeleteProductCart: () -> Unit
+    onProductCartDete: (ProductCart) -> Unit
 ) {
     if (productCartList.isNullOrEmpty()) {
         Card(
@@ -138,7 +136,7 @@ fun CartListProducts(
             items(productCartList) {
                 CartProductItem(
                     onCartProductClicked = onCardProductButtonClicked,
-                    onDeleteProductClicked = onDeleteProductCart,
+                    onDeleteProductClicked = { onProductCartDete(it) },
                     modifier = modifier,
                     data = it
                 )
