@@ -56,7 +56,7 @@ fun CartScreen(
     Column(modifier = modifier.padding(horizontal = 10.dp)) {
         CartHeader(modifier)
         CartListProducts(
-            productCartList = cartViewModel.productCartList,
+            productCartList = cartViewModel.state.productCartList,
             modifier = modifier,
             onCardProductButtonClicked = onCardProductButtonClicked
         )

@@ -55,7 +55,6 @@ fun PasionariaStore(
 ) {
     // Intento recuperar ultimo valor de navegacion
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val uiState = cartViewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {

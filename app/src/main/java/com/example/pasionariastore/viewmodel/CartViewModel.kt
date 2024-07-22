@@ -1,5 +1,8 @@
 package com.example.pasionariastore.viewmodel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.example.pasionariastore.MyScreens
@@ -7,75 +10,59 @@ import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.CartUIState
 import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.ProductCart
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 
 class CartViewModel : ViewModel() {
-    private val _uiState = MutableStateFlow(CartUIState())
-    val uiState: StateFlow<CartUIState> = _uiState.asStateFlow()
-
-    var productCartList: List<ProductCart> = mutableListOf()
-    var currentProductSearcheds: List<Product> = mutableListOf()
-    var currentProductCart: ProductCart? = null
-
+    var state by mutableStateOf(CartUIState())
+        private set
 
     /**
      * Indica si es posible utilizar el buscador y restablece valores
      */
     fun initProductScreen(navController: NavHostController, canSearchProducts: Boolean) {
         navController.navigate(MyScreens.CartProduct.name)
-        _uiState.update { currentStates ->
-            currentStates.copy(
-                canSearchProducts = canSearchProducts,
-                currentSearch = "",
-                showModalProductSearch = false
-            )
-        }
+        state = state.copy(
+            canSearchProducts = canSearchProducts,
+            currentSearch = "",
+            showModalProductSearch = false
+        )
     }
 
     /**
      * Actualiza el valor del buscador al momento de tipear
      */
     fun updateCurrentSearch(newValue: String) {
-        _uiState.update {
-            it.copy(currentSearch = newValue)
-        }
+        state = state.copy(currentSearch = newValue)
     }
 
     fun selectProductSearched(productSearched: Product) {
-        currentProductCart = ProductCart(product = productSearched)
-        // dejo de mostrar el modal
-        _uiState.update { it.copy(showModalProductSearch = false) }
+        state = state.copy(
+            currentProductCart = ProductCart(product = productSearched),
+            showModalProductSearch = false
+        )
     }
 
     fun searchProducts() {
-        // Filtro los productos en base parametro de busqueda
-        currentProductSearcheds = Datasource.apiProducts.filter { String.format("%s %s", it.name, it.description).contains(uiState.value.currentSearch) }
-        // Si existen valores para mostrar sigo, caso contrario tengo que emitir el mensaje
-
-        // Abre el modal
-        _uiState.update {
-            it.copy(
-                showModalProductSearch = true
-            )
-        }
-
+        state = state.copy(
+            currentProductSearcheds = Datasource.apiProducts.filter { res ->
+                String.format("%s %s", res.name, res.description)
+                    .contains(state.currentSearch)
+            },
+            showModalProductSearch = true
+        )
     }
 
     fun cancelProductSearch() {
-        _uiState.update { it.copy(showModalProductSearch = false) }
+        state = state.copy(showModalProductSearch = false)
     }
 
     fun updateCurrentQuantity(newValue: String) {
-        _uiState.update { it.copy(currentQuantity = newValue ) }
+        state = state.copy(
+            currentAmount = state.currentAmount.copy(quantity = newValue.toDouble())
+        )
     }
 
     fun calculatePrice(): String {
-        var result = "0"
-        result = uiState.value.currentQuantity
-        return result
+        return state.currentAmount.quantity.toString()
     }
 
 }

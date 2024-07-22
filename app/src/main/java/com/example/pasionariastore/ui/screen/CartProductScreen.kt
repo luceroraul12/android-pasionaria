@@ -22,8 +22,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -68,13 +66,13 @@ fun CartProductScreen(
     onCancelButtonClicked: () -> Unit,
     cartViewModel: CartViewModel
 ) {
-    val cartUiState = cartViewModel.uiState.collectAsState()
-    if (cartUiState.value.showModalProductSearch) {
+    val state = cartViewModel.state
+    if (state.showModalProductSearch) {
         // Antes de abrir el modal tengo que ver si existen coincidencias
         ModalSearchProduct(
-            productList = cartViewModel.currentProductSearcheds,
+            productList = state.currentProductSearcheds,
             onProductSearchClicked = { cartViewModel.selectProductSearched(it) },
-            search = cartUiState.value.currentSearch,
+            search = state.currentSearch,
             modifier = modifier,
             onCancelSearch = { cartViewModel.cancelProductSearch() }
         )
@@ -86,18 +84,18 @@ fun CartProductScreen(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Card {
-            ProductSearcher(modifier.fillMaxWidth(), cartUiState, cartViewModel)
+            ProductSearcher(modifier.fillMaxWidth(), state, cartViewModel)
         }
         Spacer(modifier = modifier.padding(10.dp))
         Card(modifier = modifier.weight(1f)) {
-            ProductDescription(modifier.fillMaxWidth(), cartViewModel.currentProductCart)
+            ProductDescription(modifier.fillMaxWidth(), state.currentProductCart)
         }
         Spacer(modifier = modifier.padding(10.dp))
         Card {
             ProductFormCalculator(
                 modifier = modifier,
                 viewModel = cartViewModel,
-                uiState = cartUiState
+                uiState = state
             )
             CartProductActionButtons(
                 modifier = modifier.padding(15.dp),
@@ -177,10 +175,10 @@ fun DescriptionItem(title: String, description: String, modifier: Modifier) {
 }
 
 @Composable
-fun ProductSearcher(modifier: Modifier, uiState: State<CartUIState>, viewModel: CartViewModel) {
+fun ProductSearcher(modifier: Modifier, uiState: CartUIState, viewModel: CartViewModel) {
     TextField(
-        enabled = uiState.value.canSearchProducts,
-        value = uiState.value.currentSearch,
+        enabled = uiState.canSearchProducts,
+        value = uiState.currentSearch,
         onValueChange = {
             viewModel.updateCurrentSearch(it)
         },
@@ -222,7 +220,7 @@ fun CartProductActionButtons(
 }
 
 @Composable
-fun ProductFormCalculator(viewModel: CartViewModel, uiState: State<CartUIState>, modifier: Modifier) {
+fun ProductFormCalculator(viewModel: CartViewModel, uiState: CartUIState, modifier: Modifier) {
     Card(modifier = modifier.padding(10.dp)) {
         Column(
             verticalArrangement = Arrangement.SpaceAround,
@@ -236,8 +234,8 @@ fun ProductFormCalculator(viewModel: CartViewModel, uiState: State<CartUIState>,
             )
             TextField(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                value = uiState.value.currentQuantity,
-                onValueChange = { viewModel.updateCurrentQuantity(it)},
+                value = uiState.currentAmount.quantity.toString(),
+                onValueChange = { viewModel.updateCurrentQuantity(it) },
                 modifier = modifier.fillMaxWidth(),
                 singleLine = true,
                 label = { Text(text = "Cantidad del producto") }
