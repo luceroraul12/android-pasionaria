@@ -83,4 +83,8 @@ class CartViewModel : ViewModel() {
         return result
     }
 
+    fun addProductToCart() {
+        state.productCartList.add(state.currentProductCart!!)
+    }
+
 }

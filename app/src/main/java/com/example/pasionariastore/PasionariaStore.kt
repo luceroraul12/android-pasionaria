@@ -108,7 +108,7 @@ fun PasionariaStore(
                     cartViewModel = cartViewModel,
                     modifier = modifier,
                     onCancelButtonClicked = { navController.navigate(MyScreens.Cart.name) },
-                    onAddButtonClicked = {})
+                    onAddButtonClicked = { cartViewModel.addProductToCart()})
             }
         }
     }
