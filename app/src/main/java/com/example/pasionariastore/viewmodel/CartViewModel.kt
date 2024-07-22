@@ -59,19 +59,19 @@ class CartViewModel : ViewModel() {
     fun updateCurrentQuantity(newQuantity: String) {
         state = state.copy(
             currentProductCart = state.currentProductCart!!.copy(
-                amount = state.currentProductCart!!.amount.copy(quantity = newQuantity.toDouble())
+                amount = state.currentProductCart!!.amount.copy(quantity = newQuantity)
             )
         )
     }
 
     fun calculatePrice(): String {
-        return state.currentProductCart?.amount?.quantity.toString() ?: "0"
+        return "ARS ${state.currentProductCart?.amount?.quantity?.toDoubleOrNull() ?: "0"}"
     }
 
     fun canAddProductToCart(): Boolean {
         var result = false
         if (state.currentProductCart != null)
-            result = state.currentProductCart!!.amount.quantity != 0.0
+            result = (state.currentProductCart!!.amount.quantity.toDoubleOrNull() ?: 0.0) > 0.0
         return result
     }
 

@@ -6,6 +6,6 @@ data class ProductCart(
 )
 
 data class AmountCart(
-    val quantity: Double = 0.0,
+    val quantity: String = "",
     val totalPrice: Double = 0.0
 )

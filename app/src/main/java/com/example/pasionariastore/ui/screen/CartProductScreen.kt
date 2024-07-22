@@ -231,13 +231,13 @@ fun ProductFormCalculator(viewModel: CartViewModel, state: CartUIState, modifier
             modifier = modifier
         ) {
             DescriptionItem(
-                title = "Precio Estimado",
-                description = "ARS ${viewModel.calculatePrice()}",
+                title = "Calculadora",
+                description = viewModel.calculatePrice(),
                 modifier = modifier
             )
             TextField(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                value = state.currentProductCart?.amount?.quantity.toString(),
+                value = state.currentProductCart?.amount?.quantity ?: "",
                 onValueChange = { viewModel.updateCurrentQuantity(it) },
                 modifier = modifier.fillMaxWidth(),
                 singleLine = true,
