@@ -68,12 +68,10 @@ class CartViewModel : ViewModel() {
         var result = "0.0"
         var quantity = 0.0
         var price = 0.0
-        var unitValue = 0.0
         state.currentProductCart?.let {
             quantity = it.amount.quantity.toDoubleOrNull() ?: 0.0
             price = it.product.priceList
-            unitValue = it.product.unit.value
-            result = (quantity * price * unitValue).toString()
+            result = (price * quantity / 1000).toString()
         }
         return "ARS $result"
     }
