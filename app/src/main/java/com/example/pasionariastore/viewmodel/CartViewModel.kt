@@ -3,6 +3,7 @@ package com.example.pasionariastore.viewmodel
 import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.pasionariastore.MyScreens
 import com.example.pasionariastore.data.Datasource
@@ -117,6 +118,16 @@ class CartViewModel : ViewModel() {
     fun removeProductFromCart(product: ProductCart, context: Context) {
         state.value.productCartList.remove(product)
         Toast.makeText(context, "El producto fue removido del pedido", Toast.LENGTH_SHORT).show()
+    }
+
+    fun updateProductCart(product: ProductCart, navController: NavController, context: Context) {
+        state.update {
+            it.copy(
+                currentProductCart = product
+            )
+        }
+        navController.navigate(MyScreens.CartProduct.name)
+        Toast.makeText(context, "Actualizando producto", Toast.LENGTH_SHORT).show()
     }
 
 }

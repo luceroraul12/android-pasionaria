@@ -30,6 +30,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
@@ -45,7 +47,7 @@ fun CartPreview() {
             CartScreen(
                 cartViewModel = CartViewModel(),
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-                onCardProductButtonClicked = { },
+                navController = rememberNavController()
             )
         }
     }
@@ -55,7 +57,7 @@ fun CartPreview() {
 fun CartScreen(
     cartViewModel: CartViewModel,
     modifier: Modifier = Modifier,
-    onCardProductButtonClicked: () -> Unit,
+    navController: NavController
 ) {
     val context = LocalContext.current
     val state = cartViewModel.state.collectAsState()
@@ -64,7 +66,9 @@ fun CartScreen(
         CartListProducts(
             productCartList = state.value.productCartList,
             modifier = modifier,
-            onCardProductButtonClicked = onCardProductButtonClicked,
+            onCardProductButtonClicked = {
+                cartViewModel.updateProductCart(product = it,context = context, navController = navController)
+            },
             onProductCartDete = {
                 cartViewModel.removeProductFromCart(
                     product = it,
@@ -113,7 +117,7 @@ fun CartHeaderRow(firstLabel: String, secondLabel: String, modifier: Modifier) {
 fun CartListProducts(
     productCartList: List<ProductCart>,
     modifier: Modifier,
-    onCardProductButtonClicked: () -> Unit,
+    onCardProductButtonClicked: (ProductCart) -> Unit,
     onProductCartDete: (ProductCart) -> Unit
 ) {
     if (productCartList.isNullOrEmpty()) {
@@ -144,7 +148,7 @@ fun CartListProducts(
         ) {
             items(productCartList) {
                 CartProductItem(
-                    onCartProductClicked = onCardProductButtonClicked,
+                    onCartProductClicked = { onCardProductButtonClicked(it) },
                     onDeleteProductClicked = { onProductCartDete(it) },
                     modifier = modifier,
                     data = it

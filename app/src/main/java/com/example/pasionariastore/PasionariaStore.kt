@@ -94,12 +94,7 @@ fun PasionariaStore(
                 CartScreen(
                     cartViewModel = cartViewModel,
                     modifier = modifier,
-                    onCardProductButtonClicked = {
-                        cartViewModel.initProductScreen(
-                            navController = navController,
-                            canSearchProducts = false
-                        )
-                    },
+                    navController = navController
                 )
             }
             composable(route = MyScreens.CartProduct.name) {
