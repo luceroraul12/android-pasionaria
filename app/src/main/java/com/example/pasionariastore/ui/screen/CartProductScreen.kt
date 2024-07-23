@@ -130,6 +130,11 @@ fun ProductDescription(modifier: Modifier = Modifier, productCart: ProductCart?)
             DescriptionItem(
                 title = "Descripcion", description = description, modifier = modifier
             )
+            DescriptionItem(
+                title = "Precio Lista",
+                description =  "ARS ${productCart?.product?.priceList.toString()}",
+                modifier = modifier
+            )
             Row(horizontalArrangement = Arrangement.SpaceBetween) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
