@@ -51,15 +51,24 @@ class CartViewModel : ViewModel() {
         }
     }
 
-    fun searchProducts() {
-        state.update {
-            it.copy(
-                currentProductSearcheds = Datasource.apiProducts.filter { res ->
-                    String.format("%s %s", res.name, res.description)
-                        .contains(it.currentSearch)
-                },
-                showModalProductSearch = true
-            )
+    fun searchProducts(context: Context) {
+        if (state.value.currentSearch.isNullOrEmpty()) {
+            Toast.makeText(context, "Debe escribir algo para buscar", Toast.LENGTH_SHORT).show()
+        } else {
+            val productFiltered = Datasource.apiProducts.filter { res ->
+                String.format("%s %s", res.name, res.description)
+                    .contains(state.value.currentSearch)
+            }
+            if (productFiltered.isNullOrEmpty()) {
+                Toast.makeText(context, "No existen coincidencias", Toast.LENGTH_SHORT).show()
+            } else {
+                state.update {
+                    it.copy(
+                        currentProductSearcheds = productFiltered,
+                        showModalProductSearch = true
+                    )
+                }
+            }
         }
     }
 

@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
@@ -133,7 +134,7 @@ fun ProductDescription(modifier: Modifier = Modifier, productCart: ProductCart?)
             )
             DescriptionItem(
                 title = "Precio Lista",
-                description =  "ARS ${productCart?.product?.priceList.toString()}",
+                description = "ARS ${productCart?.product?.priceList.toString()}",
                 modifier = modifier
             )
             Row(horizontalArrangement = Arrangement.SpaceBetween) {
@@ -183,6 +184,7 @@ fun DescriptionItem(title: String, description: String, modifier: Modifier) {
 
 @Composable
 fun ProductSearcher(modifier: Modifier, uiState: CartUIState, viewModel: CartViewModel) {
+    val context = LocalContext.current
     TextField(
         enabled = uiState.canSearchProducts,
         value = uiState.currentSearch,
@@ -192,7 +194,7 @@ fun ProductSearcher(modifier: Modifier, uiState: CartUIState, viewModel: CartVie
         singleLine = true,
         label = { Text(text = "Buscador de productos") },
         keyboardActions = KeyboardActions(onSearch = {
-            viewModel.searchProducts()
+            viewModel.searchProducts(context = context)
         }),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         leadingIcon = {
