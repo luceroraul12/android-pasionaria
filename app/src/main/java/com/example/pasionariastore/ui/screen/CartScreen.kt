@@ -176,9 +176,9 @@ fun CartProductItem(
                     fontSize = 20.sp
                 )
                 Row {
-                    Text(text = data.product.unit.name)
+                    Text(text = data.amount.quantity)
                     Text(
-                        text = (data.product.unit.value * data.product.priceList).toString(),
+                        text = (data.amount.totalPrice).toString(),
                         fontWeight = FontWeight.Bold
                     )
                 }
