@@ -52,7 +52,7 @@ fun PasionariaStore(
 ) {
     // Intento recuperar ultimo valor de navegacion
     val backStackEntry by navController.currentBackStackEntryAsState()
-
+    val context = LocalContext.current
     Scaffold(
         topBar = {
             PasionariaTopAppBar(
@@ -107,7 +107,12 @@ fun PasionariaStore(
                     cartViewModel = cartViewModel,
                     modifier = modifier,
                     onCancelButtonClicked = { navController.navigate(MyScreens.Cart.name) },
-                    onAddButtonClicked = { cartViewModel.addProductToCart(navController = navController)})
+                    onAddButtonClicked = {
+                        cartViewModel.addProductToCart(
+                            navController = navController,
+                            context = context
+                        )
+                    })
             }
         }
     }
@@ -130,3 +135,4 @@ fun PasionariaTopAppBar(screen: MyScreens, modifier: Modifier = Modifier) {
         )
     )
 }
+

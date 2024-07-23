@@ -1,5 +1,7 @@
 package com.example.pasionariastore.viewmodel
 
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.example.pasionariastore.MyScreens
@@ -97,13 +99,15 @@ class CartViewModel : ViewModel() {
         return result
     }
 
-    fun addProductToCart(navController: NavHostController) {
+    fun addProductToCart(navController: NavHostController, context: Context) {
         state.value.productCartList.add(state.value.currentProductCart!!)
         navController.navigate(MyScreens.Cart.name)
+        Toast.makeText(context, "El producto fue agregado al pedido", Toast.LENGTH_SHORT).show()
     }
 
-    fun removeProductFromCart(product: ProductCart) {
+    fun removeProductFromCart(product: ProductCart, context: Context) {
         state.value.productCartList.remove(product)
+        Toast.makeText(context, "El producto fue removido del pedido", Toast.LENGTH_SHORT).show()
     }
 
 }

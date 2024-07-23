@@ -23,6 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -56,6 +57,7 @@ fun CartScreen(
     modifier: Modifier = Modifier,
     onCardProductButtonClicked: () -> Unit,
 ) {
+    val context = LocalContext.current
     val state = cartViewModel.state.collectAsState()
     Column(modifier = modifier.padding(horizontal = 10.dp)) {
         CartHeader(modifier)
@@ -63,7 +65,12 @@ fun CartScreen(
             productCartList = state.value.productCartList,
             modifier = modifier,
             onCardProductButtonClicked = onCardProductButtonClicked,
-            onProductCartDete = { cartViewModel.removeProductFromCart(it) }
+            onProductCartDete = {
+                cartViewModel.removeProductFromCart(
+                    product = it,
+                    context = context
+                )
+            }
         )
     }
 }
