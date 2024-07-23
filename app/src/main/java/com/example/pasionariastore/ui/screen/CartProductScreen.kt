@@ -22,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -66,13 +67,13 @@ fun CartProductScreen(
     onCancelButtonClicked: () -> Unit,
     cartViewModel: CartViewModel
 ) {
-    val state = cartViewModel.state
-    if (state.showModalProductSearch) {
+    val state = cartViewModel.state.collectAsState()
+    if (state.value.showModalProductSearch) {
         // Antes de abrir el modal tengo que ver si existen coincidencias
         ModalSearchProduct(
-            productList = state.currentProductSearcheds,
+            productList = state.value.currentProductSearcheds,
             onProductSearchClicked = { cartViewModel.selectProductSearched(it) },
-            search = state.currentSearch,
+            search = state.value.currentSearch,
             modifier = modifier,
             onCancelSearch = { cartViewModel.cancelProductSearch() }
         )
@@ -84,18 +85,18 @@ fun CartProductScreen(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Card {
-            ProductSearcher(modifier.fillMaxWidth(), state, cartViewModel)
+            ProductSearcher(modifier.fillMaxWidth(), state.value, cartViewModel)
         }
         Spacer(modifier = modifier.padding(10.dp))
         Card(modifier = modifier.weight(1f)) {
-            ProductDescription(modifier.fillMaxWidth(), state.currentProductCart)
+            ProductDescription(modifier.fillMaxWidth(), state.value.currentProductCart)
         }
         Spacer(modifier = modifier.padding(10.dp))
         Card {
             ProductFormCalculator(
                 modifier = modifier,
                 viewModel = cartViewModel,
-                state = state
+                state = state.value
             )
             CartProductActionButtons(
                 modifier = modifier.padding(15.dp),

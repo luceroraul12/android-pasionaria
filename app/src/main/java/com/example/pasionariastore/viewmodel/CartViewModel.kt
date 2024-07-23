@@ -1,8 +1,5 @@
 package com.example.pasionariastore.viewmodel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.example.pasionariastore.MyScreens
@@ -10,65 +7,81 @@ import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.CartUIState
 import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.ProductCart
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 
 class CartViewModel : ViewModel() {
-    var state by mutableStateOf(CartUIState())
-        private set
+    private val _state = MutableStateFlow(CartUIState())
+    val state = _state
 
     /**
      * Indica si es posible utilizar el buscador y restablece valores
      */
     fun initProductScreen(navController: NavHostController, canSearchProducts: Boolean) {
         navController.navigate(MyScreens.CartProduct.name)
-        state = state.copy(
-            canSearchProducts = canSearchProducts,
-            currentSearch = "",
-            showModalProductSearch = false,
-            currentProductCart = null
-        )
+        state.update {
+            it.copy(
+                canSearchProducts = canSearchProducts,
+                currentSearch = "",
+                showModalProductSearch = false,
+                currentProductCart = null
+            )
+        }
     }
 
     /**
      * Actualiza el valor del buscador al momento de tipear
      */
     fun updateCurrentSearch(newValue: String) {
-        state = state.copy(currentSearch = newValue)
+        state.update {
+            it.copy(
+                currentSearch = newValue
+            )
+        }
     }
 
     fun selectProductSearched(productSearched: Product) {
-        state = state.copy(
-            currentProductCart = ProductCart(product = productSearched),
-            showModalProductSearch = false
-        )
+        state.update {
+            it.copy(
+                currentProductCart = ProductCart(product = productSearched),
+                showModalProductSearch = false
+            )
+        }
     }
 
     fun searchProducts() {
-        state = state.copy(
-            currentProductSearcheds = Datasource.apiProducts.filter { res ->
-                String.format("%s %s", res.name, res.description)
-                    .contains(state.currentSearch)
-            },
-            showModalProductSearch = true
-        )
+        state.update {
+            it.copy(
+                currentProductSearcheds = Datasource.apiProducts.filter { res ->
+                    String.format("%s %s", res.name, res.description)
+                        .contains(it.currentSearch)
+                },
+                showModalProductSearch = true
+            )
+        }
     }
 
     fun cancelProductSearch() {
-        state = state.copy(showModalProductSearch = false)
+        state.update {
+            it.copy(showModalProductSearch = false)
+        }
     }
 
     fun updateCurrentQuantity(newQuantity: String) {
-        state = state.copy(
-            currentProductCart = state.currentProductCart!!.copy(
-                amount = state.currentProductCart!!.amount.copy(quantity = newQuantity)
+        state.update {
+            it.copy(
+                currentProductCart = it.currentProductCart!!.copy(
+                    amount = it.currentProductCart!!.amount.copy(quantity = newQuantity)
+                )
             )
-        )
+        }
     }
 
     fun calculatePrice(): String {
         var result = "0.0"
         var quantity = 0.0
         var price = 0.0
-        state.currentProductCart?.let {
+        state.value.currentProductCart?.let {
             quantity = it.amount.quantity.toDoubleOrNull() ?: 0.0
             price = it.product.priceList
             result = (price * quantity / 1000).toString()
@@ -78,17 +91,18 @@ class CartViewModel : ViewModel() {
 
     fun canAddProductToCart(): Boolean {
         var result = false
-        if (state.currentProductCart != null)
-            result = (state.currentProductCart!!.amount.quantity.toDoubleOrNull() ?: 0.0) > 0.0
+        if (state.value.currentProductCart != null)
+            result =
+                (state.value.currentProductCart!!.amount.quantity.toDoubleOrNull() ?: 0.0) > 0.0
         return result
     }
 
     fun addProductToCart() {
-        state.productCartList.add(state.currentProductCart!!)
+        state.value.productCartList.add(state.value.currentProductCart!!)
     }
 
     fun removeProductFromCart(product: ProductCart) {
-        state.productCartList.remove(product)
+        state.value.productCartList.remove(product)
     }
 
 }

@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -55,10 +56,11 @@ fun CartScreen(
     modifier: Modifier = Modifier,
     onCardProductButtonClicked: () -> Unit,
 ) {
+    val state = cartViewModel.state.collectAsState()
     Column(modifier = modifier.padding(horizontal = 10.dp)) {
         CartHeader(modifier)
         CartListProducts(
-            productCartList = cartViewModel.state.productCartList,
+            productCartList = state.value.productCartList,
             modifier = modifier,
             onCardProductButtonClicked = onCardProductButtonClicked,
             onProductCartDete = { cartViewModel.removeProductFromCart(it) }
