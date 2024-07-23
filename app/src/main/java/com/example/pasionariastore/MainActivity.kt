@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.collectAsState
+import com.example.pasionariastore.data.CustomDataStore
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 
 class MainActivity : ComponentActivity() {
@@ -11,8 +13,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            PasionariaStoreTheme {
-                PasionariaStore()
+            val dataStore = CustomDataStore(this)
+            PasionariaStoreTheme(
+                darkTheme = dataStore.getDarkMode.collectAsState(initial = false).value
+            ) {
+                PasionariaStore(dataStore = dataStore)
             }
         }
     }

@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,6 +27,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.pasionariastore.data.CustomDataStore
 import com.example.pasionariastore.ui.screen.CartProductScreen
 import com.example.pasionariastore.ui.screen.CartScreen
 import com.example.pasionariastore.ui.screen.ResumeScreen
@@ -45,7 +47,8 @@ enum class MyScreens(@StringRes val title: Int) {
 fun PasionariaStore(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    cartViewModel: CartViewModel = viewModel()
+    cartViewModel: CartViewModel = viewModel(),
+    dataStore: CustomDataStore = CustomDataStore(LocalContext.current)
 ) {
     // Intento recuperar ultimo valor de navegacion
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -83,6 +86,7 @@ fun PasionariaStore(
         ) {
             composable(route = MyScreens.Resume.name) {
                 ResumeScreen(
+                    dataStore = dataStore,
                     modifier = modifier,
                     onCartButtonClicked = { navController.navigate(MyScreens.Cart.name) })
             }
