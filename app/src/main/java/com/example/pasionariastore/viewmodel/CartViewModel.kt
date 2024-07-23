@@ -97,8 +97,9 @@ class CartViewModel : ViewModel() {
         return result
     }
 
-    fun addProductToCart() {
+    fun addProductToCart(navController: NavHostController) {
         state.value.productCartList.add(state.value.currentProductCart!!)
+        navController.navigate(MyScreens.Cart.name)
     }
 
     fun removeProductFromCart(product: ProductCart) {
