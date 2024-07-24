@@ -1,6 +1,8 @@
 package com.example.pasionariastore
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -17,7 +19,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -77,37 +82,46 @@ fun PasionariaStore(
         },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = MyScreens.Resume.name,
-            modifier = modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            composable(route = MyScreens.Resume.name) {
-                ResumeScreen(
-                    dataStore = dataStore,
-                    modifier = modifier,
-                    onCartButtonClicked = { navController.navigate(MyScreens.Cart.name) })
-            }
-            composable(route = MyScreens.Cart.name) {
-                CartScreen(
-                    cartViewModel = cartViewModel,
-                    modifier = modifier,
-                    navController = navController
-                )
-            }
-            composable(route = MyScreens.CartProduct.name) {
-                CartProductScreen(
-                    cartViewModel = cartViewModel,
-                    modifier = modifier,
-                    onCancelButtonClicked = { navController.navigate(MyScreens.Cart.name) },
-                    onAddButtonClicked = {
-                        cartViewModel.addProductToCart(
-                            navController = navController,
-                            context = context
-                        )
-                    })
+        Box {
+            Image(
+                painter = painterResource(id = R.drawable.pasionaria_logo),
+                contentDescription = "logo",
+                contentScale = ContentScale.Fit,
+                modifier = modifier.fillMaxSize(),
+                alpha = 0.3f,
+            )
+            NavHost(
+                navController = navController,
+                startDestination = MyScreens.Resume.name,
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                composable(route = MyScreens.Resume.name) {
+                    ResumeScreen(
+                        dataStore = dataStore,
+                        modifier = modifier,
+                        onCartButtonClicked = { navController.navigate(MyScreens.Cart.name) })
+                }
+                composable(route = MyScreens.Cart.name) {
+                    CartScreen(
+                        cartViewModel = cartViewModel,
+                        modifier = modifier,
+                        navController = navController
+                    )
+                }
+                composable(route = MyScreens.CartProduct.name) {
+                    CartProductScreen(
+                        cartViewModel = cartViewModel,
+                        modifier = modifier,
+                        onCancelButtonClicked = { navController.navigate(MyScreens.Cart.name) },
+                        onAddButtonClicked = {
+                            cartViewModel.addProductToCart(
+                                navController = navController,
+                                context = context
+                            )
+                        })
+                }
             }
         }
     }
