@@ -42,8 +42,8 @@ import androidx.compose.ui.window.Dialog
 import com.example.pasionariastore.R
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.CartUIState
-import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.ProductCart
+import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.CartViewModel
 
@@ -118,11 +118,13 @@ fun ProductDescription(modifier: Modifier = Modifier, productCart: ProductCart?)
     var description: String = "Descripcion del producto"
     var price: String = "0.0"
     var unit: String = "SIN UNIDAD"
-    productCart?.product?.let {
-        name = it.name
-        description = it.description
-        price = String.format("%.2f", (it.priceList * it.unitId.value))
-        unit = it.unitId.name
+    productCart?.productWithUnit?.let {
+        it.product.let { product ->
+            name = product.name
+            description = product.description
+            price = String.format("%.2f", (product.priceList * it.unit.value))
+        }
+        unit = it.unit.nameType
     }
     Card(modifier = modifier) {
         Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceEvenly) {
@@ -136,7 +138,7 @@ fun ProductDescription(modifier: Modifier = Modifier, productCart: ProductCart?)
             )
             DescriptionItem(
                 title = "Precio Lista",
-                description = "ARS ${productCart?.product?.priceList.toString()}",
+                description = "ARS ${productCart?.productWithUnit?.product?.priceList.toString()}",
                 modifier = modifier
             )
             Row(horizontalArrangement = Arrangement.SpaceBetween) {
@@ -258,7 +260,7 @@ fun ProductFormCalculator(viewModel: CartViewModel, state: CartUIState, modifier
             )
             TextField(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                value = state.currentProductCart?.amount?.quantity ?: "",
+                value = state.currentProductCart?.quantity ?: "",
                 onValueChange = { viewModel.updateCurrentQuantity(it) },
                 modifier = modifier.fillMaxWidth(),
                 singleLine = true,
@@ -281,9 +283,9 @@ fun ModalSearchProductPreview(modifier: Modifier = Modifier) {
 
 @Composable
 fun ModalSearchProduct(
-    productList: List<Product>,
+    productList: List<ProductWithUnit>,
     search: String,
-    onProductSearchClicked: (Product) -> Unit,
+    onProductSearchClicked: (ProductWithUnit) -> Unit,
     onCancelSearch: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -311,8 +313,8 @@ fun ModalSearchProduct(
 
 @Composable
 fun ModalSearchProductItem(
-    product: Product,
-    onProductSearchClicked: (Product) -> Unit,
+    productWithUnit: ProductWithUnit,
+    onProductSearchClicked: (ProductWithUnit) -> Unit,
     modifier: Modifier
 ) {
     Column(
@@ -321,16 +323,16 @@ fun ModalSearchProductItem(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 15.dp)
-            .clickable { onProductSearchClicked(product) }
+            .clickable { onProductSearchClicked(productWithUnit) }
     ) {
         Text(
-            text = product.name,
+            text = productWithUnit.product.name,
             fontWeight = FontWeight.Bold,
             fontSize = 15.sp,
             modifier = modifier.fillMaxWidth()
         )
         Text(
-            text = product.description,
+            text = productWithUnit.product.description,
             fontStyle = FontStyle.Italic,
             fontSize = 12.sp,
             modifier = modifier.fillMaxWidth()

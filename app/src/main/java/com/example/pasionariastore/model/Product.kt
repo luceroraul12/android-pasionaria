@@ -29,9 +29,9 @@ data class Unit(
     @ColumnInfo(name = "name_unit")
     val name: String,
     @ColumnInfo(name = "name_type")
-    val nameType: String,
+    val nameType: String = "Gramos",
     @ColumnInfo(name = "value")
-    val value: Double
+    val value: Double = 0.0
 )
 
 @Entity(primaryKeys = ["productId", "unitId"])

@@ -8,12 +8,17 @@ import androidx.navigation.NavHostController
 import com.example.pasionariastore.MyScreens
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.CartUIState
-import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.ProductCart
+import com.example.pasionariastore.model.ProductWithUnit
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
-class CartViewModel : ViewModel() {
+@HiltViewModel
+class CartViewModel @Inject constructor(
+
+): ViewModel() {
     private val _state = MutableStateFlow(CartUIState())
     val state = _state
 
@@ -43,10 +48,10 @@ class CartViewModel : ViewModel() {
         }
     }
 
-    fun selectProductSearched(productSearched: Product) {
+    fun selectProductSearched(productSearched: ProductWithUnit) {
         state.update {
             it.copy(
-                currentProductCart = ProductCart(product = productSearched),
+                currentProductCart = ProductCart(productWithUnit = productSearched),
                 showModalProductSearch = false
             )
         }
@@ -57,7 +62,7 @@ class CartViewModel : ViewModel() {
             Toast.makeText(context, "Debe escribir algo para buscar", Toast.LENGTH_SHORT).show()
         } else {
             val productFiltered = Datasource.apiProducts.filter { res ->
-                String.format("%s %s", res.name, res.description)
+                String.format("%s %s", res.product.name, res.product.description)
                     .contains(state.value.currentSearch)
             }
             if (productFiltered.isNullOrEmpty()) {
@@ -83,28 +88,26 @@ class CartViewModel : ViewModel() {
         state.update {
             it.copy(
                 currentProductCart = it.currentProductCart!!.copy(
-                    amount = it.currentProductCart!!.amount.copy(quantity = newQuantity)
+                    quantity = newQuantity
                 )
             )
         }
     }
 
-    fun calculateCartPrice(): String = (state.value.productCartList.map { p -> p.amount.totalPrice }
+    fun calculateCartPrice(): String = (state.value.productCartList.map { p -> p.totalPrice }
         .reduceOrNull { acc, price -> acc + price } ?: 0.0).toString()
 
     fun calculatePrice(): String {
         var result = 0.0
         var quantity = 0.0
         var price = 0.0
-        state.value.currentProductCart?.let {
-            quantity = it.amount.quantity.toDoubleOrNull() ?: 0.0
-            price = it.product.priceList
+        state.value.currentProductCart?.let { productCart ->
+            quantity = productCart.quantity.toDoubleOrNull() ?: 0.0
+            price = productCart.productWithUnit.product.priceList
             result = (price * quantity / 1000)
-            val newAmount = it.amount.copy(totalPrice = result)
-            val prodcuctCartUpdated = it.copy(amount = newAmount)
             state.update {
                 it.copy(
-                    currentProductCart = prodcuctCartUpdated
+                    currentProductCart = productCart.copy(totalPrice = result)
                 )
             }
         }
@@ -115,14 +118,14 @@ class CartViewModel : ViewModel() {
         var result = false
         if (state.value.currentProductCart != null)
             result =
-                (state.value.currentProductCart!!.amount.quantity.toDoubleOrNull() ?: 0.0) > 0.0
+                (state.value.currentProductCart!!.quantity.toDoubleOrNull() ?: 0.0) > 0.0
         return result
     }
 
     fun addProductToCart(navController: NavHostController, context: Context) {
         // Si el product ya se encuentra en el pedido, tengo que actualizarlo
         val index: Int =
-            state.value.productCartList.indexOfFirst { it.product == state.value.currentProductCart?.product }
+            state.value.productCartList.indexOfFirst { it.productWithUnit == state.value.currentProductCart?.productWithUnit }
         var message = "El producto fue agregado al pedido"
         if (index >= 0) {
             state.value.productCartList.set(index, state.value.currentProductCart!!)

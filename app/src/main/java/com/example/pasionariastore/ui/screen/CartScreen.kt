@@ -195,20 +195,20 @@ fun CartProductItem(
                         .padding(10.dp)
                 ) {
                     Text(
-                        text = "Producto ${data.product.name}",
+                        text = "Producto ${data.productWithUnit.product.name}",
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
                     )
                 }
                 Row(modifier = modifier.padding(horizontal = 15.dp)) {
-                    Text(text = data.amount.quantity)
+                    Text(text = data.quantity)
                     Spacer(modifier = modifier.weight(1f))
                     Text(
-                        text = "ARS ${(data.amount.totalPrice).toString()}",
+                        text = "ARS ${(data.totalPrice)}",
                         fontWeight = FontWeight.Bold
                     )
                 }
-                Text(text = data.product.description, modifier = modifier.padding(vertical = 5.dp))
+                Text(text = data.productWithUnit.product.description, modifier = modifier.padding(vertical = 5.dp))
             }
             ActionButtons(
                 onCartProductClicked = onCartProductClicked,
