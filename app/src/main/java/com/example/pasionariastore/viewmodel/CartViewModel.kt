@@ -110,9 +110,18 @@ class CartViewModel : ViewModel() {
     }
 
     fun addProductToCart(navController: NavHostController, context: Context) {
-        state.value.productCartList.add(state.value.currentProductCart!!)
+        // Si el product ya se encuentra en el pedido, tengo que actualizarlo
+        val index: Int =
+            state.value.productCartList.indexOfFirst { it.product == state.value.currentProductCart?.product }
+        var message = "El producto fue agregado al pedido"
+        if (index >= 0) {
+            state.value.productCartList.set(index, state.value.currentProductCart!!)
+            message = "El producto fue actualizado"
+        } else {
+            state.value.productCartList.add(state.value.currentProductCart!!)
+        }
         navController.navigate(MyScreens.Cart.name)
-        Toast.makeText(context, "El producto fue agregado al pedido", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
     fun removeProductFromCart(product: ProductCart, context: Context) {
