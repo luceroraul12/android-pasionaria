@@ -3,6 +3,7 @@ package com.example.pasionariastore.model
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
+import androidx.room.Junction
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 
@@ -33,17 +34,19 @@ data class Unit(
     val value: Double
 )
 
-//data class ProductHasUnit(
-//    @Embedded val product: Product,
-//    @Relation(
-//        parentColumn = "productId",
-//        entityColumn = "unitId"
-//    )
-//    val unit: Unit
-//)
-
 @Entity(primaryKeys = ["productId", "unitId"])
-data class ProductHasUnit(
+data class ProductUnitCrossRef(
     val productId: Long,
+    @ColumnInfo(index = true)
     val unitId: Long
+)
+
+data class ProductWithUnit(
+    @Embedded val product: Product,
+    @Relation(
+        parentColumn = "productId",
+        entityColumn = "unitId",
+        associateBy = Junction(ProductUnitCrossRef::class)
+    )
+    val unit: Unit
 )
