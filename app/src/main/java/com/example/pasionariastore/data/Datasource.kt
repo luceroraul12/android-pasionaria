@@ -1,6 +1,8 @@
 package com.example.pasionariastore.data
 
+import com.example.pasionariastore.model.AmountCart
 import com.example.pasionariastore.model.Product
+import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.Unit
 
 object Datasource {
@@ -30,4 +32,12 @@ object Datasource {
         Product(name = "Repelente natural", description = "x 60cc", priceList = 2300.0, unit = apiUnits.get(0)),
         Product(name = "Zuccinis", description = "Orgánicos", priceList = 2070.0, unit = apiUnits.get(0)),
         )
+
+    val apiCartProducts: List<ProductCart> = listOf(
+        ProductCart(product = apiProducts.get(0), AmountCart()),
+        ProductCart(product = apiProducts.get(1), AmountCart()),
+        ProductCart(product = apiProducts.get(2), AmountCart()),
+        ProductCart(product = apiProducts.get(3), AmountCart()),
+        ProductCart(product = apiProducts.get(4), AmountCart()),
+    )
 }

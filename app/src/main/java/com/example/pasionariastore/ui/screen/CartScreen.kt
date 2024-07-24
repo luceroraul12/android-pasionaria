@@ -2,6 +2,7 @@ package com.example.pasionariastore.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
+import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.CartViewModel
@@ -53,6 +55,16 @@ fun CartPreview() {
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun CartItemPreview() {
+    CartListProducts(
+        productCartList = Datasource.apiCartProducts,
+        modifier = Modifier,
+        onCardProductButtonClicked = {}) {
+    }
+}
+
 @Composable
 fun CartScreen(
     cartViewModel: CartViewModel,
@@ -67,7 +79,11 @@ fun CartScreen(
             productCartList = state.value.productCartList,
             modifier = modifier,
             onCardProductButtonClicked = {
-                cartViewModel.updateProductCart(product = it,context = context, navController = navController)
+                cartViewModel.updateProductCart(
+                    product = it,
+                    context = context,
+                    navController = navController
+                )
             },
             onProductCartDete = {
                 cartViewModel.removeProductFromCart(
@@ -165,30 +181,37 @@ fun CartProductItem(
     modifier: Modifier,
     data: ProductCart
 ) {
-    Card(modifier = modifier.padding(5.dp), elevation = CardDefaults.cardElevation(3.dp)) {
-        Column(modifier = modifier.padding(5.dp)) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween, modifier = modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = "Producto ${data.product.name}",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
-                )
-                Row {
-                    Text(text = data.amount.quantity)
+    Card(
+        modifier = modifier.padding(5.dp),
+        elevation = CardDefaults.cardElevation(3.dp),
+    ) {
+        Column(modifier = modifier) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                ) {
                     Text(
-                        text = (data.amount.totalPrice).toString(),
-                        fontWeight = FontWeight.Bold
+                        text = "Producto ${data.product.name}",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
                     )
+                    Row {
+                        Text(text = data.amount.quantity)
+                        Text(
+                            text = (data.amount.totalPrice).toString(),
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
-
+                Text(text = data.product.description, modifier = modifier.padding(vertical = 5.dp))
             }
-            Text(text = data.product.description)
             ActionButtons(
                 onCartProductClicked = onCartProductClicked,
                 onDeleteProductClicked = onDeleteProductClicked,
-                modifier.padding(horizontal = 15.dp)
+                modifier = modifier
             )
         }
     }
@@ -202,22 +225,35 @@ fun ActionButtons(
 ) {
     Row() {
         Button(
-            onClick = onDeleteProductClicked, modifier = modifier.weight(1f), colors = ButtonColors(
+            onClick = onDeleteProductClicked, colors = ButtonColors(
                 containerColor = colorResource(id = R.color.delete),
                 contentColor = Color.White,
                 disabledContentColor = Color.Black,
                 disabledContainerColor = Color.Gray
-            )
+            ),
+            shape = RoundedCornerShape(
+                0.dp
+            ),
+            modifier = modifier
+                .weight(1f)
+                .height(IntrinsicSize.Max)
         ) {
-            Text(text = "Quitar")
+            Text(text = "Quitar", modifier = modifier)
         }
         Button(
-            onClick = onCartProductClicked, modifier = modifier.weight(1f), colors = ButtonColors(
+            onClick = onCartProductClicked,
+            colors = ButtonColors(
                 containerColor = colorResource(id = R.color.update),
                 contentColor = Color.White,
                 disabledContentColor = Color.Black,
                 disabledContainerColor = Color.Gray
-            )
+            ),
+            shape = RoundedCornerShape(
+                0.dp
+            ),
+            modifier = modifier
+                .weight(1f)
+                .height(IntrinsicSize.Max),
         ) {
             Text(text = "Editar")
         }
