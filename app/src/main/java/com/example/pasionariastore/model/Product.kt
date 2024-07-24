@@ -33,7 +33,6 @@ data class Unit(
     val value: Double
 )
 
-
 data class ProductHasUnit(
     @Embedded val product: Product,
     @Relation(
