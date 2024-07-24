@@ -33,11 +33,17 @@ data class Unit(
     val value: Double
 )
 
+//data class ProductHasUnit(
+//    @Embedded val product: Product,
+//    @Relation(
+//        parentColumn = "productId",
+//        entityColumn = "unitId"
+//    )
+//    val unit: Unit
+//)
+
+@Entity(primaryKeys = ["productId", "unitId"])
 data class ProductHasUnit(
-    @Embedded val product: Product,
-    @Relation(
-        parentColumn = "productId",
-        entityColumn = "unitId"
-    )
-    val unit: Unit
+    val productId: Long,
+    val unitId: Long
 )
