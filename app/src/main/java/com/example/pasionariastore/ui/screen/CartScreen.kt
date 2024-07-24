@@ -75,7 +75,7 @@ fun CartScreen(
     val context = LocalContext.current
     val state = cartViewModel.state.collectAsState()
     Column(modifier = modifier.padding(horizontal = 10.dp)) {
-        CartHeader(modifier)
+        CartHeader(modifier, cartViewModel.calculateCartPrice())
         CartListProducts(
             productCartList = state.value.productCartList,
             modifier = modifier,
@@ -97,7 +97,7 @@ fun CartScreen(
 }
 
 @Composable
-fun CartHeader(modifier: Modifier) {
+fun CartHeader(modifier: Modifier, cartPrice: String) {
     Card(
         shape = RoundedCornerShape(
             topStart = 0.dp, topEnd = 0.dp, bottomStart = 25.dp, bottomEnd = 25.dp
@@ -111,10 +111,10 @@ fun CartHeader(modifier: Modifier) {
         elevation = CardDefaults.cardElevation(5.dp),
         modifier = modifier.padding(top = 0.dp, end = 5.dp, start = 5.dp, bottom = 5.dp),
     ) {
-        Column(modifier = modifier.padding(5.dp)) {
+        Column(modifier = modifier.padding(10.dp)) {
             CartHeaderRow("Identificador de producto", "1234", modifier)
             CartHeaderRow("Fecha de creación", "20/07/2024 17:35", modifier)
-            CartHeaderRow("Precio total", "ARS 13500", modifier)
+            CartHeaderRow("Precio total", "ARS $cartPrice", modifier)
         }
     }
 }

@@ -89,6 +89,9 @@ class CartViewModel : ViewModel() {
         }
     }
 
+    fun calculateCartPrice(): String = (state.value.productCartList.map { p -> p.amount.totalPrice }
+        .reduceOrNull { acc, price -> acc + price } ?: 0.0).toString()
+
     fun calculatePrice(): String {
         var result = 0.0
         var quantity = 0.0
