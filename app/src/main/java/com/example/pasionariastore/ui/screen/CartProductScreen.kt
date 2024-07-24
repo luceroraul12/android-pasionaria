@@ -3,6 +3,7 @@ package com.example.pasionariastore.ui.screen
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -100,7 +102,7 @@ fun CartProductScreen(
                 state = state.value
             )
             CartProductActionButtons(
-                modifier = modifier.padding(15.dp),
+                modifier = modifier,
                 onCancelButtonClicked = onCancelButtonClicked,
                 onAddButtonClicked = onAddButtonClicked,
                 enabled = cartViewModel.canAddProductToCart()
@@ -214,18 +216,29 @@ fun CartProductActionButtons(
 ) {
     Row {
         Button(
-            enabled = enabled,
-            onClick = onAddButtonClicked,
-            modifier = modifier.weight(1f),
-            colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.update))
-        ) {
-            Text(text = "Agregar")
-        }
-        Button(
-            onClick = onCancelButtonClicked, modifier = modifier.weight(1f),
-            colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.delete))
+            onClick = onCancelButtonClicked,
+            colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.delete)),
+            shape = RoundedCornerShape(
+                0.dp
+            ),
+            modifier = modifier
+                .weight(1f)
+                .height(IntrinsicSize.Max),
         ) {
             Text(text = "Cancelar")
+        }
+        Button(
+            enabled = enabled,
+            onClick = onAddButtonClicked,
+            colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.update)),
+            shape = RoundedCornerShape(
+                0.dp
+            ),
+            modifier = modifier
+                .weight(1f)
+                .height(IntrinsicSize.Max),
+        ) {
+            Text(text = "Agregar")
         }
     }
 }
