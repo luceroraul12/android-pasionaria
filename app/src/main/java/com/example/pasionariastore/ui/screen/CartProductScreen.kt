@@ -121,8 +121,8 @@ fun ProductDescription(modifier: Modifier = Modifier, productCart: ProductCart?)
     productCart?.product?.let {
         name = it.name
         description = it.description
-        price = String.format("%.2f", (it.priceList * it.unit.value))
-        unit = it.unit.name
+        price = String.format("%.2f", (it.priceList * it.unitId.value))
+        unit = it.unitId.name
     }
     Card(modifier = modifier) {
         Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceEvenly) {

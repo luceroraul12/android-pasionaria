@@ -68,8 +68,8 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     // hilt
-    implementation(libs.hilt.android)
-    kapt(libs.hilt.android.compiler)
+    implementation("com.google.dagger:hilt-android:2.46")
+    kapt("com.google.dagger:hilt-android-compiler:2.46")
 
     // Room
     implementation(libs.androidx.room.runtime)
