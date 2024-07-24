@@ -127,7 +127,6 @@ class CartViewModel : ViewModel() {
             )
         }
         navController.navigate(MyScreens.CartProduct.name)
-        Toast.makeText(context, "Actualizando producto", Toast.LENGTH_SHORT).show()
     }
 
 }
