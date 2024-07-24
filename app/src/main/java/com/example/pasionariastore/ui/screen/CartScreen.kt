@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -200,8 +201,9 @@ fun CartProductItem(
                     )
                     Row {
                         Text(text = data.amount.quantity)
+                        Spacer(modifier = modifier.padding(5.dp))
                         Text(
-                            text = (data.amount.totalPrice).toString(),
+                            text = "ARS ${(data.amount.totalPrice).toString()}",
                             fontWeight = FontWeight.Bold
                         )
                     }

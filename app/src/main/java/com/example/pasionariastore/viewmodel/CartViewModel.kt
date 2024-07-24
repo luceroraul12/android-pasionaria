@@ -90,13 +90,20 @@ class CartViewModel : ViewModel() {
     }
 
     fun calculatePrice(): String {
-        var result = "0.0"
+        var result = 0.0
         var quantity = 0.0
         var price = 0.0
         state.value.currentProductCart?.let {
             quantity = it.amount.quantity.toDoubleOrNull() ?: 0.0
             price = it.product.priceList
-            result = (price * quantity / 1000).toString()
+            result = (price * quantity / 1000)
+            val newAmount = it.amount.copy(totalPrice = result)
+            val prodcuctCartUpdated = it.copy(amount = newAmount)
+            state.update {
+                it.copy(
+                    currentProductCart = prodcuctCartUpdated
+                )
+            }
         }
         return "ARS $result"
     }
