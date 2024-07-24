@@ -199,14 +199,14 @@ fun CartProductItem(
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
                     )
-                    Row {
-                        Text(text = data.amount.quantity)
-                        Spacer(modifier = modifier.padding(5.dp))
-                        Text(
-                            text = "ARS ${(data.amount.totalPrice).toString()}",
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+                }
+                Row(modifier = modifier.padding(horizontal = 15.dp)) {
+                    Text(text = data.amount.quantity)
+                    Spacer(modifier = modifier.weight(1f))
+                    Text(
+                        text = "ARS ${(data.amount.totalPrice).toString()}",
+                        fontWeight = FontWeight.Bold
+                    )
                 }
                 Text(text = data.product.description, modifier = modifier.padding(vertical = 5.dp))
             }
