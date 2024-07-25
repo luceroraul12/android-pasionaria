@@ -1,14 +1,16 @@
 package com.example.pasionariastore.repository
 
 import com.example.pasionariastore.data.Datasource
+import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.room.ProductDatabaseDao
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class ProductRepository @Inject constructor(private val productDatabaseDao: ProductDatabaseDao) {
-    fun getProductsWithUnit() =
+    fun getProductsWithUnit(): Flow<List<ProductWithUnit>?> =
         productDatabaseDao.getProductsWithUnit().flowOn(Dispatchers.IO).conflate()
 
     fun getProductsWithUnitBySearch(search: String) =
@@ -24,7 +26,12 @@ class ProductRepository @Inject constructor(private val productDatabaseDao: Prod
     }
 
     suspend fun saveFirstProducts() {
+        // Creo los productos
         productDatabaseDao.insertProducts(Datasource.apiProducts)
+        // Los recupero y creo los WithUnit
+//        productDatabaseDao.getProducts().collect(
+//            productDatabaseDao.insert
+//        )
     }
 
 }

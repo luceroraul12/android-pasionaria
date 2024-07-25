@@ -10,7 +10,7 @@ import com.example.pasionariastore.model.Unit
 
 @Database(
     entities = [Product::class, Unit::class, ProductUnitCrossRef::class, ProductCart::class, ProductCartCrossRef::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class PasionariaDatabase : RoomDatabase() {
