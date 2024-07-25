@@ -4,6 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.ProductUnitCrossRef
+import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.model.Unit
 
 @Database(

@@ -70,6 +70,7 @@ dependencies {
     // hilt
     implementation("com.google.dagger:hilt-android:2.46")
     kapt("com.google.dagger:hilt-android-compiler:2.46")
+    implementation("androidx.room:room-ktx:2.4.3")
 
     // Room
     implementation(libs.androidx.room.runtime)
