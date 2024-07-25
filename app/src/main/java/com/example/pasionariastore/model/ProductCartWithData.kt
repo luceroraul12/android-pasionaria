@@ -3,7 +3,7 @@ package com.example.pasionariastore.model
 import androidx.room.Embedded
 import androidx.room.Relation
 
-data class ProductCartWithProductAndUnit(
+data class ProductCartWithData(
     @Embedded val productCart: ProductCart,
     @Relation(
         entity = Product::class,

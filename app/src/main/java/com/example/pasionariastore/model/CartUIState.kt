@@ -6,9 +6,9 @@ data class CartUIState(
     val canSearchProducts: Boolean = false,
     val currentSearch: String = "",
     val showModalProductSearch: Boolean = false,
-    val productCartList: MutableList<ProductCartWithProductAndUnit> = mutableStateListOf(),
+    val productCartList: MutableList<ProductCartWithData> = mutableStateListOf(),
     val currentProductSearcheds: List<ProductWithUnit> = mutableListOf(),
-    val currentProductCart: ProductCartWithProductAndUnit? = null
+    val currentProductCart: ProductCartWithData? = null
 ) {
 
 }

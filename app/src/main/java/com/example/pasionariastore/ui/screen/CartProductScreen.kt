@@ -41,7 +41,7 @@ import androidx.compose.ui.window.Dialog
 import com.example.pasionariastore.R
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.CartUIState
-import com.example.pasionariastore.model.ProductCartWithProductAndUnit
+import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.viewmodel.CartViewModel
 
@@ -111,7 +111,7 @@ fun CartProductScreen(
 }
 
 @Composable
-fun ProductDescription(modifier: Modifier = Modifier, relation: ProductCartWithProductAndUnit?) {
+fun ProductDescription(modifier: Modifier = Modifier, relation: ProductCartWithData?) {
     var name: String = "Nombre del producto"
     var description: String = "Descripcion del producto"
     var price: String = "0.0"

@@ -10,7 +10,7 @@ import com.example.pasionariastore.MyScreens
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.CartUIState
 import com.example.pasionariastore.model.ProductCart
-import com.example.pasionariastore.model.ProductCartWithProductAndUnit
+import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.repository.CartRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +28,7 @@ class CartViewModel @Inject constructor(
     private val _state = MutableStateFlow(CartUIState())
     val state = _state
 
-    private val _cartProducts = MutableStateFlow<List<ProductCartWithProductAndUnit>>(emptyList())
+    private val _cartProducts = MutableStateFlow<List<ProductCartWithData>>(emptyList())
     val cartProducts = _cartProducts.asStateFlow()
 
     init {
@@ -79,7 +79,7 @@ class CartViewModel @Inject constructor(
     fun selectProductSearched(productSearched: ProductWithUnit) {
         state.update {
             it.copy(
-                currentProductCart = ProductCartWithProductAndUnit(
+                currentProductCart = ProductCartWithData(
                     productWithUnit = productSearched,
                     productCart = ProductCart(productId = productSearched.product.productId)
                 ),
@@ -180,13 +180,13 @@ class CartViewModel @Inject constructor(
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
-    fun removeProductFromCart(product: ProductCartWithProductAndUnit, context: Context) {
+    fun removeProductFromCart(product: ProductCartWithData, context: Context) {
         state.value.productCartList.remove(product)
         Toast.makeText(context, "El producto fue removido del pedido", Toast.LENGTH_SHORT).show()
     }
 
     fun updateProductCart(
-        product: ProductCartWithProductAndUnit,
+        product: ProductCartWithData,
         navController: NavController,
         context: Context
     ) {

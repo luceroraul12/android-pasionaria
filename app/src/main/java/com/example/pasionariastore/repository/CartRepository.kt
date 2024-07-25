@@ -1,7 +1,7 @@
 package com.example.pasionariastore.repository
 
 import com.example.pasionariastore.model.ProductCart
-import com.example.pasionariastore.model.ProductCartWithProductAndUnit
+import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.room.CartDatabaseDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class CartRepository @Inject constructor(private val cartDatabaseDao: CartDatabaseDao) {
 
-    fun getProducts(): Flow<List<ProductCartWithProductAndUnit>> {
+    fun getProducts(): Flow<List<ProductCartWithData>> {
         return cartDatabaseDao.getCartProducts().flowOn(Dispatchers.IO).conflate()
     }
 

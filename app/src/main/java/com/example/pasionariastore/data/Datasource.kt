@@ -1,7 +1,7 @@
 package com.example.pasionariastore.data
 
 import com.example.pasionariastore.model.Product
-import com.example.pasionariastore.model.ProductCartWithProductAndUnit
+import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.model.Unit
 
@@ -52,7 +52,7 @@ object Datasource {
         )
     )
 
-    val apiCartProducts: List<ProductCartWithProductAndUnit> = listOf(
+    val apiCartProducts: List<ProductCartWithData> = listOf(
 //        ProductCartWithProductAndUnit()
 //        ProductCart(productWithUnit = apiProducts.get(0)),
 //        ProductCart(productWithUnit = apiProducts.get(1)),

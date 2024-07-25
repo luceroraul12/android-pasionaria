@@ -18,7 +18,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -33,14 +32,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
 import com.example.pasionariastore.data.Datasource
-import com.example.pasionariastore.model.ProductCart
-import com.example.pasionariastore.model.ProductCartWithProductAndUnit
-import com.example.pasionariastore.repository.CartRepository
-import com.example.pasionariastore.room.CartDatabaseDao_Impl
-import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
+import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.viewmodel.CartViewModel
 
 //@Preview
@@ -135,10 +129,10 @@ fun CartHeaderRow(firstLabel: String, secondLabel: String, modifier: Modifier) {
 
 @Composable
 fun CartListProducts(
-    productCartList: List<ProductCartWithProductAndUnit>,
+    productCartList: List<ProductCartWithData>,
     modifier: Modifier,
-    onCardProductButtonClicked: (ProductCartWithProductAndUnit) -> Unit,
-    onProductCartDete: (ProductCartWithProductAndUnit) -> Unit
+    onCardProductButtonClicked: (ProductCartWithData) -> Unit,
+    onProductCartDete: (ProductCartWithData) -> Unit
 ) {
     if (productCartList.isNullOrEmpty()) {
         Card(
@@ -183,7 +177,7 @@ fun CartProductItem(
     onCartProductClicked: () -> Unit,
     onDeleteProductClicked: () -> Unit,
     modifier: Modifier,
-    data: ProductCartWithProductAndUnit
+    data: ProductCartWithData
 ) {
     Card(
         modifier = modifier.padding(5.dp),
