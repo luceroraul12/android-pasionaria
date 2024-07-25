@@ -1,7 +1,6 @@
 package com.example.pasionariastore.data
 
 import com.example.pasionariastore.model.Product
-import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithProductAndUnit
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.model.Unit
@@ -17,31 +16,39 @@ object Datasource {
         Unit(unitId = 7, name = "Unidad", value = 1.0, nameType = "Unidad"),
     )
 
-    val apiProducts: List<ProductWithUnit> = listOf(
+    val apiProducts: List<Product> = listOf(
+        Product(
+            name = "Aceitunas", description = "Libanti x 500g", priceList = 1595.0, unitId = 1
+        ),
+        Product(
+            name = "Pera", description = "Libanti x 500g", priceList = 23.0, unitId = 2
+        ),
+        Product(
+            name = "Manzana", description = "Libanti x 500g", priceList = 344.0, unitId = 3
+        ),
+        Product(
+            name = "Carne", description = "Libanti x 500g", priceList = 500.0, unitId = 4
+        ),
+        Product(
+            name = "Especie", description = "Libanti x 500g", priceList = 24500.0, unitId = 5
+        )
+    )
+
+    val apiProductsWithUnit: List<ProductWithUnit> = listOf(
         ProductWithUnit(
-            product = Product(
-                name = "Aceitunas", description = "Libanti x 500g", priceList = 1595.0, unitId = 1
-            ), unit = apiUnits.get(0)
+            product = apiProducts.get(0), unit = apiUnits.get(0)
         ),
         ProductWithUnit(
-            product = Product(
-                name = "Pera", description = "Libanti x 500g", priceList = 23.0, unitId = 2
-            ), unit = apiUnits.get(1)
+            product = apiProducts.get(1), unit = apiUnits.get(1)
         ),
         ProductWithUnit(
-            product = Product(
-                name = "Manzana", description = "Libanti x 500g", priceList = 344.0, unitId = 3
-            ), unit = apiUnits.get(2)
+            product = apiProducts.get(2), unit = apiUnits.get(2)
         ),
         ProductWithUnit(
-            product = Product(
-                name = "Carne", description = "Libanti x 500g", priceList = 500.0, unitId = 4
-            ), unit = apiUnits.get(3)
+            product = apiProducts.get(3), unit = apiUnits.get(3)
         ),
         ProductWithUnit(
-            product = Product(
-                name = "Especie", description = "Libanti x 500g", priceList = 24500.0, unitId = 5
-            ), unit = apiUnits.get(4)
+            product = apiProducts.get(4), unit = apiUnits.get(4)
         )
     )
 

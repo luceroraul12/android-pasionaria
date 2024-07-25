@@ -13,6 +13,7 @@ import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithProductAndUnit
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.repository.CartRepository
+import com.example.pasionariastore.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +24,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
-    private val cartRepository: CartRepository
+    private val cartRepository: CartRepository,
+    private val productRepository: ProductRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(CartUIState())
     val state = _state
@@ -32,9 +34,19 @@ class CartViewModel @Inject constructor(
     val cartProducts = _cartProducts.asStateFlow()
 
     init {
+
         viewModelScope.launch(Dispatchers.IO) {
+            productRepository.getProductsBySearch("pure").collect {
+                val products =
+                    if (it.isNullOrEmpty()) emptyList() else it
+            }
+
             cartRepository.getProducts().collect {
-                _cartProducts.value = it
+                _cartProducts.value =
+                    if (it.isNullOrEmpty())
+                        emptyList()
+                    else
+                        it
             }
         }
     }
@@ -82,7 +94,7 @@ class CartViewModel @Inject constructor(
         if (state.value.currentSearch.isNullOrEmpty()) {
             Toast.makeText(context, "Debe escribir algo para buscar", Toast.LENGTH_SHORT).show()
         } else {
-            val productFiltered = Datasource.apiProducts.filter { res ->
+            val productFiltered = Datasource.apiProductsWithUnit.filter { res ->
                 String.format("%s %s", res.product.name, res.product.description)
                     .contains(state.value.currentSearch)
             }
@@ -161,6 +173,10 @@ class CartViewModel @Inject constructor(
             message = "El producto fue actualizado"
         } else {
             state.value.productCartList.add(state.value.currentProductCart!!)
+        }
+
+        viewModelScope.launch {
+            cartRepository.insertProductCart(_state.value.currentProductCart!!.productCart)
         }
         navController.navigate(MyScreens.Cart.name)
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()

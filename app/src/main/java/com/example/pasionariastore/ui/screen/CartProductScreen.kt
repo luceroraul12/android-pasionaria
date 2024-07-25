@@ -20,7 +20,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -42,10 +41,8 @@ import androidx.compose.ui.window.Dialog
 import com.example.pasionariastore.R
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.CartUIState
-import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithProductAndUnit
 import com.example.pasionariastore.model.ProductWithUnit
-import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.CartViewModel
 
 
@@ -276,7 +273,7 @@ fun ProductFormCalculator(viewModel: CartViewModel, state: CartUIState, modifier
 @Composable
 fun ModalSearchProductPreview(modifier: Modifier = Modifier) {
     ModalSearchProduct(
-        productList = Datasource.apiProducts,
+        productList = Datasource.apiProductsWithUnit,
         "prueba",
         onProductSearchClicked = { },
         onCancelSearch = {})

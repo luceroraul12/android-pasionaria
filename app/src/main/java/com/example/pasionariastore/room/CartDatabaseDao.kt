@@ -1,6 +1,7 @@
 package com.example.pasionariastore.room
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -21,5 +22,8 @@ interface CartDatabaseDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCartProductCross(productCartCrossRef: ProductCartCrossRef)
+
+    @Delete
+    suspend fun deleteProductCart(product: ProductCart)
 
 }

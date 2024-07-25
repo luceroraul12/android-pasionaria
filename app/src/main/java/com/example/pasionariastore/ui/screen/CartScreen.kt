@@ -38,6 +38,8 @@ import com.example.pasionariastore.R
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithProductAndUnit
+import com.example.pasionariastore.repository.CartRepository
+import com.example.pasionariastore.room.CartDatabaseDao_Impl
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.CartViewModel
 
@@ -49,7 +51,7 @@ import com.example.pasionariastore.viewmodel.CartViewModel
 //            modifier = Modifier.fillMaxSize()
 //        ) { innerPadding ->
 //            CartScreen(
-//                cartViewModel = CartViewModel(),
+//                cartViewModel = CartViewModel(cartRepository = ),
 //                modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
 //                navController = rememberNavController()
 //            )
