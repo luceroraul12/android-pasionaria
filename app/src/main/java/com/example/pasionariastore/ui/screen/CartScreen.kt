@@ -37,6 +37,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.ProductCart
+import com.example.pasionariastore.model.ProductCartWithProductAndUnit
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.CartViewModel
 
@@ -132,10 +133,10 @@ fun CartHeaderRow(firstLabel: String, secondLabel: String, modifier: Modifier) {
 
 @Composable
 fun CartListProducts(
-    productCartList: List<ProductCart>,
+    productCartList: List<ProductCartWithProductAndUnit>,
     modifier: Modifier,
-    onCardProductButtonClicked: (ProductCart) -> Unit,
-    onProductCartDete: (ProductCart) -> Unit
+    onCardProductButtonClicked: (ProductCartWithProductAndUnit) -> Unit,
+    onProductCartDete: (ProductCartWithProductAndUnit) -> Unit
 ) {
     if (productCartList.isNullOrEmpty()) {
         Card(
@@ -180,7 +181,7 @@ fun CartProductItem(
     onCartProductClicked: () -> Unit,
     onDeleteProductClicked: () -> Unit,
     modifier: Modifier,
-    data: ProductCart
+    data: ProductCartWithProductAndUnit
 ) {
     Card(
         modifier = modifier.padding(5.dp),
@@ -201,10 +202,10 @@ fun CartProductItem(
                     )
                 }
                 Row(modifier = modifier.padding(horizontal = 15.dp)) {
-                    Text(text = data.quantity)
+                    Text(text = data.productCart.quantity)
                     Spacer(modifier = modifier.weight(1f))
                     Text(
-                        text = "ARS ${(data.totalPrice)}",
+                        text = "ARS ${(data.productCart.totalPrice)}",
                         fontWeight = FontWeight.Bold
                     )
                 }

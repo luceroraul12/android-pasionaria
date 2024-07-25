@@ -9,6 +9,7 @@ import com.example.pasionariastore.MyScreens
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.CartUIState
 import com.example.pasionariastore.model.ProductCart
+import com.example.pasionariastore.model.ProductCartWithProductAndUnit
 import com.example.pasionariastore.model.ProductWithUnit
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CartViewModel @Inject constructor(
 
-): ViewModel() {
+) : ViewModel() {
     private val _state = MutableStateFlow(CartUIState())
     val state = _state
 
@@ -51,7 +52,10 @@ class CartViewModel @Inject constructor(
     fun selectProductSearched(productSearched: ProductWithUnit) {
         state.update {
             it.copy(
-                currentProductCart = ProductCart(productWithUnit = productSearched),
+                currentProductCart = ProductCartWithProductAndUnit(
+                    productWithUnit = productSearched,
+                    productCart = ProductCart(referenceProductId = productSearched.product.productId)
+                ),
                 showModalProductSearch = false
             )
         }
@@ -88,26 +92,33 @@ class CartViewModel @Inject constructor(
         state.update {
             it.copy(
                 currentProductCart = it.currentProductCart!!.copy(
-                    quantity = newQuantity
+                    it.currentProductCart.productCart.copy(
+                        quantity = newQuantity
+                    )
                 )
             )
         }
     }
 
-    fun calculateCartPrice(): String = (state.value.productCartList.map { p -> p.totalPrice }
-        .reduceOrNull { acc, price -> acc + price } ?: 0.0).toString()
+    fun calculateCartPrice(): String =
+        (state.value.productCartList.map { p -> p.productCart.totalPrice }
+            .reduceOrNull { acc, price -> acc + price } ?: 0.0).toString()
 
     fun calculatePrice(): String {
         var result = 0.0
         var quantity = 0.0
         var price = 0.0
         state.value.currentProductCart?.let { productCart ->
-            quantity = productCart.quantity.toDoubleOrNull() ?: 0.0
+            quantity = productCart.productCart.quantity.toDoubleOrNull() ?: 0.0
             price = productCart.productWithUnit.product.priceList
             result = (price * quantity / 1000)
             state.update {
                 it.copy(
-                    currentProductCart = productCart.copy(totalPrice = result)
+                    currentProductCart = productCart.copy(
+                        productCart = productCart.productCart.copy(
+                            totalPrice = result
+                        )
+                    )
                 )
             }
         }
@@ -118,7 +129,8 @@ class CartViewModel @Inject constructor(
         var result = false
         if (state.value.currentProductCart != null)
             result =
-                (state.value.currentProductCart!!.quantity.toDoubleOrNull() ?: 0.0) > 0.0
+                (state.value.currentProductCart!!.productCart.quantity.toDoubleOrNull()
+                    ?: 0.0) > 0.0
         return result
     }
 
@@ -137,12 +149,16 @@ class CartViewModel @Inject constructor(
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
-    fun removeProductFromCart(product: ProductCart, context: Context) {
+    fun removeProductFromCart(product: ProductCartWithProductAndUnit, context: Context) {
         state.value.productCartList.remove(product)
         Toast.makeText(context, "El producto fue removido del pedido", Toast.LENGTH_SHORT).show()
     }
 
-    fun updateProductCart(product: ProductCart, navController: NavController, context: Context) {
+    fun updateProductCart(
+        product: ProductCartWithProductAndUnit,
+        navController: NavController,
+        context: Context
+    ) {
         state.update {
             it.copy(
                 currentProductCart = product

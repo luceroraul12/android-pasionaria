@@ -43,6 +43,7 @@ import com.example.pasionariastore.R
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.CartUIState
 import com.example.pasionariastore.model.ProductCart
+import com.example.pasionariastore.model.ProductCartWithProductAndUnit
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.CartViewModel
@@ -113,12 +114,12 @@ fun CartProductScreen(
 }
 
 @Composable
-fun ProductDescription(modifier: Modifier = Modifier, productCart: ProductCart?) {
+fun ProductDescription(modifier: Modifier = Modifier, relation: ProductCartWithProductAndUnit?) {
     var name: String = "Nombre del producto"
     var description: String = "Descripcion del producto"
     var price: String = "0.0"
     var unit: String = "SIN UNIDAD"
-    productCart?.productWithUnit?.let {
+    relation?.productWithUnit?.let {
         it.product.let { product ->
             name = product.name
             description = product.description
@@ -138,7 +139,7 @@ fun ProductDescription(modifier: Modifier = Modifier, productCart: ProductCart?)
             )
             DescriptionItem(
                 title = "Precio Lista",
-                description = "ARS ${productCart?.productWithUnit?.product?.priceList.toString()}",
+                description = "ARS ${relation?.productWithUnit?.product?.priceList.toString()}",
                 modifier = modifier
             )
             Row(horizontalArrangement = Arrangement.SpaceBetween) {
@@ -260,7 +261,7 @@ fun ProductFormCalculator(viewModel: CartViewModel, state: CartUIState, modifier
             )
             TextField(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                value = state.currentProductCart?.quantity ?: "",
+                value = state.currentProductCart?.productCart?.quantity ?: "",
                 onValueChange = { viewModel.updateCurrentQuantity(it) },
                 modifier = modifier.fillMaxWidth(),
                 singleLine = true,
