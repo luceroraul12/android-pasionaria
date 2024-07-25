@@ -13,9 +13,7 @@ import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithProductAndUnit
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.repository.CartRepository
-import com.example.pasionariastore.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -25,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val cartRepository: CartRepository,
-    private val productRepository: ProductRepository
+    private val checkDatabaseViewModel: CheckDatabaseViewModel
 ) : ViewModel() {
     private val _state = MutableStateFlow(CartUIState())
     val state = _state
@@ -34,21 +32,21 @@ class CartViewModel @Inject constructor(
     val cartProducts = _cartProducts.asStateFlow()
 
     init {
-
-        viewModelScope.launch(Dispatchers.IO) {
-            productRepository.getProductsBySearch("pure").collect {
-                val products =
-                    if (it.isNullOrEmpty()) emptyList() else it
-            }
-
-            cartRepository.getProducts().collect {
-                _cartProducts.value =
-                    if (it.isNullOrEmpty())
-                        emptyList()
-                    else
-                        it
-            }
-        }
+//        checkDatabaseViewModel.checkData()
+//        viewModelScope.launch(Dispatchers.IO) {
+//            productRepository.getProductsWithUnitBySearch("pure").collect {
+//                val products =
+//                    if (it.isNullOrEmpty()) emptyList() else it
+//            }
+//
+//            cartRepository.getProducts().collect {
+//                _cartProducts.value =
+//                    if (it.isNullOrEmpty())
+//                        emptyList()
+//                    else
+//                        it
+//            }
+//        }
     }
 
     /**
@@ -83,7 +81,7 @@ class CartViewModel @Inject constructor(
             it.copy(
                 currentProductCart = ProductCartWithProductAndUnit(
                     productWithUnit = productSearched,
-                    productCart = ProductCart(referenceProductId = productSearched.product.productId)
+                    productCart = ProductCart(productId = productSearched.product.productId)
                 ),
                 showModalProductSearch = false
             )
