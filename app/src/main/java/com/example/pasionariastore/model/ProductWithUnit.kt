@@ -8,8 +8,7 @@ data class ProductWithUnit(
     @Embedded val product: Product,
     @Relation(
         parentColumn = "product_id",
-        entityColumn = "unit_id",
-        associateBy = Junction(ProductUnitCrossRef::class)
+        entityColumn = "unit_id"
     )
     val unit: Unit
 )

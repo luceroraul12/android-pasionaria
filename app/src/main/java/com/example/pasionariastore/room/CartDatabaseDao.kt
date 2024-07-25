@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.example.pasionariastore.model.ProductCart
-import com.example.pasionariastore.model.ProductCartCrossRef
 import com.example.pasionariastore.model.ProductCartWithProductAndUnit
 import kotlinx.coroutines.flow.Flow
 
@@ -19,9 +18,6 @@ interface CartDatabaseDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCartProduct(product: ProductCart)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCartProductCross(productCartCrossRef: ProductCartCrossRef)
 
     @Delete
     suspend fun deleteProductCart(product: ProductCart)
