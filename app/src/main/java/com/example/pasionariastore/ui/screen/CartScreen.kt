@@ -41,21 +41,21 @@ import com.example.pasionariastore.model.ProductCartWithProductAndUnit
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.CartViewModel
 
-@Preview
-@Composable
-fun CartPreview() {
-    PasionariaStoreTheme {
-        Scaffold(
-            modifier = Modifier.fillMaxSize()
-        ) { innerPadding ->
-            CartScreen(
-                cartViewModel = CartViewModel(),
-                modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-                navController = rememberNavController()
-            )
-        }
-    }
-}
+//@Preview
+//@Composable
+//fun CartPreview() {
+//    PasionariaStoreTheme {
+//        Scaffold(
+//            modifier = Modifier.fillMaxSize()
+//        ) { innerPadding ->
+//            CartScreen(
+//                cartViewModel = CartViewModel(),
+//                modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
+//                navController = rememberNavController()
+//            )
+//        }
+//    }
+//}
 
 @Preview(showBackground = true)
 @Composable

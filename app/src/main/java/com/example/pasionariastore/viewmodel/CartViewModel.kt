@@ -3,6 +3,7 @@ package com.example.pasionariastore.viewmodel
 import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.pasionariastore.MyScreens
@@ -11,21 +12,37 @@ import com.example.pasionariastore.model.CartUIState
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithProductAndUnit
 import com.example.pasionariastore.model.ProductWithUnit
+import com.example.pasionariastore.repository.CartRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
-
+    private val cartRepository: CartRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(CartUIState())
     val state = _state
 
+    private val _cartProducts = MutableStateFlow<List<ProductCartWithProductAndUnit>>(emptyList())
+    val cartProducts = _cartProducts.asStateFlow()
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            cartRepository.getProducts().collect {
+                _cartProducts.value = it
+            }
+        }
+    }
+
     /**
      * Indica si es posible utilizar el buscador y restablece valores
      */
+
     fun initProductScreen(navController: NavHostController, canSearchProducts: Boolean) {
         navController.navigate(MyScreens.CartProduct.name)
         state.update {

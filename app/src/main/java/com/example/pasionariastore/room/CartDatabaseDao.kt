@@ -8,12 +8,13 @@ import androidx.room.Transaction
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartCrossRef
 import com.example.pasionariastore.model.ProductCartWithProductAndUnit
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CartDatabaseDao {
     @Transaction
     @Query("SELECT * FROM ProductCart")
-    fun getCartProducts(): List<ProductCartWithProductAndUnit>
+    fun getCartProducts(): Flow<List<ProductCartWithProductAndUnit>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCartProduct(product: ProductCart)

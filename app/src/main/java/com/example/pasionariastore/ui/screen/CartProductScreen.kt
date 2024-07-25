@@ -49,20 +49,20 @@ import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.CartViewModel
 
 
-@Preview
-@Composable
-fun ProductScreenPreview() {
-    PasionariaStoreTheme {
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            CartProductScreen(
-                modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-                onAddButtonClicked = {},
-                onCancelButtonClicked = {},
-                cartViewModel = CartViewModel()
-            )
-        }
-    }
-}
+//@Preview
+//@Composable
+//fun ProductScreenPreview() {
+//    PasionariaStoreTheme {
+//        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+//            CartProductScreen(
+//                modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
+//                onAddButtonClicked = {},
+//                onCancelButtonClicked = {},
+//                cartViewModel = CartViewModel()
+//            )
+//        }
+//    }
+//}
 
 @Composable
 fun CartProductScreen(
