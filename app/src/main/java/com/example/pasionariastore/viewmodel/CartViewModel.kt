@@ -11,7 +11,6 @@ import com.example.pasionariastore.model.CartUIState
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.ProductWithUnit
-import com.example.pasionariastore.model.Unit
 import com.example.pasionariastore.repository.CartRepository
 import com.example.pasionariastore.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -84,7 +84,8 @@ class CartViewModel @Inject constructor(
         }
         // notifico nuevo envio
         viewModelScope.launch {
-            delay(500)
+            delay(1000)
+            state.value.lastSearch.emit(value = Unit)
             state.value.lastSearch.emit(value = Unit)
         }
     }
@@ -194,6 +195,10 @@ class CartViewModel @Inject constructor(
             )
         }
         navController.navigate(MyScreens.CartProduct.name)
+        viewModelScope.launch {
+            delay(500)
+            state.value.lastSearch.emit(Unit)
+        }
     }
 
     fun showMessage(message: String, context: Context) {

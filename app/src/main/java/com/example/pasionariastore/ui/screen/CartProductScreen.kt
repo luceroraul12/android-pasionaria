@@ -116,7 +116,8 @@ fun CartProductScreen(
                 modifier = modifier,
                 onCancelButtonClicked = onCancelButtonClicked,
                 onAddButtonClicked = onAddButtonClicked,
-                enabled = cartViewModel.canAddProductToCart()
+                enabled = cartViewModel.canAddProductToCart(),
+                isNew = (state.value.currentProductCart?.productCart?.productCartId ?: 0) < 0
             )
         }
     }
@@ -230,7 +231,8 @@ fun CartProductActionButtons(
     modifier: Modifier,
     onCancelButtonClicked: () -> Unit,
     onAddButtonClicked: () -> Unit,
-    enabled: Boolean
+    enabled: Boolean,
+    isNew: Boolean
 ) {
     Row {
         Button(
@@ -256,7 +258,7 @@ fun CartProductActionButtons(
                 .weight(1f)
                 .height(IntrinsicSize.Max),
         ) {
-            Text(text = "Agregar")
+            Text(text = if (isNew) "Agregar" else "Actualizar")
         }
     }
 }
