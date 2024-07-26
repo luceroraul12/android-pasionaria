@@ -90,7 +90,10 @@ fun CartProductScreen(
         }
         Spacer(modifier = modifier.padding(10.dp))
         Card(modifier = modifier.weight(1f)) {
-            ProductDescription(modifier.fillMaxWidth(), state.value.currentProductCart)
+            ProductDescription(
+                modifier.fillMaxWidth(),
+                state.value.currentProductCart,
+                formatValue = { cartViewModel.formatPriceNumber(it) })
         }
         Spacer(modifier = modifier.padding(10.dp))
         Card {
@@ -111,7 +114,11 @@ fun CartProductScreen(
 }
 
 @Composable
-fun ProductDescription(modifier: Modifier = Modifier, relation: ProductCartWithData?) {
+fun ProductDescription(
+    modifier: Modifier = Modifier,
+    relation: ProductCartWithData?,
+    formatValue: (Double) -> String
+) {
     var name: String = "Nombre del producto"
     var description: String = "Descripcion del producto"
     var price: String = "0.0"
@@ -120,7 +127,7 @@ fun ProductDescription(modifier: Modifier = Modifier, relation: ProductCartWithD
         it.product.let { product ->
             name = product.name
             description = product.description
-            price = String.format("%.2f", (product.priceList * it.unit.value))
+            price = formatValue(product.priceList * it.unit.value)
         }
         unit = it.unit.nameType
     }
@@ -136,7 +143,7 @@ fun ProductDescription(modifier: Modifier = Modifier, relation: ProductCartWithD
             )
             DescriptionItem(
                 title = "Precio Lista",
-                description = "ARS ${relation?.productWithUnit?.product?.priceList.toString()}",
+                description = formatValue(relation?.productWithUnit?.product?.priceList ?: 0.0),
                 modifier = modifier
             )
             Row(horizontalArrangement = Arrangement.SpaceBetween) {
@@ -147,7 +154,7 @@ fun ProductDescription(modifier: Modifier = Modifier, relation: ProductCartWithD
                 ) {
                     DescriptionItem(
                         title = "Precio",
-                        description = "ARS $price",
+                        description = price,
                         modifier = modifier
                     )
                 }
