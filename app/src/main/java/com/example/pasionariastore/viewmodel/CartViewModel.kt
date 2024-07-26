@@ -129,79 +129,78 @@ class CartViewModel @Inject constructor(
     }
 
 
-
-fun calculatePrice(): String {
-    var result = 0.0
-    var quantity = 0.0
-    var price = 0.0
-    state.value.currentProductCart?.let { productCart ->
-        quantity = productCart.productCart.quantity.toDoubleOrNull() ?: 0.0
-        price = productCart.productWithUnit.product.priceList
-        result = (price * quantity / 1000)
-        state.update {
-            it.copy(
-                currentProductCart = productCart.copy(
-                    productCart = productCart.productCart.copy(
-                        totalPrice = result
+    fun calculatePrice(): String {
+        var result = 0.0
+        var quantity = 0.0
+        var price = 0.0
+        state.value.currentProductCart?.let { productCart ->
+            quantity = productCart.productCart.quantity.toDoubleOrNull() ?: 0.0
+            price = productCart.productWithUnit.product.priceList
+            result = (price * quantity / 1000)
+            state.update {
+                it.copy(
+                    currentProductCart = productCart.copy(
+                        productCart = productCart.productCart.copy(
+                            totalPrice = result
+                        )
                     )
                 )
+            }
+        }
+        return formatPriceNumber(result)
+    }
+
+    fun canAddProductToCart(): Boolean {
+        var result = false
+        if (state.value.currentProductCart != null) result =
+            (state.value.currentProductCart!!.productCart.quantity.toDoubleOrNull() ?: 0.0) > 0.0
+        return result
+    }
+
+    fun addProductToCart(navController: NavHostController, context: Context) {
+        // persisto el producto en la base de datos
+        viewModelScope.launch(Dispatchers.IO) {
+            state.value.currentProductCart?.productCart?.let {
+                var message = "El producto fue agregado al pedido"
+                cartRepository.insertProductCart(it)
+                if (it.productCartId != 0L) message = "El producto fue actualizado"
+                showMessage(context = context, message = message)
+            }
+        }
+        navController.navigate(MyScreens.Cart.name)
+    }
+
+    fun removeProductFromCart(data: ProductCartWithData, context: Context) {
+        viewModelScope.launch(Dispatchers.IO) {
+            cartRepository.deleteProductCart(productCart = data.productCart)
+            showMessage(context = context, message = "El producto fue removido del pedido")
+
+        }
+    }
+
+    fun updateProductCart(
+        product: ProductCartWithData, navController: NavController, context: Context
+    ) {
+        state.update {
+            it.copy(
+                currentProductCart = product
             )
         }
+        navController.navigate(MyScreens.CartProduct.name)
     }
-    return "ARS $result"
-}
 
-fun canAddProductToCart(): Boolean {
-    var result = false
-    if (state.value.currentProductCart != null) result =
-        (state.value.currentProductCart!!.productCart.quantity.toDoubleOrNull() ?: 0.0) > 0.0
-    return result
-}
-
-fun addProductToCart(navController: NavHostController, context: Context) {
-    // persisto el producto en la base de datos
-    viewModelScope.launch(Dispatchers.IO) {
-        state.value.currentProductCart?.productCart?.let {
-            var message = "El producto fue agregado al pedido"
-            cartRepository.insertProductCart(it)
-            if (it.productCartId != 0L) message = "El producto fue actualizado"
-            showMessage(context = context, message = message)
+    fun showMessage(message: String, context: Context) {
+        CoroutineScope(Dispatchers.Main).launch {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         }
     }
-    navController.navigate(MyScreens.Cart.name)
-}
 
-fun removeProductFromCart(data: ProductCartWithData, context: Context) {
-    viewModelScope.launch(Dispatchers.IO) {
-        cartRepository.deleteProductCart(productCart = data.productCart)
-        showMessage(context = context, message = "El producto fue removido del pedido")
+    fun formatPriceNumber(value: Double): String {
+        val format: NumberFormat = NumberFormat.getCurrencyInstance()
+        format.setMaximumFractionDigits(2)
+        format.currency = Currency.getInstance("ARS")
 
+        return format.format(value)
     }
-}
-
-fun updateProductCart(
-    product: ProductCartWithData, navController: NavController, context: Context
-) {
-    state.update {
-        it.copy(
-            currentProductCart = product
-        )
-    }
-    navController.navigate(MyScreens.CartProduct.name)
-}
-
-fun showMessage(message: String, context: Context) {
-    CoroutineScope(Dispatchers.Main).launch {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-    }
-}
-
-fun formatPriceNumber(value: Double): String {
-    val format: NumberFormat = NumberFormat.getCurrencyInstance()
-    format.setMaximumFractionDigits(2)
-    format.currency = Currency.getInstance("ARS")
-
-    return format.format(value)
-}
 
 }
