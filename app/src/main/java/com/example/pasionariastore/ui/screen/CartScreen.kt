@@ -59,8 +59,9 @@ fun CartItemPreview() {
     CartListProducts(
         productCartList = Datasource.apiCartProducts,
         modifier = Modifier,
-        onCardProductButtonClicked = {}) {
-    }
+        onCardProductButtonClicked = {},
+        onProductCartDelete = {},
+        formatValue = {value -> value.toString()})
 }
 
 @Composable
@@ -88,7 +89,8 @@ fun CartScreen(
                     data = it,
                     context = context
                 )
-            }
+            },
+            formatValue = { cartViewModel.formatPriceNumber(it) }
         )
     }
 }
@@ -111,7 +113,7 @@ fun CartHeader(modifier: Modifier, cartPrice: String) {
         Column(modifier = modifier.padding(10.dp)) {
             CartHeaderRow("Identificador de producto", "1234", modifier)
             CartHeaderRow("Fecha de creación", "20/07/2024 17:35", modifier)
-            CartHeaderRow("Precio total", "ARS $cartPrice", modifier)
+            CartHeaderRow("Precio total", cartPrice, modifier)
         }
     }
 }
@@ -132,7 +134,8 @@ fun CartListProducts(
     productCartList: List<ProductCartWithData>,
     modifier: Modifier,
     onCardProductButtonClicked: (ProductCartWithData) -> Unit,
-    onProductCartDelete: (ProductCartWithData) -> Unit
+    onProductCartDelete: (ProductCartWithData) -> Unit,
+    formatValue: (Double) -> String
 ) {
     if (productCartList.isNullOrEmpty()) {
         Card(
@@ -165,7 +168,8 @@ fun CartListProducts(
                     onCartProductClicked = { onCardProductButtonClicked(it) },
                     onDeleteProductClicked = { onProductCartDelete(it) },
                     modifier = modifier,
-                    data = it
+                    data = it,
+                    formatValue = formatValue
                 )
             }
         }
@@ -177,7 +181,8 @@ fun CartProductItem(
     onCartProductClicked: () -> Unit,
     onDeleteProductClicked: () -> Unit,
     modifier: Modifier,
-    data: ProductCartWithData
+    data: ProductCartWithData,
+    formatValue: (Double) -> String
 ) {
     Card(
         modifier = modifier.padding(5.dp),
@@ -201,7 +206,7 @@ fun CartProductItem(
                     Text(text = data.productCart.quantity)
                     Spacer(modifier = modifier.weight(1f))
                     Text(
-                        text = "ARS ${(data.productCart.totalPrice)}",
+                        text = formatValue(data.productCart.totalPrice),
                         fontWeight = FontWeight.Bold
                     )
                 }
