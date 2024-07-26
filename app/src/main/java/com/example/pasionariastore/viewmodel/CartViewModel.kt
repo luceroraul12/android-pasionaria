@@ -33,21 +33,13 @@ class CartViewModel @Inject constructor(
     val cartProducts = _cartProducts.asStateFlow()
 
     init {
-//        checkDatabaseViewModel.checkData()
-//        viewModelScope.launch(Dispatchers.IO) {
-//            productRepository.getProductsWithUnitBySearch("pure").collect {
-//                val products =
-//                    if (it.isNullOrEmpty()) emptyList() else it
-//            }
-//
-//            cartRepository.getProducts().collect {
-//                _cartProducts.value =
-//                    if (it.isNullOrEmpty())
-//                        emptyList()
-//                    else
-//                        it
-//            }
-//        }
+        viewModelScope.launch(Dispatchers.IO) {
+            cartRepository.getProducts().collect { products ->
+                state.update {
+                    state.value.copy(productCartList = products.toMutableList())
+                }
+            }
+        }
     }
 
     /**
@@ -173,9 +165,12 @@ class CartViewModel @Inject constructor(
         navController.navigate(MyScreens.Cart.name)
     }
 
-    fun removeProductFromCart(product: ProductCartWithData, context: Context) {
-        state.value.productCartList.remove(product)
-        Toast.makeText(context, "El producto fue removido del pedido", Toast.LENGTH_SHORT).show()
+    fun removeProductFromCart(data: ProductCartWithData, context: Context) {
+        viewModelScope.launch(Dispatchers.IO) {
+            cartRepository.deleteProductCart(productCart = data.productCart)
+            showMessage(context = context, message = "El producto fue removido del pedido")
+
+        }
     }
 
     fun updateProductCart(

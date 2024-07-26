@@ -83,9 +83,9 @@ fun CartScreen(
                     navController = navController
                 )
             },
-            onProductCartDete = {
+            onProductCartDelete = {
                 cartViewModel.removeProductFromCart(
-                    product = it,
+                    data = it,
                     context = context
                 )
             }
@@ -132,7 +132,7 @@ fun CartListProducts(
     productCartList: List<ProductCartWithData>,
     modifier: Modifier,
     onCardProductButtonClicked: (ProductCartWithData) -> Unit,
-    onProductCartDete: (ProductCartWithData) -> Unit
+    onProductCartDelete: (ProductCartWithData) -> Unit
 ) {
     if (productCartList.isNullOrEmpty()) {
         Card(
@@ -163,7 +163,7 @@ fun CartListProducts(
             items(productCartList) {
                 CartProductItem(
                     onCartProductClicked = { onCardProductButtonClicked(it) },
-                    onDeleteProductClicked = { onProductCartDete(it) },
+                    onDeleteProductClicked = { onProductCartDelete(it) },
                     modifier = modifier,
                     data = it
                 )
@@ -205,7 +205,10 @@ fun CartProductItem(
                         fontWeight = FontWeight.Bold
                     )
                 }
-                Text(text = data.productWithUnit.product.description, modifier = modifier.padding(vertical = 5.dp))
+                Text(
+                    text = data.productWithUnit.product.description,
+                    modifier = modifier.padding(vertical = 5.dp)
+                )
             }
             ActionButtons(
                 onCartProductClicked = onCartProductClicked,
