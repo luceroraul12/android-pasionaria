@@ -23,10 +23,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
@@ -44,6 +47,7 @@ import com.example.pasionariastore.model.CartUIState
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.viewmodel.CartViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 
 //@Preview
@@ -69,6 +73,12 @@ fun CartProductScreen(
     cartViewModel: CartViewModel
 ) {
     val state = cartViewModel.state.collectAsState()
+    val focusManager = LocalFocusManager.current
+    LaunchedEffect(Unit) {
+        state.value.lastSearch.collectLatest {
+            focusManager.moveFocus(FocusDirection.Down)
+        }
+    }
     if (state.value.showModalProductSearch) {
         // Antes de abrir el modal tengo que ver si existen coincidencias
         ModalSearchProduct(
@@ -194,6 +204,7 @@ fun DescriptionItem(title: String, description: String, modifier: Modifier) {
 @Composable
 fun ProductSearcher(modifier: Modifier, uiState: CartUIState, viewModel: CartViewModel) {
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
     TextField(
         enabled = uiState.canSearchProducts,
         value = uiState.currentSearch,
@@ -270,7 +281,7 @@ fun ProductFormCalculator(viewModel: CartViewModel, state: CartUIState, modifier
                 modifier = modifier.fillMaxWidth(),
                 singleLine = true,
                 enabled = state.currentProductCart != null,
-                label = { Text(text = "Cantidad del producto") }
+                label = { Text(text = "Cantidad del producto") },
             )
         }
     }

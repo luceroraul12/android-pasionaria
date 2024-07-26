@@ -11,11 +11,13 @@ import com.example.pasionariastore.model.CartUIState
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.ProductWithUnit
+import com.example.pasionariastore.model.Unit
 import com.example.pasionariastore.repository.CartRepository
 import com.example.pasionariastore.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -79,6 +81,11 @@ class CartViewModel @Inject constructor(
                     productCart = ProductCart(productId = productSearched.product.productId)
                 ), showModalProductSearch = false
             )
+        }
+        // notifico nuevo envio
+        viewModelScope.launch {
+            delay(500)
+            state.value.lastSearch.emit(value = Unit)
         }
     }
 
@@ -202,5 +209,6 @@ class CartViewModel @Inject constructor(
 
         return format.format(value)
     }
+
 
 }
