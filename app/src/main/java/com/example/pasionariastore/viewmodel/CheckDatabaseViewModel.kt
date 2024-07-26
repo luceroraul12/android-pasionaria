@@ -25,7 +25,7 @@ class CheckDatabaseViewModel @Inject constructor(
             }
         }
         viewModelScope.launch(Dispatchers.IO) {
-            productRepository.getProducts().collect {
+            productRepository.getProductsWithUnit().collect {
                 if (it.isNullOrEmpty())
                     productRepository.saveFirstProducts()
             }

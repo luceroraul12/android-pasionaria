@@ -7,13 +7,15 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.pasionariastore.MyScreens
-import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.CartUIState
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.repository.CartRepository
+import com.example.pasionariastore.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -22,8 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
-    private val cartRepository: CartRepository,
-    private val checkDatabaseViewModel: CheckDatabaseViewModel
+    private val cartRepository: CartRepository, private val productRepository: ProductRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(CartUIState())
     val state = _state
@@ -82,8 +83,7 @@ class CartViewModel @Inject constructor(
                 currentProductCart = ProductCartWithData(
                     productWithUnit = productSearched,
                     productCart = ProductCart(productId = productSearched.product.productId)
-                ),
-                showModalProductSearch = false
+                ), showModalProductSearch = false
             )
         }
     }
@@ -92,19 +92,20 @@ class CartViewModel @Inject constructor(
         if (state.value.currentSearch.isNullOrEmpty()) {
             Toast.makeText(context, "Debe escribir algo para buscar", Toast.LENGTH_SHORT).show()
         } else {
-            val productFiltered = Datasource.apiProductsWithUnit.filter { res ->
-                String.format("%s %s", res.product.name, res.product.description)
-                    .contains(state.value.currentSearch)
-            }
-            if (productFiltered.isNullOrEmpty()) {
-                Toast.makeText(context, "No existen coincidencias", Toast.LENGTH_SHORT).show()
-            } else {
-                state.update {
-                    it.copy(
-                        currentProductSearcheds = productFiltered,
-                        showModalProductSearch = true
-                    )
-                }
+            viewModelScope.launch(Dispatchers.IO) {
+                productRepository.getProductsWithUnitBySearch(state.value.currentSearch)
+                    .collect { products ->
+                        if (products.isNullOrEmpty()) {
+                            showMessage(context = context, message = "No hay coincidencias")
+                        } else {
+                            state.update {
+                                it.copy(
+                                    currentProductSearcheds = products,
+                                    showModalProductSearch = true
+                                )
+                            }
+                        }
+                    }
             }
         }
     }
@@ -154,30 +155,22 @@ class CartViewModel @Inject constructor(
 
     fun canAddProductToCart(): Boolean {
         var result = false
-        if (state.value.currentProductCart != null)
-            result =
-                (state.value.currentProductCart!!.productCart.quantity.toDoubleOrNull()
-                    ?: 0.0) > 0.0
+        if (state.value.currentProductCart != null) result =
+            (state.value.currentProductCart!!.productCart.quantity.toDoubleOrNull() ?: 0.0) > 0.0
         return result
     }
 
     fun addProductToCart(navController: NavHostController, context: Context) {
-        // Si el product ya se encuentra en el pedido, tengo que actualizarlo
-        val index: Int =
-            state.value.productCartList.indexOfFirst { it.productWithUnit == state.value.currentProductCart?.productWithUnit }
-        var message = "El producto fue agregado al pedido"
-        if (index >= 0) {
-            state.value.productCartList.set(index, state.value.currentProductCart!!)
-            message = "El producto fue actualizado"
-        } else {
-            state.value.productCartList.add(state.value.currentProductCart!!)
-        }
-
-        viewModelScope.launch {
-            cartRepository.insertProductCart(_state.value.currentProductCart!!.productCart)
+        // persisto el producto en la base de datos
+        viewModelScope.launch(Dispatchers.IO) {
+            state.value.currentProductCart?.productCart?.let {
+                var message = "El producto fue agregado al pedido"
+                cartRepository.insertProductCart(it)
+                if (it.productCartId != 0L) message = "El producto fue actualizado"
+                showMessage(context = context, message = message)
+            }
         }
         navController.navigate(MyScreens.Cart.name)
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
     fun removeProductFromCart(product: ProductCartWithData, context: Context) {
@@ -186,9 +179,7 @@ class CartViewModel @Inject constructor(
     }
 
     fun updateProductCart(
-        product: ProductCartWithData,
-        navController: NavController,
-        context: Context
+        product: ProductCartWithData, navController: NavController, context: Context
     ) {
         state.update {
             it.copy(
@@ -196,6 +187,12 @@ class CartViewModel @Inject constructor(
             )
         }
         navController.navigate(MyScreens.CartProduct.name)
+    }
+
+    fun showMessage(message: String, context: Context) {
+        CoroutineScope(Dispatchers.Main).launch {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
     }
 
 }

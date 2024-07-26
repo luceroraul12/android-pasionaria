@@ -16,7 +16,9 @@ class ProductRepository @Inject constructor(private val productDatabaseDao: Prod
     fun getProductsWithUnitBySearch(search: String) =
         productDatabaseDao.getProductsBySearch("%$search%").flowOn(Dispatchers.IO).conflate()
 
-    fun getProducts() = productDatabaseDao.getProducts().flowOn(Dispatchers.IO).conflate()
+    fun getProductsWithUnitById(id: Long) {
+        productDatabaseDao.getProductsWithUnitById(id).flowOn(Dispatchers.IO).conflate()
+    }
 
     fun getUnits() = productDatabaseDao.getUnits().flowOn(Dispatchers.IO).conflate()
 
