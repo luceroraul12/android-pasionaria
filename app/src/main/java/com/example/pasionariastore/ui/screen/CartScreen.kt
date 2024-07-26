@@ -1,5 +1,7 @@
 package com.example.pasionariastore.ui.screen
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -23,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -185,8 +188,9 @@ fun CartProductItem(
     formatValue: (Double) -> String
 ) {
     Card(
-        modifier = modifier.padding(5.dp),
+        modifier = modifier.padding(5.dp).alpha(0.9f),
         elevation = CardDefaults.cardElevation(3.dp),
+        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondary)
     ) {
         Column(modifier = modifier) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
