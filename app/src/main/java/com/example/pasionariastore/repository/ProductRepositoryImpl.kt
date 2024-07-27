@@ -19,20 +19,19 @@ class ProductRepositoryImpl @Inject constructor(private val productDatabaseDao: 
     override fun getProductsWithUnitBySearch(search: String) =
         productDatabaseDao.getProductsBySearch("%$search%").flowOn(Dispatchers.IO).conflate()
 
-    override fun getProductsWithUnitById(id: Long) {
+    override fun getProductsWithUnitById(id: Long): Flow<ProductWithUnit> =
         productDatabaseDao.getProductsWithUnitById(id).flowOn(Dispatchers.IO).conflate()
-    }
 
     override fun getUnits() = productDatabaseDao.getUnits().flowOn(Dispatchers.IO).conflate()
 
     // Auxiliares
     override suspend fun saveFirstUnits() {
-        productDatabaseDao.insertUnits(Datasource.apiUnits)
+        productDatabaseDao.insertUnits(Datasource.units)
     }
 
     override suspend fun saveFirstProducts() {
         // Creo los productos
-        productDatabaseDao.insertProducts(Datasource.apiProducts)
+        productDatabaseDao.insertProducts(Datasource.products)
         // Los recupero y creo los WithUnit
 //        productDatabaseDao.getProducts().collect(
 //            productDatabaseDao.insert

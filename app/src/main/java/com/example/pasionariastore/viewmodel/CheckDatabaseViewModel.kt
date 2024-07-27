@@ -13,7 +13,7 @@ class CheckDatabaseViewModel @Inject constructor(
     private val productRepository: ProductRepository
 ) : ViewModel() {
     init {
-        checkData()
+//        checkData()
     }
 
     fun checkData() {

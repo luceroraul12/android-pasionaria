@@ -1,7 +1,6 @@
 package com.example.pasionariastore.ui.screen
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -60,11 +59,11 @@ import com.example.pasionariastore.viewmodel.CartViewModel
 @Composable
 fun CartItemPreview() {
     CartListProducts(
-        productCartList = Datasource.apiCartProducts,
+        productCartList = Datasource.cartProducts,
         modifier = Modifier,
         onCardProductButtonClicked = {},
         onProductCartDelete = {},
-        formatValue = {value -> value.toString()})
+        formatValue = { value -> value.toString() })
 }
 
 @Composable
@@ -188,7 +187,9 @@ fun CartProductItem(
     formatValue: (Double) -> String
 ) {
     Card(
-        modifier = modifier.padding(5.dp).alpha(0.9f),
+        modifier = modifier
+            .padding(5.dp)
+            .alpha(0.9f),
         elevation = CardDefaults.cardElevation(3.dp),
         border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondary)
     ) {

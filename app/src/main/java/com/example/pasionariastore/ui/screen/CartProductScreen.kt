@@ -42,7 +42,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.pasionariastore.R
-import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.CartUIState
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.ProductWithUnit
@@ -293,7 +292,7 @@ fun ProductFormCalculator(viewModel: CartViewModel, state: CartUIState, modifier
 @Composable
 fun ModalSearchProductPreview(modifier: Modifier = Modifier) {
     ModalSearchProduct(
-        productList = Datasource.apiProductsWithUnit,
+        productList = com.example.pasionariastore.data.Datasource.productsWithUnit,
         "prueba",
         onProductSearchClicked = { },
         onCancelSearch = {})

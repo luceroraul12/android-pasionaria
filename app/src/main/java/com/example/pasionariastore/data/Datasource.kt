@@ -6,7 +6,7 @@ import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.model.Unit
 
 object Datasource {
-    val apiUnits: List<Unit> = listOf(
+    val units: List<Unit> = listOf(
         Unit(unitId = 1, name = "x50gr", value = 0.05),
         Unit(unitId = 2, name = "x100gr", value = 0.1),
         Unit(unitId = 3, name = "x250gr", value = 0.25),
@@ -16,7 +16,7 @@ object Datasource {
         Unit(unitId = 7, name = "Unidad", value = 1.0, nameType = "Unidad"),
     )
 
-    val apiProducts: List<Product> = listOf(
+    val products: List<Product> = listOf(
         Product(
             name = "Aceitunas", description = "Libanti x 500g", priceList = 1595.0, unitId = 1
         ),
@@ -34,25 +34,25 @@ object Datasource {
         )
     )
 
-    val apiProductsWithUnit: List<ProductWithUnit> = listOf(
+    val productsWithUnit: List<ProductWithUnit> = listOf(
         ProductWithUnit(
-            product = apiProducts.get(0), unit = apiUnits.get(0)
+            product = products.get(0), unit = units.get(0)
         ),
         ProductWithUnit(
-            product = apiProducts.get(1), unit = apiUnits.get(1)
+            product = products.get(1), unit = units.get(1)
         ),
         ProductWithUnit(
-            product = apiProducts.get(2), unit = apiUnits.get(2)
+            product = products.get(2), unit = units.get(2)
         ),
         ProductWithUnit(
-            product = apiProducts.get(3), unit = apiUnits.get(3)
+            product = products.get(3), unit = units.get(3)
         ),
         ProductWithUnit(
-            product = apiProducts.get(4), unit = apiUnits.get(4)
+            product = products.get(4), unit = units.get(4)
         )
     )
 
-    val apiCartProducts: List<ProductCartWithData> = listOf(
+    val cartProducts: List<ProductCartWithData> = listOf(
 //        ProductCartWithProductAndUnit()
 //        ProductCart(productWithUnit = apiProducts.get(0)),
 //        ProductCart(productWithUnit = apiProducts.get(1)),
