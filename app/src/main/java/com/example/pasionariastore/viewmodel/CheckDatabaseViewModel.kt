@@ -1,9 +1,8 @@
 package com.example.pasionariastore.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pasionariastore.repository.ProductRepository
+import com.example.pasionariastore.repository.ProductRepositoryImpl
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -11,7 +10,7 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class CheckDatabaseViewModel @Inject constructor(
-    private val productRepository: ProductRepository
+    private val productRepositoryImpl: ProductRepositoryImpl
 ) : ViewModel() {
     init {
         checkData()
@@ -19,22 +18,22 @@ class CheckDatabaseViewModel @Inject constructor(
 
     fun checkData() {
         viewModelScope.launch(Dispatchers.IO) {
-            productRepository.getUnits().collect {
+            productRepositoryImpl.getUnits().collect {
                 if (it.isNullOrEmpty())
-                    productRepository.saveFirstUnits()
+                    productRepositoryImpl.saveFirstUnits()
             }
         }
         viewModelScope.launch(Dispatchers.IO) {
-            productRepository.getProductsWithUnit().collect {
+            productRepositoryImpl.getProductsWithUnit().collect {
                 if (it.isNullOrEmpty())
-                    productRepository.saveFirstProducts()
+                    productRepositoryImpl.saveFirstProducts()
             }
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-            productRepository.getProductsWithUnit().collect {
+            productRepositoryImpl.getProductsWithUnit().collect {
                 if (it.isNullOrEmpty())
-                    productRepository.saveFirstProducts()
+                    productRepositoryImpl.saveFirstProducts()
             }
         }
     }

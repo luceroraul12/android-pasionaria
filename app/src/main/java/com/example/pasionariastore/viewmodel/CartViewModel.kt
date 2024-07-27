@@ -11,15 +11,14 @@ import com.example.pasionariastore.model.CartUIState
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.ProductWithUnit
-import com.example.pasionariastore.repository.CartRepository
-import com.example.pasionariastore.repository.ProductRepository
+import com.example.pasionariastore.repository.CartRepositoryImpl
+import com.example.pasionariastore.repository.ProductRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -28,7 +27,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
-    private val cartRepository: CartRepository, private val productRepository: ProductRepository
+    private val cartRepositoryImpl: CartRepositoryImpl, private val productRepositoryImpl: ProductRepositoryImpl
 ) : ViewModel() {
     private val _state = MutableStateFlow(CartUIState())
     val state = _state
@@ -38,7 +37,7 @@ class CartViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            cartRepository.getProducts().collect { products ->
+            cartRepositoryImpl.getProducts().collect { products ->
                 state.update {
                     state.value.copy(productCartList = products.toMutableList())
                 }
@@ -95,7 +94,7 @@ class CartViewModel @Inject constructor(
             Toast.makeText(context, "Debe escribir algo para buscar", Toast.LENGTH_SHORT).show()
         } else {
             viewModelScope.launch(Dispatchers.IO) {
-                productRepository.getProductsWithUnitBySearch(state.value.currentSearch)
+                productRepositoryImpl.getProductsWithUnitBySearch(state.value.currentSearch)
                     .collect { products ->
                         if (products.isNullOrEmpty()) {
                             showMessage(context = context, message = "No hay coincidencias")
@@ -170,7 +169,7 @@ class CartViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             state.value.currentProductCart?.productCart?.let {
                 var message = "El producto fue agregado al pedido"
-                cartRepository.insertProductCart(it)
+                cartRepositoryImpl.insertProductCart(it)
                 if (it.productCartId != 0L) message = "El producto fue actualizado"
                 showMessage(context = context, message = message)
             }
@@ -180,7 +179,7 @@ class CartViewModel @Inject constructor(
 
     fun removeProductFromCart(data: ProductCartWithData, context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
-            cartRepository.deleteProductCart(productCart = data.productCart)
+            cartRepositoryImpl.deleteProductCart(productCart = data.productCart)
             showMessage(context = context, message = "El producto fue removido del pedido")
 
         }
