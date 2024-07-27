@@ -25,9 +25,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -58,7 +61,7 @@ fun ProductScreenPreview() {
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
                 onAddButtonClicked = {},
                 onCancelButtonClicked = {},
-                priceCalculated = "123" ,
+                priceCalculated = "123",
                 onSearchProducts = {},
                 updateCurrentSearch = {},
                 onCancelSearch = {},
@@ -86,9 +89,11 @@ fun CartProductScreen(
     updateQuantity: (String) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
+    val focusRequester = remember { FocusRequester() }
     LaunchedEffect(Unit) {
         state.lastSearch.collectLatest {
-            focusManager.moveFocus(FocusDirection.Next)
+            focusRequester.requestFocus()
+            focusManager.moveFocus(FocusDirection.Down)
         }
     }
     if (state.showModalProductSearch) {
@@ -107,7 +112,7 @@ fun CartProductScreen(
             .padding(10.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        if(state.canSearchProducts){
+        if (state.canSearchProducts) {
             Card {
                 ProductSearcher(
                     modifier.fillMaxWidth(),
@@ -115,6 +120,7 @@ fun CartProductScreen(
                     onSearchProducts = onSearchProducts,
                     currentSearch = state.currentSearch,
                     updateCurrentSearch = updateCurrentSearch,
+                    focusRequester = focusRequester
                 )
             }
             Spacer(modifier = modifier.padding(10.dp))
@@ -132,7 +138,9 @@ fun CartProductScreen(
                 modifier = modifier,
                 state = state,
                 updateQuantity = { updateQuantity(it) },
-                priceCalculated = priceCalculated
+                priceCalculated = priceCalculated,
+                focusRequester = focusRequester,
+                onAddButtonClicked = onAddButtonClicked
             )
             CartProductActionButtons(
                 modifier = modifier,
@@ -229,7 +237,8 @@ fun ProductSearcher(
     updateCurrentSearch: (String) -> Unit,
     onSearchProducts: () -> Unit,
     canSearchProducts: Boolean,
-    currentSearch: String
+    currentSearch: String,
+    focusRequester: FocusRequester
 ) {
     TextField(
         enabled = canSearchProducts,
@@ -243,7 +252,7 @@ fun ProductSearcher(
             Icon(painter = painterResource(id = R.drawable.search), contentDescription = "search")
         },
 
-        modifier = modifier
+        modifier = modifier.focusRequester(focusRequester)
     )
 }
 
@@ -288,7 +297,9 @@ fun ProductFormCalculator(
     state: CartUIState,
     modifier: Modifier,
     priceCalculated: String,
-    updateQuantity: (String) -> Unit
+    updateQuantity: (String) -> Unit,
+    focusRequester: FocusRequester,
+    onAddButtonClicked: () -> Unit
 ) {
     Card(modifier = modifier.padding(10.dp)) {
         Column(
@@ -302,10 +313,16 @@ fun ProductFormCalculator(
                 modifier = modifier
             )
             TextField(
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(onDone = { onAddButtonClicked() }),
                 value = state.currentProductCart?.productCart?.quantity ?: "",
                 onValueChange = { updateQuantity(it) },
-                modifier = modifier.fillMaxWidth(),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester),
                 singleLine = true,
                 enabled = state.currentProductCart != null,
                 label = { Text(text = "Cantidad del producto") },
