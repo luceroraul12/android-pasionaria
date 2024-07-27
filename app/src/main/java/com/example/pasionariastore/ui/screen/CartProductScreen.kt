@@ -20,15 +20,17 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -45,33 +47,49 @@ import com.example.pasionariastore.R
 import com.example.pasionariastore.model.CartUIState
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.ProductWithUnit
-import com.example.pasionariastore.viewmodel.CartViewModel
+import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 
 
-//@Preview
-//@Composable
-//fun ProductScreenPreview() {
-//    PasionariaStoreTheme {
-//        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//            CartProductScreen(
-//                modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-//                onAddButtonClicked = {},
-//                onCancelButtonClicked = {},
-//                cartViewModel = CartViewModel()
-//            )
-//        }
-//    }
-//}
+@Preview
+@Composable
+fun ProductScreenPreview() {
+    PasionariaStoreTheme {
+        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+            CartProductScreen(
+                modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
+                onAddButtonClicked = {},
+                onCancelButtonClicked = {},
+                priceCalculated = "123",
+                onSearchProducts = {},
+                updateCurrentSearch = {},
+                onCancelSearch = {},
+                onProductSearchClicked = {},
+                canAddProducts = true,
+                formatPriceNumber = {"203"},
+                state = MutableStateFlow(CartUIState()).collectAsState()
+            )
+        }
+    }
+}
 
 @Composable
 fun CartProductScreen(
     modifier: Modifier = Modifier,
     onAddButtonClicked: () -> Unit,
     onCancelButtonClicked: () -> Unit,
-    cartViewModel: CartViewModel
+    state: State<CartUIState>,
+    onProductSearchClicked: (ProductWithUnit) -> Unit,
+    onCancelSearch: () -> Unit,
+    formatPriceNumber: (Double) -> String,
+    priceCalculated: String,
+    canAddProducts: Boolean,
+    onSearchProducts: () -> Unit,
+    updateCurrentSearch: (String) -> Unit
 ) {
-    val state = cartViewModel.state.collectAsState()
     val focusManager = LocalFocusManager.current
     LaunchedEffect(Unit) {
         state.value.lastSearch.collectLatest {
@@ -82,10 +100,10 @@ fun CartProductScreen(
         // Antes de abrir el modal tengo que ver si existen coincidencias
         ModalSearchProduct(
             productList = state.value.currentProductSearcheds,
-            onProductSearchClicked = { cartViewModel.selectProductSearched(it) },
+            onProductSearchClicked = onProductSearchClicked,
             search = state.value.currentSearch,
             modifier = modifier,
-            onCancelSearch = { cartViewModel.cancelProductSearch() }
+            onCancelSearch = onCancelSearch
         )
     }
     Column(
@@ -95,27 +113,36 @@ fun CartProductScreen(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Card {
-            ProductSearcher(modifier.fillMaxWidth(), state.value, cartViewModel)
+            ProductSearcher(
+                modifier.fillMaxWidth(),
+                canSearchProducts = state.value.canSearchProducts,
+                onSearchProducts = onSearchProducts,
+                currentSearch = state.value.currentSearch,
+                updateCurrentSearch = updateCurrentSearch,
+
+                )
         }
         Spacer(modifier = modifier.padding(10.dp))
         Card(modifier = modifier.weight(1f)) {
             ProductDescription(
                 modifier.fillMaxWidth(),
                 state.value.currentProductCart,
-                formatValue = { cartViewModel.formatPriceNumber(it) })
+                formatValue = formatPriceNumber
+            )
         }
         Spacer(modifier = modifier.padding(10.dp))
         Card {
             ProductFormCalculator(
                 modifier = modifier,
-                viewModel = cartViewModel,
-                state = state.value
+                state = state.value,
+                onChangeQuantity = {},
+                priceCalculated = priceCalculated
             )
             CartProductActionButtons(
                 modifier = modifier,
                 onCancelButtonClicked = onCancelButtonClicked,
                 onAddButtonClicked = onAddButtonClicked,
-                enabled = cartViewModel.canAddProductToCart(),
+                enabled = canAddProducts,
                 isNew = (state.value.currentProductCart?.productCart?.productCartId ?: 0) < 0
             )
         }
@@ -202,20 +229,20 @@ fun DescriptionItem(title: String, description: String, modifier: Modifier) {
 }
 
 @Composable
-fun ProductSearcher(modifier: Modifier, uiState: CartUIState, viewModel: CartViewModel) {
-    val context = LocalContext.current
-    val focusManager = LocalFocusManager.current
+fun ProductSearcher(
+    modifier: Modifier,
+    updateCurrentSearch: (String) -> Unit,
+    onSearchProducts: () -> Unit,
+    canSearchProducts: Boolean,
+    currentSearch: String
+) {
     TextField(
-        enabled = uiState.canSearchProducts,
-        value = uiState.currentSearch,
-        onValueChange = {
-            viewModel.updateCurrentSearch(it)
-        },
+        enabled = canSearchProducts,
+        value = currentSearch,
+        onValueChange = updateCurrentSearch,
         singleLine = true,
         label = { Text(text = "Buscador de productos") },
-        keyboardActions = KeyboardActions(onSearch = {
-            viewModel.searchProducts(context = context)
-        }),
+        keyboardActions = KeyboardActions(onSearch = { onSearchProducts() }),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         leadingIcon = {
             Icon(painter = painterResource(id = R.drawable.search), contentDescription = "search")
@@ -263,7 +290,12 @@ fun CartProductActionButtons(
 }
 
 @Composable
-fun ProductFormCalculator(viewModel: CartViewModel, state: CartUIState, modifier: Modifier) {
+fun ProductFormCalculator(
+    state: CartUIState,
+    modifier: Modifier,
+    priceCalculated: String,
+    onChangeQuantity: (String) -> Unit
+) {
     Card(modifier = modifier.padding(10.dp)) {
         Column(
             verticalArrangement = Arrangement.SpaceAround,
@@ -272,13 +304,13 @@ fun ProductFormCalculator(viewModel: CartViewModel, state: CartUIState, modifier
         ) {
             DescriptionItem(
                 title = "Calculadora",
-                description = viewModel.calculatePrice(),
+                description = priceCalculated,
                 modifier = modifier
             )
             TextField(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 value = state.currentProductCart?.productCart?.quantity ?: "",
-                onValueChange = { viewModel.updateCurrentQuantity(it) },
+                onValueChange = onChangeQuantity,
                 modifier = modifier.fillMaxWidth(),
                 singleLine = true,
                 enabled = state.currentProductCart != null,
