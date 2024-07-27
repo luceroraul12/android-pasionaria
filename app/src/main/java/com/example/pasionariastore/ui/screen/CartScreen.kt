@@ -74,7 +74,7 @@ fun CartPreview() {
                 onCardProductButtonClicked = {},
                 formatValue = { "0.0" },
                 cartPrice = "123",
-                productCartList = Datasource.cartProducts
+                productCartList = emptyList()
             )
         }
     }
