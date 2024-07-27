@@ -38,6 +38,29 @@ import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 
+@Preview(showBackground = true)
+@Composable
+fun CartItemPreview() {
+    CartProductItem(
+        onCartProductClicked = { /*TODO*/ },
+        onDeleteProductClicked = { /*TODO*/ },
+        modifier = Modifier,
+        data = Datasource.cartProducts.get(1),
+        formatValue = {"ARS1,500"}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CartListPreview() {
+    CartListProducts(
+        productCartList = Datasource.cartProducts,
+        modifier = Modifier,
+        onCardProductButtonClicked = {},
+        onProductCartDelete = {},
+        formatValue = { value -> value.toString() })
+}
+
 @Preview
 @Composable
 fun CartPreview() {
@@ -55,17 +78,6 @@ fun CartPreview() {
             )
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CartItemPreview() {
-    CartListProducts(
-        productCartList = Datasource.cartProducts,
-        modifier = Modifier,
-        onCardProductButtonClicked = {},
-        onProductCartDelete = {},
-        formatValue = { value -> value.toString() })
 }
 
 @Composable
