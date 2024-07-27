@@ -16,10 +16,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -58,6 +58,7 @@ fun PasionariaStore(
     // Intento recuperar ultimo valor de navegacion
     val backStackEntry by navController.currentBackStackEntryAsState()
     val context = LocalContext.current
+    val state = cartViewModel.state.collectAsState()
     Scaffold(
         topBar = {
             PasionariaTopAppBar(
@@ -105,9 +106,23 @@ fun PasionariaStore(
                 }
                 composable(route = MyScreens.Cart.name) {
                     CartScreen(
-                        cartViewModel = cartViewModel,
                         modifier = modifier,
-                        navController = navController
+                        cartPrice = cartViewModel.calculateCartPrice(),
+                        onRemoveProductCart = {
+                            cartViewModel.removeProductFromCart(
+                                data = it,
+                                context = context
+                            )
+                        },
+                        onCardProductButtonClicked = {
+                            cartViewModel.updateProductCart(
+                                product = it,
+                                context = context,
+                                navController = navController
+                            )
+                        },
+                        formatValue = { cartViewModel.formatPriceNumber(it) },
+                        productCartList = state.value.productCartList
                     )
                 }
                 composable(route = MyScreens.CartProduct.name) {

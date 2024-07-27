@@ -1,6 +1,7 @@
 package com.example.pasionariastore.data
 
 import com.example.pasionariastore.model.Product
+import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.model.Unit
@@ -53,11 +54,21 @@ object Datasource {
     )
 
     val cartProducts: List<ProductCartWithData> = listOf(
-//        ProductCartWithProductAndUnit()
-//        ProductCart(productWithUnit = apiProducts.get(0)),
-//        ProductCart(productWithUnit = apiProducts.get(1)),
-//        ProductCart(productWithUnit = apiProducts.get(2)),
-//        ProductCart(productWithUnit = apiProducts.get(3)),
-//        ProductCart(productWithUnit = apiProducts.get(4)),
+        ProductCartWithData(
+            productCart = ProductCart(
+                quantity = "233",
+                productCartId = 2,
+                totalPrice = 2500.0,
+                productId = 3
+            ), productWithUnit = productsWithUnit.get(2)
+        ),
+        ProductCartWithData(
+            productCart = ProductCart(
+                quantity = "500",
+                productCartId = 3,
+                totalPrice = 3625.0,
+                productId = 3
+            ), productWithUnit = productsWithUnit.get(3)
+        )
     )
 }

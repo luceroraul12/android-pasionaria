@@ -19,9 +19,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -33,27 +33,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.pasionariastore.R
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.ProductCartWithData
-import com.example.pasionariastore.viewmodel.CartViewModel
+import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 
-//@Preview
-//@Composable
-//fun CartPreview() {
-//    PasionariaStoreTheme {
-//        Scaffold(
-//            modifier = Modifier.fillMaxSize()
-//        ) { innerPadding ->
-//            CartScreen(
-//                cartViewModel = CartViewModel(cartRepository = ),
-//                modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-//                navController = rememberNavController()
-//            )
-//        }
-//    }
-//}
+@Preview
+@Composable
+fun CartPreview() {
+    PasionariaStoreTheme {
+        Scaffold(
+            modifier = Modifier.fillMaxSize()
+        ) { innerPadding ->
+            CartScreen(
+                modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
+                onRemoveProductCart = {},
+                onCardProductButtonClicked = {},
+                formatValue = { "0.0" },
+                cartPrice = "123",
+                productCartList = Datasource.cartProducts
+            )
+        }
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
@@ -68,31 +70,22 @@ fun CartItemPreview() {
 
 @Composable
 fun CartScreen(
-    cartViewModel: CartViewModel,
     modifier: Modifier = Modifier,
-    navController: NavController
+    productCartList: List<ProductCartWithData>,
+    cartPrice: String,
+    onCardProductButtonClicked: (ProductCartWithData) -> Unit,
+    onRemoveProductCart: (ProductCartWithData) -> Unit,
+    formatValue: (Double) -> String
 ) {
     val context = LocalContext.current
-    val state = cartViewModel.state.collectAsState()
     Column(modifier = modifier.padding(horizontal = 10.dp)) {
-        CartHeader(modifier, cartViewModel.calculateCartPrice())
+        CartHeader(modifier, cartPrice)
         CartListProducts(
-            productCartList = state.value.productCartList,
+            productCartList = productCartList,
             modifier = modifier,
-            onCardProductButtonClicked = {
-                cartViewModel.updateProductCart(
-                    product = it,
-                    context = context,
-                    navController = navController
-                )
-            },
-            onProductCartDelete = {
-                cartViewModel.removeProductFromCart(
-                    data = it,
-                    context = context
-                )
-            },
-            formatValue = { cartViewModel.formatPriceNumber(it) }
+            onCardProductButtonClicked = onCardProductButtonClicked,
+            onProductCartDelete = onRemoveProductCart,
+            formatValue = formatValue
         )
     }
 }
@@ -202,7 +195,7 @@ fun CartProductItem(
                         .padding(10.dp)
                 ) {
                     Text(
-                        text = "Producto ${data.productWithUnit.product.name}",
+                        text = data.productWithUnit.product.name,
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
                     )
