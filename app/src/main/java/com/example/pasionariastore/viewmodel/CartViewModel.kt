@@ -2,6 +2,7 @@ package com.example.pasionariastore.viewmodel
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -19,6 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -30,8 +32,8 @@ class CartViewModel @Inject constructor(
     private val cartRepository: CartRepository,
     private val productRepository: ProductRepository
 ) : ViewModel() {
-    private val _state = MutableStateFlow(CartUIState())
-    val state = _state
+    private var _state = MutableStateFlow(CartUIState())
+    val state = _state.asStateFlow()
 
     private val _cartProducts = MutableStateFlow<List<ProductCartWithData>>(emptyList())
     val cartProducts = _cartProducts.asStateFlow()
@@ -39,8 +41,8 @@ class CartViewModel @Inject constructor(
     init {
         viewModelScope.launch(Dispatchers.IO) {
             cartRepository.getProducts().collect { products ->
-                state.update {
-                    state.value.copy(productCartList = products.toMutableList())
+                _state.update {
+                    _state.value.copy(productCartList = products.toMutableList())
                 }
             }
         }
@@ -52,7 +54,7 @@ class CartViewModel @Inject constructor(
 
     fun initProductScreen(navController: NavHostController, canSearchProducts: Boolean) {
         navController.navigate(MyScreens.CartProduct.name)
-        state.update {
+        _state.update {
             it.copy(
                 canSearchProducts = canSearchProducts,
                 currentSearch = "",
@@ -66,7 +68,7 @@ class CartViewModel @Inject constructor(
      * Actualiza el valor del buscador al momento de tipear
      */
     fun updateCurrentSearch(newValue: String) {
-        state.update {
+        _state.update {
             it.copy(
                 currentSearch = newValue
             )
@@ -74,7 +76,7 @@ class CartViewModel @Inject constructor(
     }
 
     fun selectProductSearched(productSearched: ProductWithUnit) {
-        state.update {
+        _state.update {
             it.copy(
                 currentProductCart = ProductCartWithData(
                     productWithUnit = productSearched,
@@ -100,7 +102,7 @@ class CartViewModel @Inject constructor(
                         if (products.isNullOrEmpty()) {
                             showMessage(context = context, message = "No hay coincidencias")
                         } else {
-                            state.update {
+                            _state.update {
                                 it.copy(
                                     currentProductSearcheds = products,
                                     showModalProductSearch = true
@@ -113,13 +115,13 @@ class CartViewModel @Inject constructor(
     }
 
     fun cancelProductSearch() {
-        state.update {
+        _state.update {
             it.copy(showModalProductSearch = false)
         }
     }
 
     fun updateCurrentQuantity(newQuantity: String) {
-        state.update {
+        _state.update {
             it.copy(
                 currentProductCart = it.currentProductCart!!.copy(
                     it.currentProductCart.productCart.copy(
@@ -145,7 +147,7 @@ class CartViewModel @Inject constructor(
             quantity = productCart.productCart.quantity.toDoubleOrNull() ?: 0.0
             price = productCart.productWithUnit.product.priceList
             result = (price * quantity / 1000)
-            state.update {
+            _state.update {
                 it.copy(
                     currentProductCart = productCart.copy(
                         productCart = productCart.productCart.copy(
@@ -156,13 +158,6 @@ class CartViewModel @Inject constructor(
             }
         }
         return formatPriceNumber(result)
-    }
-
-    fun canAddProductToCart(): Boolean {
-        var result = false
-        if (state.value.currentProductCart != null) result =
-            (state.value.currentProductCart!!.productCart.quantity.toDoubleOrNull() ?: 0.0) > 0.0
-        return result
     }
 
     fun addProductToCart(navController: NavHostController, context: Context) {
@@ -189,7 +184,7 @@ class CartViewModel @Inject constructor(
     fun updateProductCart(
         product: ProductCartWithData, navController: NavController, context: Context
     ) {
-        state.update {
+        _state.update {
             it.copy(
                 currentProductCart = product
             )

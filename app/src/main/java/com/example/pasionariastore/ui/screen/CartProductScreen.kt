@@ -25,9 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -44,13 +41,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.pasionariastore.R
+import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.CartUIState
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -63,14 +58,14 @@ fun ProductScreenPreview() {
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
                 onAddButtonClicked = {},
                 onCancelButtonClicked = {},
-                priceCalculated = "123",
+                priceCalculated = { "123" },
                 onSearchProducts = {},
                 updateCurrentSearch = {},
                 onCancelSearch = {},
                 onProductSearchClicked = {},
-                canAddProducts = true,
-                formatPriceNumber = {"203"},
-                state = MutableStateFlow(CartUIState()).collectAsState()
+                formatPriceNumber = { "203" },
+                state = CartUIState(),
+                updateQuantity = {}
             )
         }
     }
@@ -81,27 +76,27 @@ fun CartProductScreen(
     modifier: Modifier = Modifier,
     onAddButtonClicked: () -> Unit,
     onCancelButtonClicked: () -> Unit,
-    state: State<CartUIState>,
+    state: CartUIState,
     onProductSearchClicked: (ProductWithUnit) -> Unit,
     onCancelSearch: () -> Unit,
     formatPriceNumber: (Double) -> String,
-    priceCalculated: String,
-    canAddProducts: Boolean,
+    priceCalculated: () -> String,
     onSearchProducts: () -> Unit,
-    updateCurrentSearch: (String) -> Unit
+    updateCurrentSearch: (String) -> Unit,
+    updateQuantity: (String) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
     LaunchedEffect(Unit) {
-        state.value.lastSearch.collectLatest {
+        state.lastSearch.collectLatest {
             focusManager.moveFocus(FocusDirection.Down)
         }
     }
-    if (state.value.showModalProductSearch) {
+    if (state.showModalProductSearch) {
         // Antes de abrir el modal tengo que ver si existen coincidencias
         ModalSearchProduct(
-            productList = state.value.currentProductSearcheds,
-            onProductSearchClicked = onProductSearchClicked,
-            search = state.value.currentSearch,
+            productList = state.currentProductSearcheds,
+            onProductSearchClicked = { onProductSearchClicked(it) },
+            search = state.currentSearch,
             modifier = modifier,
             onCancelSearch = onCancelSearch
         )
@@ -115,18 +110,17 @@ fun CartProductScreen(
         Card {
             ProductSearcher(
                 modifier.fillMaxWidth(),
-                canSearchProducts = state.value.canSearchProducts,
+                canSearchProducts = state.canSearchProducts,
                 onSearchProducts = onSearchProducts,
-                currentSearch = state.value.currentSearch,
+                currentSearch = state.currentSearch,
                 updateCurrentSearch = updateCurrentSearch,
-
-                )
+            )
         }
         Spacer(modifier = modifier.padding(10.dp))
         Card(modifier = modifier.weight(1f)) {
             ProductDescription(
                 modifier.fillMaxWidth(),
-                state.value.currentProductCart,
+                state.currentProductCart,
                 formatValue = formatPriceNumber
             )
         }
@@ -134,16 +128,15 @@ fun CartProductScreen(
         Card {
             ProductFormCalculator(
                 modifier = modifier,
-                state = state.value,
-                onChangeQuantity = {},
-                priceCalculated = priceCalculated
+                state = state,
+                updateQuantity = { updateQuantity(it) },
+                priceCalculated = priceCalculated()
             )
             CartProductActionButtons(
                 modifier = modifier,
                 onCancelButtonClicked = onCancelButtonClicked,
                 onAddButtonClicked = onAddButtonClicked,
-                enabled = canAddProducts,
-                isNew = (state.value.currentProductCart?.productCart?.productCartId ?: 0) < 0
+                productCartWithData = state.currentProductCart,
             )
         }
     }
@@ -239,7 +232,7 @@ fun ProductSearcher(
     TextField(
         enabled = canSearchProducts,
         value = currentSearch,
-        onValueChange = updateCurrentSearch,
+        onValueChange = { updateCurrentSearch(it) },
         singleLine = true,
         label = { Text(text = "Buscador de productos") },
         keyboardActions = KeyboardActions(onSearch = { onSearchProducts() }),
@@ -257,8 +250,7 @@ fun CartProductActionButtons(
     modifier: Modifier,
     onCancelButtonClicked: () -> Unit,
     onAddButtonClicked: () -> Unit,
-    enabled: Boolean,
-    isNew: Boolean
+    productCartWithData: ProductCartWithData?,
 ) {
     Row {
         Button(
@@ -274,7 +266,7 @@ fun CartProductActionButtons(
             Text(text = "Cancelar")
         }
         Button(
-            enabled = enabled,
+            enabled = (productCartWithData?.productCart?.quantity?.toDoubleOrNull() ?: 0.0) > 0.0,
             onClick = onAddButtonClicked,
             colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.update)),
             shape = RoundedCornerShape(
@@ -284,7 +276,7 @@ fun CartProductActionButtons(
                 .weight(1f)
                 .height(IntrinsicSize.Max),
         ) {
-            Text(text = if (isNew) "Agregar" else "Actualizar")
+            Text(text = if (productCartWithData?.productCart != null) "Agregar" else "Actualizar")
         }
     }
 }
@@ -294,7 +286,7 @@ fun ProductFormCalculator(
     state: CartUIState,
     modifier: Modifier,
     priceCalculated: String,
-    onChangeQuantity: (String) -> Unit
+    updateQuantity: (String) -> Unit
 ) {
     Card(modifier = modifier.padding(10.dp)) {
         Column(
@@ -308,9 +300,9 @@ fun ProductFormCalculator(
                 modifier = modifier
             )
             TextField(
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 value = state.currentProductCart?.productCart?.quantity ?: "",
-                onValueChange = onChangeQuantity,
+                onValueChange = { updateQuantity(it) },
                 modifier = modifier.fillMaxWidth(),
                 singleLine = true,
                 enabled = state.currentProductCart != null,
@@ -324,7 +316,7 @@ fun ProductFormCalculator(
 @Composable
 fun ModalSearchProductPreview(modifier: Modifier = Modifier) {
     ModalSearchProduct(
-        productList = com.example.pasionariastore.data.Datasource.productsWithUnit,
+        productList = Datasource.productsWithUnit,
         "prueba",
         onProductSearchClicked = { },
         onCancelSearch = {})

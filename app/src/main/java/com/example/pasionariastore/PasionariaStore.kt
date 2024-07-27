@@ -127,7 +127,6 @@ fun PasionariaStore(
                 }
                 composable(route = MyScreens.CartProduct.name) {
                     CartProductScreen(
-                        cartViewModel = cartViewModel,
                         modifier = modifier,
                         onCancelButtonClicked = { navController.navigate(MyScreens.Cart.name) },
                         onAddButtonClicked = {
@@ -135,7 +134,17 @@ fun PasionariaStore(
                                 navController = navController,
                                 context = context
                             )
-                        })
+                        },
+                        onCancelSearch = { cartViewModel.cancelProductSearch() },
+                        priceCalculated = { cartViewModel.calculateCartPrice() },
+                        formatPriceNumber = { cartViewModel.formatPriceNumber(it) },
+                        state = state.value,
+                        onSearchProducts = { cartViewModel.searchProducts(context = context) },
+                        updateCurrentSearch = { cartViewModel.updateCurrentSearch(it) },
+                        onProductSearchClicked = { cartViewModel.selectProductSearched(it) },
+                        updateQuantity = { cartViewModel.updateCurrentQuantity(it) },
+
+                        )
                 }
             }
         }
