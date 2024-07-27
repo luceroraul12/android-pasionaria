@@ -65,7 +65,7 @@ fun ProductScreenPreview() {
                 onProductSearchClicked = {},
                 formatPriceNumber = { "203" },
                 state = CartUIState(),
-                updateQuantity = {}
+                updateQuantity = {},
             )
         }
     }
@@ -88,7 +88,7 @@ fun CartProductScreen(
     val focusManager = LocalFocusManager.current
     LaunchedEffect(Unit) {
         state.lastSearch.collectLatest {
-            focusManager.moveFocus(FocusDirection.Down)
+            focusManager.moveFocus(FocusDirection.Next)
         }
     }
     if (state.showModalProductSearch) {
@@ -107,16 +107,18 @@ fun CartProductScreen(
             .padding(10.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Card {
-            ProductSearcher(
-                modifier.fillMaxWidth(),
-                canSearchProducts = state.canSearchProducts,
-                onSearchProducts = onSearchProducts,
-                currentSearch = state.currentSearch,
-                updateCurrentSearch = updateCurrentSearch,
-            )
+        if(state.canSearchProducts){
+            Card {
+                ProductSearcher(
+                    modifier.fillMaxWidth(),
+                    canSearchProducts = state.canSearchProducts,
+                    onSearchProducts = onSearchProducts,
+                    currentSearch = state.currentSearch,
+                    updateCurrentSearch = updateCurrentSearch,
+                )
+            }
+            Spacer(modifier = modifier.padding(10.dp))
         }
-        Spacer(modifier = modifier.padding(10.dp))
         Card(modifier = modifier.weight(1f)) {
             ProductDescription(
                 modifier.fillMaxWidth(),

@@ -2,7 +2,6 @@ package com.example.pasionariastore.viewmodel
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -20,7 +19,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -52,15 +50,19 @@ class CartViewModel @Inject constructor(
      * Indica si es posible utilizar el buscador y restablece valores
      */
 
-    fun initProductScreen(navController: NavHostController, canSearchProducts: Boolean) {
+    fun goToAddNewProductCartScreen(navController: NavHostController) {
         navController.navigate(MyScreens.CartProduct.name)
         _state.update {
             it.copy(
-                canSearchProducts = canSearchProducts,
+                canSearchProducts = true,
                 currentSearch = "",
                 showModalProductSearch = false,
                 currentProductCart = null
             )
+        }
+        viewModelScope.launch {
+            delay(1000)
+            state.value.lastSearch.emit(value = Unit)
         }
     }
 
@@ -181,17 +183,18 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    fun updateProductCart(
-        product: ProductCartWithData, navController: NavController, context: Context
+    fun goToUpdateProductCart(
+        product: ProductCartWithData, navController: NavController
     ) {
         _state.update {
             it.copy(
-                currentProductCart = product
+                currentProductCart = product,
+                canSearchProducts = false,
             )
         }
         navController.navigate(MyScreens.CartProduct.name)
         viewModelScope.launch {
-            delay(500)
+            delay(1000)
             state.value.lastSearch.emit(Unit)
         }
     }

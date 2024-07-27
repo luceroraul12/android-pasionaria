@@ -72,9 +72,8 @@ fun PasionariaStore(
             if (backStackEntry?.destination?.route.equals(MyScreens.Cart.name))
                 FloatingActionButton(
                     onClick = {
-                        cartViewModel.initProductScreen(
-                            navController = navController,
-                            canSearchProducts = true
+                        cartViewModel.goToAddNewProductCartScreen(
+                            navController = navController
                         )
                     },
                 ) {
@@ -115,9 +114,8 @@ fun PasionariaStore(
                             )
                         },
                         onCardProductButtonClicked = {
-                            cartViewModel.updateProductCart(
+                            cartViewModel.goToUpdateProductCart(
                                 product = it,
-                                context = context,
                                 navController = navController
                             )
                         },
