@@ -136,7 +136,7 @@ fun PasionariaStore(
                             )
                         },
                         onCancelSearch = { cartViewModel.cancelProductSearch() },
-                        priceCalculated = { cartViewModel.calculateCartPrice() },
+                        priceCalculated = cartViewModel.calculatePrice(),
                         formatPriceNumber = { cartViewModel.formatPriceNumber(it) },
                         state = state.value,
                         onSearchProducts = { cartViewModel.searchProducts(context = context) },

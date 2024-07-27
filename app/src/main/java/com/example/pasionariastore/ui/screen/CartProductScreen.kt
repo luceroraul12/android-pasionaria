@@ -58,7 +58,7 @@ fun ProductScreenPreview() {
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
                 onAddButtonClicked = {},
                 onCancelButtonClicked = {},
-                priceCalculated = { "123" },
+                priceCalculated = "123" ,
                 onSearchProducts = {},
                 updateCurrentSearch = {},
                 onCancelSearch = {},
@@ -80,7 +80,7 @@ fun CartProductScreen(
     onProductSearchClicked: (ProductWithUnit) -> Unit,
     onCancelSearch: () -> Unit,
     formatPriceNumber: (Double) -> String,
-    priceCalculated: () -> String,
+    priceCalculated: String,
     onSearchProducts: () -> Unit,
     updateCurrentSearch: (String) -> Unit,
     updateQuantity: (String) -> Unit,
@@ -130,7 +130,7 @@ fun CartProductScreen(
                 modifier = modifier,
                 state = state,
                 updateQuantity = { updateQuantity(it) },
-                priceCalculated = priceCalculated()
+                priceCalculated = priceCalculated
             )
             CartProductActionButtons(
                 modifier = modifier,
