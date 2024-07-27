@@ -14,9 +14,16 @@ class CartViewModelTest {
         CartViewModel(cartRepository = cartRepository, productRepository = productRepository)
 
     @Test
-    fun formatPriceSucces() {
+    fun format_text_rounded_success() {
         val result = viewModel.formatPriceNumber(77.666)
 
-        assertEquals("ARS 77.66", result)
+        assertEquals("ARS77.67", result)
+    }
+
+    @Test
+    fun format_text_rounded_zero() {
+        val result = viewModel.formatPriceNumber(0.0)
+
+        assertEquals("ARS0.00", result)
     }
 }
