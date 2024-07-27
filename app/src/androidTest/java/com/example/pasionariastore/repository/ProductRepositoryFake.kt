@@ -18,4 +18,12 @@ class ProductRepositoryFake : ProductRepository {
 
     override fun getUnits(): Flow<List<Unit>> = flow { Datasource.units }
 
+    override suspend fun saveFirstUnits() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun saveFirstProducts() {
+        TODO("Not yet implemented")
+    }
+
 }
