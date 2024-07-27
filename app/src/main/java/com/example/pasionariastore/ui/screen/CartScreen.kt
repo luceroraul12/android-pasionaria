@@ -235,7 +235,7 @@ fun CartProductItem(
                     modifier = modifier.padding(vertical = 5.dp)
                 )
             }
-            ActionButtons(
+            CardActionButtons(
                 onCartProductClicked = onCartProductClicked,
                 onDeleteProductClicked = onDeleteProductClicked,
                 modifier = modifier
@@ -245,7 +245,7 @@ fun CartProductItem(
 }
 
 @Composable
-fun ActionButtons(
+fun CardActionButtons(
     onCartProductClicked: () -> Unit,
     onDeleteProductClicked: () -> Unit,
     modifier: Modifier = Modifier

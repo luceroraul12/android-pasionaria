@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.pasionariastore.R
 import com.example.pasionariastore.data.Datasource
-import com.example.pasionariastore.model.CartUIState
+import com.example.pasionariastore.model.state.CartUIState
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme

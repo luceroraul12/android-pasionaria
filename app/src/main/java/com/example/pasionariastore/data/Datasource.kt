@@ -1,5 +1,6 @@
 package com.example.pasionariastore.data
 
+import com.example.pasionariastore.model.Cart
 import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithData
@@ -70,5 +71,12 @@ object Datasource {
                 productId = 3
             ), productWithUnit = productsWithUnit.get(3)
         )
+    )
+
+    val carts: List<Cart> = listOf(
+        Cart(status = "INACTIVE"),
+        Cart(status = "PENDING"),
+        Cart(status = "FINALIZED"),
+        Cart(),
     )
 }

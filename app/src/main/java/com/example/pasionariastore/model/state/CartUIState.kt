@@ -1,6 +1,8 @@
-package com.example.pasionariastore.model
+package com.example.pasionariastore.model.state
 
 import androidx.compose.runtime.mutableStateListOf
+import com.example.pasionariastore.model.ProductCartWithData
+import com.example.pasionariastore.model.ProductWithUnit
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlin.Unit
 
