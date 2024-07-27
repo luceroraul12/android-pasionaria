@@ -2,6 +2,10 @@ package com.example.pasionariastore.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.pasionariastore.repository.CartRepository
+import com.example.pasionariastore.repository.CartRepositoryImpl
+import com.example.pasionariastore.repository.ProductRepository
+import com.example.pasionariastore.repository.ProductRepositoryImpl
 import com.example.pasionariastore.room.CartDatabaseDao
 import com.example.pasionariastore.room.PasionariaDatabase
 import com.example.pasionariastore.room.ProductDatabaseDao
@@ -14,8 +18,20 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-
 object AppModule {
+
+    @Provides
+    @Singleton
+    fun providesCartRepository(cartDao: CartDatabaseDao): CartRepository {
+        return CartRepositoryImpl(cartDao)
+    }
+
+    @Provides
+    @Singleton
+    fun providesProductRepository(productDao: ProductDatabaseDao): ProductRepository {
+        return ProductRepositoryImpl(productDao)
+    }
+
     @Singleton
     @Provides
     fun providesProductDao(productDatabase: PasionariaDatabase): ProductDatabaseDao {

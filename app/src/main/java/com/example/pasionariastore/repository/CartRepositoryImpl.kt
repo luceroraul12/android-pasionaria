@@ -8,8 +8,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
+import javax.inject.Singleton
 
-
+@Singleton
 class CartRepositoryImpl @Inject constructor(private val cartDatabaseDao: CartDatabaseDao) :
     CartRepository {
 

@@ -11,8 +11,8 @@ import com.example.pasionariastore.model.CartUIState
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.ProductWithUnit
-import com.example.pasionariastore.repository.CartRepositoryImpl
-import com.example.pasionariastore.repository.ProductRepositoryImpl
+import com.example.pasionariastore.repository.CartRepository
+import com.example.pasionariastore.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +27,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
-    private val cartRepositoryImpl: CartRepositoryImpl, private val productRepositoryImpl: ProductRepositoryImpl
+    private val cartRepository: CartRepository,
+    private val productRepository: ProductRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(CartUIState())
     val state = _state
@@ -37,7 +38,7 @@ class CartViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            cartRepositoryImpl.getProducts().collect { products ->
+            cartRepository.getProducts().collect { products ->
                 state.update {
                     state.value.copy(productCartList = products.toMutableList())
                 }
@@ -94,7 +95,7 @@ class CartViewModel @Inject constructor(
             Toast.makeText(context, "Debe escribir algo para buscar", Toast.LENGTH_SHORT).show()
         } else {
             viewModelScope.launch(Dispatchers.IO) {
-                productRepositoryImpl.getProductsWithUnitBySearch(state.value.currentSearch)
+                productRepository.getProductsWithUnitBySearch(state.value.currentSearch)
                     .collect { products ->
                         if (products.isNullOrEmpty()) {
                             showMessage(context = context, message = "No hay coincidencias")
@@ -169,7 +170,7 @@ class CartViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             state.value.currentProductCart?.productCart?.let {
                 var message = "El producto fue agregado al pedido"
-                cartRepositoryImpl.insertProductCart(it)
+                cartRepository.insertProductCart(it)
                 if (it.productCartId != 0L) message = "El producto fue actualizado"
                 showMessage(context = context, message = message)
             }
@@ -179,7 +180,7 @@ class CartViewModel @Inject constructor(
 
     fun removeProductFromCart(data: ProductCartWithData, context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
-            cartRepositoryImpl.deleteProductCart(productCart = data.productCart)
+            cartRepository.deleteProductCart(productCart = data.productCart)
             showMessage(context = context, message = "El producto fue removido del pedido")
 
         }
