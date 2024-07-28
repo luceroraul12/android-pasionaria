@@ -36,36 +36,44 @@ import com.example.pasionariastore.model.format
 import com.example.pasionariastore.model.state.CartListUIState
 import com.example.pasionariastore.model.state.CartStatus
 import com.example.pasionariastore.ui.preview.CartRepositoryFake
+import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.CartListViewModel
 
 @Composable
 @Preview
 fun CartFormPreview(modifier: Modifier = Modifier) {
     val state = CartListUIState()
-    CartForm(
-        modifier = modifier,
-        stateButtons = state.stateFilters,
-        onUpdateChip = {})
-}
+    PasionariaStoreTheme(darkTheme = true) {
+        CartForm(
+            modifier = modifier,
+            stateButtons = state.stateFilters,
+            onUpdateChip = {})
 
-@Composable
-@Preview
-fun CartItemPreview(modifier: Modifier = Modifier) {
-    Column {
-        CartItem(modifier = modifier, cart = Datasource.carts.get(0))
-        CartItem(modifier = modifier, cart = Datasource.carts.get(1))
-        CartItem(modifier = modifier, cart = Datasource.carts.get(2))
     }
 }
 
 @Composable
 @Preview
+fun CartItemPreview(modifier: Modifier = Modifier) {
+    PasionariaStoreTheme(darkTheme = true) {
+        Column {
+            CartItem(modifier = modifier, cart = Datasource.carts.get(0))
+            CartItem(modifier = modifier, cart = Datasource.carts.get(1))
+            CartItem(modifier = modifier, cart = Datasource.carts.get(2))
+        }
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
 fun ListPreview(modifier: Modifier = Modifier) {
-    CartListScreen(
-        modifier = modifier,
-        cartListViewModel = CartListViewModel(cartRepository = CartRepositoryFake()),
-        state = CartListUIState(carts = Datasource.carts)
-    )
+    PasionariaStoreTheme(darkTheme = true) {
+        CartListScreen(
+            modifier = modifier,
+            cartListViewModel = CartListViewModel(cartRepository = CartRepositoryFake()),
+            state = CartListUIState(carts = Datasource.carts)
+        )
+    }
 }
 
 

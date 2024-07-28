@@ -31,7 +31,7 @@ enum class CartStatus(
     ),
     FINALIZED(
         label = "Finalizado",
-        enabled = false,
+        enabled = true,
         backgroundColorActive = R.color.finalized_active,
         backgroundColorInactive = R.color.finalized_inactive
     ),
