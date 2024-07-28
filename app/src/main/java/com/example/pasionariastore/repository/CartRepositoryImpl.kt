@@ -1,5 +1,6 @@
 package com.example.pasionariastore.repository
 
+import com.example.pasionariastore.model.Cart
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.room.CartDatabaseDao
@@ -16,6 +17,11 @@ class CartRepositoryImpl @Inject constructor(private val cartDatabaseDao: CartDa
 
     override fun getProducts(): Flow<List<ProductCartWithData>> {
         return cartDatabaseDao.getCartProducts().flowOn(Dispatchers.IO).conflate()
+    }
+
+    // TODO:  sustituir con ROOM llegado el momento
+    override fun getCarts(): Flow<List<Cart>> {
+        return cartDatabaseDao.getCarts().flowOn(Dispatchers.IO).conflate()
     }
 
     override suspend fun insertProductCart(productCart: ProductCart) {

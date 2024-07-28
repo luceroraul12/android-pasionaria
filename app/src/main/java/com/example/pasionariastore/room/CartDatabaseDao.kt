@@ -7,12 +7,17 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import com.example.pasionariastore.model.Cart
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithData
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CartDatabaseDao {
+    @Transaction
+    @Query("SELECT * FROM Cart")
+    fun getCarts(): Flow<List<Cart>>
+
     @Transaction
     @Query("SELECT * FROM ProductCart")
     fun getCartProducts(): Flow<List<ProductCartWithData>>
@@ -22,5 +27,4 @@ interface CartDatabaseDao {
 
     @Delete
     suspend fun deleteProductCart(product: ProductCart)
-
 }

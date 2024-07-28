@@ -9,7 +9,7 @@ data class CartListUIState(
     val stateFilters: MutableList<CartStatus> = mutableStateListOf(
         CartStatus.INACTIVE, CartStatus.PENDING, CartStatus.FINALIZED
     ),
-    val carts: List<Cart> = emptyList()
+    val carts: MutableList<Cart> = mutableStateListOf()
 )
 
 enum class CartStatus(

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -70,12 +70,12 @@ fun CartItemPreview(modifier: Modifier = Modifier) {
 
 @Composable
 @Preview(showBackground = true)
-fun ListPreview(modifier: Modifier = Modifier) {
+fun ScreenPreivew(modifier: Modifier = Modifier) {
     PasionariaStoreTheme(darkTheme = true) {
         CartListScreen(
             modifier = modifier,
             cartListViewModel = CartListViewModel(cartRepository = CartRepositoryFake()),
-            state = mutableStateOf(CartListUIState(carts = Datasource.carts))
+            state = mutableStateOf(CartListUIState(carts = Datasource.carts.toMutableStateList()))
         )
     }
 }
@@ -154,7 +154,7 @@ fun CartFormFilterStates(
 }
 
 @Composable
-fun CartList(modifier: Modifier, carts: List<Cart>) {
+fun CartList(modifier: Modifier, carts: MutableList<Cart>) {
     LazyColumn {
         items(carts) {
             CartItem(modifier, it)
