@@ -33,13 +33,16 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.data.CustomDataStore
+import com.example.pasionariastore.ui.screen.CartListScreen
 import com.example.pasionariastore.ui.screen.CartProductScreen
 import com.example.pasionariastore.ui.screen.CartScreen
 import com.example.pasionariastore.ui.screen.ResumeScreen
+import com.example.pasionariastore.viewmodel.CartListViewModel
 import com.example.pasionariastore.viewmodel.CartViewModel
 
 enum class MyScreens(@StringRes val title: Int) {
     Resume(title = R.string.resume),
+    CartList(title = R.string.cart_list),
     Cart(title = R.string.cart),
     CartProduct(title = R.string.cart_product),
     CartResume(title = R.string.cart_resume),
@@ -53,6 +56,7 @@ fun PasionariaStore(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     cartViewModel: CartViewModel = viewModel(),
+    cartListViewModel: CartListViewModel = viewModel(),
     dataStore: CustomDataStore = CustomDataStore(LocalContext.current)
 ) {
     // Intento recuperar ultimo valor de navegacion
@@ -99,9 +103,17 @@ fun PasionariaStore(
             ) {
                 composable(route = MyScreens.Resume.name) {
                     ResumeScreen(
-                        dataStore = dataStore,
                         modifier = modifier,
-                        onCartButtonClicked = { navController.navigate(MyScreens.Cart.name) })
+                        onCartButtonClicked = { navController.navigate(MyScreens.Cart.name) },
+                        onCartListButtonClicked = { navController.navigate(MyScreens.CartList.name) },
+                        dataStore = dataStore,
+                    )
+                }
+                composable(route = MyScreens.CartList.name) {
+                    CartListScreen(
+                        cartListViewModel = cartListViewModel,
+                        state = cartListViewModel.state.collectAsState().value
+                    )
                 }
                 composable(route = MyScreens.Cart.name) {
                     CartScreen(

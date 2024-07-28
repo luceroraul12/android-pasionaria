@@ -5,4 +5,5 @@
     <string name="cart_product">Producto de pedido</string>
     <string name="cart_resume">Resumen de pedido</string>
     <string name="cart_resumes">Historial de pedidos</string>
+    <string name="cart_list">Lista de Pedidos</string>
 </resources>

@@ -21,7 +21,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.pasionariastore.data.CustomDataStore
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Preview(showBackground = true)
@@ -32,7 +31,8 @@ fun PreviewResumeScreen() {
             ResumeScreen(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
                 onCartButtonClicked = { },
-                dataStore = CustomDataStore(LocalContext.current)
+                onCartListButtonClicked = {},
+                dataStore = CustomDataStore(LocalContext.current),
             )
         }
     }
@@ -42,7 +42,8 @@ fun PreviewResumeScreen() {
 fun ResumeScreen(
     modifier: Modifier = Modifier,
     onCartButtonClicked: () -> Unit,
-    dataStore: CustomDataStore
+    dataStore: CustomDataStore,
+    onCartListButtonClicked: () -> Unit,
 ) {
     val darkMode = dataStore.getDarkMode.collectAsState(initial = false)
     val scope = rememberCoroutineScope();
@@ -74,10 +75,13 @@ fun ResumeScreen(
                 Button(onClick = onCartButtonClicked) {
                     Text(text = "Cargar pedido")
                 }
-                Button(onClick = { /*TODO*/ }) {
+                Button(onClick = onCartListButtonClicked) {
                     Text(text = "Historial de pedidos")
                 }
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
                     Text(text = "Modo oscuro")
                     Switch(checked = darkMode.value, onCheckedChange = {
                         scope.launch {
