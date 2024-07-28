@@ -11,8 +11,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,11 +41,18 @@ class CartListViewModel @Inject constructor(
                 stateFilters = statues.toMutableStateList()
             )
         }
+        // Vuelvo a actualizar el listado de pedidos
+        getCarts()
     }
 
     fun getCarts(): Unit {
         viewModelScope.launch(Dispatchers.IO) {
-            cartRepository.getCarts().collect { carts ->
+            var status: List<String> = emptyList()
+            // Al trabajar con la corutina en IO, tengo que esperar hasta que se genere el state en MAIN
+            withContext(Dispatchers.Main){
+                status = state.value.stateFilters.filter(CartStatus::enabled).map { it.name }
+            }
+            cartRepository.getCartsWithStatus(status).collect { carts ->
                 _state.update {
                     it.copy(
                         carts = carts.toMutableStateList()

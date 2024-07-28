@@ -19,9 +19,8 @@ class CartRepositoryImpl @Inject constructor(private val cartDatabaseDao: CartDa
         return cartDatabaseDao.getCartProducts().flowOn(Dispatchers.IO).conflate()
     }
 
-    // TODO:  sustituir con ROOM llegado el momento
-    override fun getCarts(): Flow<List<Cart>> {
-        return cartDatabaseDao.getCarts().flowOn(Dispatchers.IO).conflate()
+    override fun getCartsWithStatus(status: List<String>): Flow<List<Cart>> {
+        return cartDatabaseDao.getCartsWithStatus(status)
     }
 
     override suspend fun insertProductCart(productCart: ProductCart) {

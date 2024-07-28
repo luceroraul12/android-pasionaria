@@ -112,7 +112,7 @@ fun PasionariaStore(
                 composable(route = MyScreens.CartList.name) {
                     CartListScreen(
                         cartListViewModel = cartListViewModel,
-                        state = cartListViewModel.state.collectAsState(),
+                        stateFlow = cartListViewModel.state,
                         onCreateNewCartClicked = { cartListViewModel.createNewCart() },
                         onDeleteCartClicked = { cartListViewModel.deleteCart(it) }
                     )

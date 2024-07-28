@@ -238,7 +238,9 @@ fun CartProductItem(
             CardActionButtons(
                 onCartProductClicked = onCartProductClicked,
                 onDeleteProductClicked = onDeleteProductClicked,
-                modifier = modifier
+                modifier = modifier,
+                labelEdit = "Editar",
+                labelDelete = "Eliminar"
             )
         }
     }
@@ -248,7 +250,9 @@ fun CartProductItem(
 fun CardActionButtons(
     onCartProductClicked: () -> Unit,
     onDeleteProductClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    labelEdit: String,
+    labelDelete: String
 ) {
     Row() {
         Button(
@@ -265,7 +269,7 @@ fun CardActionButtons(
                 .weight(1f)
                 .height(IntrinsicSize.Max)
         ) {
-            Text(text = "Quitar", modifier = modifier)
+            Text(text = labelDelete, modifier = modifier)
         }
         Button(
             onClick = onCartProductClicked,
@@ -282,7 +286,7 @@ fun CardActionButtons(
                 .weight(1f)
                 .height(IntrinsicSize.Max),
         ) {
-            Text(text = "Editar")
+            Text(text = labelEdit)
         }
     }
 }

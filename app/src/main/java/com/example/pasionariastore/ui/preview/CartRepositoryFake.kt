@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.flow
 
 class CartRepositoryFake : CartRepository {
     override fun getProducts(): Flow<List<ProductCartWithData>> = flow { Datasource.cartProducts }
-    override fun getCarts(): Flow<List<Cart>> = flow { Datasource.carts }
+    override fun getCartsWithStatus(status: List<String>): Flow<List<Cart>> = flow { Datasource.carts }
 
     override suspend fun insertProductCart(productCart: ProductCart) {}
     override suspend fun deleteProductCart(productCart: ProductCart) {}

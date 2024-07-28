@@ -25,6 +25,6 @@ data class Cart(
 )
 
 fun Date.format(): String {
-    val df: DateFormat = SimpleDateFormat("dd/MM/yyyy hh:ss")
+    val df: DateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm")
     return df.format(this)
 }

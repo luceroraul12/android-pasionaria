@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface CartRepository {
     fun getProducts(): Flow<List<ProductCartWithData>>
-    fun getCarts(): Flow<List<Cart>>
+    fun getCartsWithStatus(status: List<String>): Flow<List<Cart>>
     suspend fun insertProductCart(productCart: ProductCart)
     suspend fun deleteProductCart(productCart: ProductCart)
     suspend fun insertCart(cart: Cart)
