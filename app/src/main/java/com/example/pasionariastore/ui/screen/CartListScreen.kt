@@ -28,8 +28,10 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.Cart
+import com.example.pasionariastore.model.format
 import com.example.pasionariastore.model.state.CartListUIState
 import com.example.pasionariastore.model.state.CartStatus
 import com.example.pasionariastore.viewmodel.CartListViewModel
@@ -54,11 +56,15 @@ fun CartItemPreview(modifier: Modifier = Modifier) {
     }
 }
 
-//@Composable
-//@Preview
-//fun ListPreview(modifier: Modifier = Modifier) {
-//    CartList(modifier = modifier, carts = Datasource.carts)
-//}
+@Composable
+@Preview
+fun ListPreview(modifier: Modifier = Modifier) {
+    CartListScreen(
+        modifier = modifier,
+        cartListViewModel = viewModel(),
+        state = CartListUIState()
+    )
+}
 
 
 @Composable
@@ -150,10 +156,26 @@ fun CartItem(modifier: Modifier, cart: Cart) {
         Column(modifier = modifier, verticalArrangement = Arrangement.Center) {
             CartItemStatusLabel(modifier = modifier, cart = CartStatus.valueOf(cart.status))
             Column(modifier = modifier.padding(10.dp)) {
-                Text(text = "Pedido ${cart.id}")
-                Text(text = cart.usernameSeller)
-                Text(text = cart.dateCreated.toString())
-                Text(text = cart.status)
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = modifier.fillMaxWidth()
+                ) {
+                    Text(text = "#${cart.id}", style = MaterialTheme.typography.titleLarge)
+                    Text(
+                        text = cart.totalPrice.toString(),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = cart.dateCreated.format(),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Text(text = cart.usernameSeller, style = MaterialTheme.typography.bodyLarge)
+                }
             }
             if (cart.status.equals(CartStatus.PENDING.name))
                 CardActionButtons(
@@ -177,7 +199,8 @@ fun CartItemStatusLabel(modifier: Modifier, cart: CartStatus) {
             text = cart.label,
             textAlign = TextAlign.Center,
             modifier = modifier,
-            color = Color.White
+            color = Color.White,
+            style = MaterialTheme.typography.labelLarge
         )
     }
 
