@@ -51,7 +51,7 @@ class CartViewModel @Inject constructor(
      */
 
     fun goToAddNewProductCartScreen(navController: NavHostController) {
-        navController.navigate(MyScreens.CartProduct.name)
+        navController.navigate(MyScreens.CartProduct.route)
         _state.update {
             it.copy(
                 canSearchProducts = true,
@@ -172,7 +172,7 @@ class CartViewModel @Inject constructor(
                 showMessage(context = context, message = message)
             }
         }
-        navController.navigate(MyScreens.Cart.name)
+        navController.navigate(MyScreens.Cart.route)
     }
 
     fun removeProductFromCart(data: ProductCartWithData, context: Context) {
@@ -192,7 +192,7 @@ class CartViewModel @Inject constructor(
                 canSearchProducts = false,
             )
         }
-        navController.navigate(MyScreens.CartProduct.name)
+        navController.navigate(MyScreens.CartProduct.route)
         viewModelScope.launch {
             delay(1000)
             state.value.lastSearch.emit(Unit)

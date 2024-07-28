@@ -6,4 +6,9 @@
     <string name="cart_resume">Resumen de pedido</string>
     <string name="cart_resumes">Historial de pedidos</string>
     <string name="cart_list">Lista de Pedidos</string>
+    <string name="resume_route">resume</string>
+    <string name="cart_list_route">cart/{id}</string>
+    <string name="cart_route">cart</string>
+    <string name="cart_product_route">cart_product/{id}</string>
+    <string name="cart_resume_route">cart_resume</string>
 </resources>

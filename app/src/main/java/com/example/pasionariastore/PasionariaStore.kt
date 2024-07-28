@@ -40,14 +40,12 @@ import com.example.pasionariastore.ui.screen.ResumeScreen
 import com.example.pasionariastore.viewmodel.CartListViewModel
 import com.example.pasionariastore.viewmodel.CartViewModel
 
-enum class MyScreens(@StringRes val title: Int) {
-    Resume(title = R.string.resume),
-    CartList(title = R.string.cart_list),
-    Cart(title = R.string.cart),
-    CartProduct(title = R.string.cart_product),
-    CartResume(title = R.string.cart_resume),
-    CartResumes(title = R.string.cart_resumes),
-
+enum class MyScreens(@StringRes val title: Int, val route: String) {
+    Resume(title = R.string.resume, route = "resume"),
+    CartList(title = R.string.cart_list, route = "cart/{id}"),
+    Cart(title = R.string.cart, route = "cart"),
+    CartProduct(title = R.string.cart_product, route = "cart_product/{id}"),
+    CartResume(title = R.string.cart_resume, route = "cart_resume"),
 }
 
 @Preview(showBackground = true)
@@ -65,15 +63,15 @@ fun PasionariaStore(
     val state = cartViewModel.state.collectAsState()
     Scaffold(
         topBar = {
+            val lastRoute =
+                backStackEntry?.destination?.route ?: MyScreens.Resume.route
             PasionariaTopAppBar(
-                MyScreens.valueOf(
-                    backStackEntry?.destination?.route ?: MyScreens.Resume.name
-                ), modifier
+                screen = MyScreens.entries.first { lastRoute.equals(it.route) }, modifier
             )
         },
         floatingActionButton = {
             // El floating button solo se ve en la vista de pedidos
-            if (backStackEntry?.destination?.route.equals(MyScreens.Cart.name))
+            if (backStackEntry?.destination?.route.equals(MyScreens.Cart.route))
                 FloatingActionButton(
                     onClick = {
                         cartViewModel.goToAddNewProductCartScreen(
@@ -96,20 +94,20 @@ fun PasionariaStore(
             )
             NavHost(
                 navController = navController,
-                startDestination = MyScreens.Resume.name,
+                startDestination = MyScreens.Resume.route,
                 modifier = modifier
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                composable(route = MyScreens.Resume.name) {
+                composable(route = MyScreens.Resume.route) {
                     ResumeScreen(
                         modifier = modifier,
-                        onCartButtonClicked = { navController.navigate(MyScreens.Cart.name) },
-                        onCartListButtonClicked = { navController.navigate(MyScreens.CartList.name) },
+                        onCartButtonClicked = { navController.navigate(MyScreens.Cart.route) },
+                        onCartListButtonClicked = { navController.navigate(MyScreens.CartList.route) },
                         dataStore = dataStore,
                     )
                 }
-                composable(route = MyScreens.CartList.name) {
+                composable(route = MyScreens.CartList.route) {
                     CartListScreen(
                         cartListViewModel = cartListViewModel,
                         stateFlow = cartListViewModel.state,
@@ -117,7 +115,7 @@ fun PasionariaStore(
                         onDeleteCartClicked = { cartListViewModel.deleteCart(it) }
                     )
                 }
-                composable(route = MyScreens.Cart.name) {
+                composable(route = MyScreens.Cart.route) {
                     CartScreen(
                         modifier = modifier,
                         cartPrice = cartViewModel.calculateCartPrice(),
@@ -137,10 +135,10 @@ fun PasionariaStore(
                         productCartList = state.value.productCartList
                     )
                 }
-                composable(route = MyScreens.CartProduct.name) {
+                composable(route = MyScreens.CartProduct.route) {
                     CartProductScreen(
                         modifier = modifier,
-                        onCancelButtonClicked = { navController.navigate(MyScreens.Cart.name) },
+                        onCancelButtonClicked = { navController.navigate(MyScreens.Cart.route) },
                         onAddButtonClicked = {
                             cartViewModel.addProductToCart(
                                 navController = navController,
