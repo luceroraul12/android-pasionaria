@@ -65,9 +65,9 @@ fun CartFormPreview(modifier: Modifier = Modifier) {
 fun CartItemPreview(modifier: Modifier = Modifier) {
     PasionariaStoreTheme(darkTheme = true) {
         Column {
-            CartItem(modifier = modifier, cart = Datasource.carts.get(0))
-            CartItem(modifier = modifier, cart = Datasource.carts.get(1))
-            CartItem(modifier = modifier, cart = Datasource.carts.get(2))
+            CartItem(modifier = modifier, cart = Datasource.carts.get(0), onDeleteCartClicked = {})
+            CartItem(modifier = modifier, cart = Datasource.carts.get(1), onDeleteCartClicked = {})
+            CartItem(modifier = modifier, cart = Datasource.carts.get(2), onDeleteCartClicked = {})
         }
     }
 }
@@ -80,7 +80,8 @@ fun ScreenPreivew(modifier: Modifier = Modifier) {
             modifier = modifier,
             cartListViewModel = CartListViewModel(cartRepository = CartRepositoryFake()),
             state = mutableStateOf(CartListUIState(carts = Datasource.carts.toMutableStateList())),
-            onCreateNewCartClicked = {}
+            onCreateNewCartClicked = {},
+            onDeleteCartClicked = {}
         )
     }
 }
@@ -91,7 +92,8 @@ fun CartListScreen(
     modifier: Modifier = Modifier,
     cartListViewModel: CartListViewModel,
     state: State<CartListUIState>,
-    onCreateNewCartClicked: () -> Unit
+    onCreateNewCartClicked: () -> Unit,
+    onDeleteCartClicked: (Cart) -> Unit
 ) {
     val state = state.value
     Box(modifier = modifier) {
@@ -101,10 +103,10 @@ fun CartListScreen(
                 stateButtons = state.stateFilters,
                 onUpdateChip = { cartListViewModel.updateChipStatus(it) }
             )
-            CartList(modifier, state.carts)
+            CartList(modifier, state.carts, onDeleteCartClicked)
         }
         FloatingActionButton(
-            onClick = onCreateNewCartClicked ,
+            onClick = onCreateNewCartClicked,
             modifier = modifier
                 .align(Alignment.BottomEnd)
                 .padding(25.dp)
@@ -170,16 +172,16 @@ fun CartFormFilterStates(
 }
 
 @Composable
-fun CartList(modifier: Modifier, carts: MutableList<Cart>) {
+fun CartList(modifier: Modifier, carts: MutableList<Cart>, onDeleteCartClicked: (Cart) -> Unit) {
     LazyColumn {
         items(carts) {
-            CartItem(modifier, it)
+            CartItem(modifier, it, onDeleteCartClicked = onDeleteCartClicked)
         }
     }
 }
 
 @Composable
-fun CartItem(modifier: Modifier, cart: Cart) {
+fun CartItem(modifier: Modifier, cart: Cart, onDeleteCartClicked: (Cart) -> Unit) {
     Card(
         modifier = modifier
             .padding(5.dp)
@@ -214,7 +216,7 @@ fun CartItem(modifier: Modifier, cart: Cart) {
             if (cart.status.equals(CartStatus.PENDING.name))
                 CardActionButtons(
                     onCartProductClicked = { /*TODO*/ },
-                    onDeleteProductClicked = { /*TODO*/ })
+                    onDeleteProductClicked = { onDeleteCartClicked(cart) })
         }
     }
 }

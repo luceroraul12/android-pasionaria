@@ -36,4 +36,8 @@ class CartRepositoryImpl @Inject constructor(private val cartDatabaseDao: CartDa
         cartDatabaseDao.insertCart(cart)
     }
 
+    override suspend fun deleteCart(cart: Cart) {
+        cartDatabaseDao.deleteCart(cart)
+    }
+
 }

@@ -58,4 +58,10 @@ class CartListViewModel @Inject constructor(
             cartRepository.insertCart(Cart())
         }
     }
+
+    fun deleteCart(cart: Cart) {
+        viewModelScope.launch(Dispatchers.IO) {
+            cartRepository.deleteCart(cart)
+        }
+    }
 }
