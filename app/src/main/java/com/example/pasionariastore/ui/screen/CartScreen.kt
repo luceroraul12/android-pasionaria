@@ -22,11 +22,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -35,8 +36,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pasionariastore.R
 import com.example.pasionariastore.data.Datasource
+import com.example.pasionariastore.model.Cart
 import com.example.pasionariastore.model.ProductCartWithData
+import com.example.pasionariastore.model.format
+import com.example.pasionariastore.model.state.CartUIState
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @Preview(showBackground = true)
 @Composable
@@ -49,7 +55,7 @@ fun CartItemPreview() {
             onDeleteProductClicked = { /*TODO*/ },
             modifier = Modifier,
             data = Datasource.cartProducts.get(1),
-            formatValue = {"ARS1,500"}
+            formatValue = { "ARS1,500" }
         )
     }
 }
@@ -80,11 +86,12 @@ fun CartPreview() {
         ) { innerPadding ->
             CartScreen(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-                onRemoveProductCart = {},
-                onCardProductButtonClicked = {},
-                formatValue = { "0.0" },
+                productCartList = emptyList(),
                 cartPrice = "123",
-                productCartList = emptyList()
+                onCardProductButtonClicked = {},
+                onRemoveProductCart = {},
+                formatValue = { "0.0" },
+                stateFlow = MutableStateFlow(CartUIState())
             )
         }
     }
@@ -97,11 +104,12 @@ fun CartScreen(
     cartPrice: String,
     onCardProductButtonClicked: (ProductCartWithData) -> Unit,
     onRemoveProductCart: (ProductCartWithData) -> Unit,
-    formatValue: (Double) -> String
+    formatValue: (Double) -> String,
+    stateFlow: StateFlow<CartUIState>
 ) {
-    val context = LocalContext.current
+    val state = stateFlow.collectAsState().value
     Column(modifier = modifier.padding(horizontal = 10.dp)) {
-        CartHeader(modifier, cartPrice)
+        CartHeader(modifier, state.cartWithData.value.cart, cartPrice)
         CartListProducts(
             productCartList = productCartList,
             modifier = modifier,
@@ -113,7 +121,7 @@ fun CartScreen(
 }
 
 @Composable
-fun CartHeader(modifier: Modifier, cartPrice: String) {
+fun CartHeader(modifier: Modifier, cart: Cart, totalPrice: String) {
     Card(
         shape = RoundedCornerShape(
             topStart = 0.dp, topEnd = 0.dp, bottomStart = 25.dp, bottomEnd = 25.dp
@@ -128,9 +136,9 @@ fun CartHeader(modifier: Modifier, cartPrice: String) {
         modifier = modifier.padding(top = 0.dp, end = 5.dp, start = 5.dp, bottom = 5.dp),
     ) {
         Column(modifier = modifier.padding(10.dp)) {
-            CartHeaderRow("Identificador de producto", "1234", modifier)
-            CartHeaderRow("Fecha de creación", "20/07/2024 17:35", modifier)
-            CartHeaderRow("Precio total", cartPrice, modifier)
+            CartHeaderRow("Identificador de producto", cart.id.toString(), modifier)
+            CartHeaderRow("Fecha de creación", cart.dateCreated.format(), modifier)
+            CartHeaderRow("Precio total", totalPrice, modifier)
         }
     }
 }

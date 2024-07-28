@@ -2,6 +2,7 @@ package com.example.pasionariastore.viewmodel
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -47,9 +48,14 @@ class CartViewModel @Inject constructor(
     }
 
     fun initScreenByCart(cartId: Long) {
+        _state.update {
+            CartUIState()
+        }
         viewModelScope.launch(Dispatchers.IO) {
-            cartRepository.getCartWithData(cartId).collect {
-
+            cartRepository.getCartWithData(cartId).collect { cart ->
+                _state.update {
+                    it.copy(cartWithData = mutableStateOf(cart))
+                }
             }
         }
     }

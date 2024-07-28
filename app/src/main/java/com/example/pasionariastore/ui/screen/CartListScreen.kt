@@ -29,7 +29,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,9 +67,21 @@ fun CartFormPreview(modifier: Modifier = Modifier) {
 fun CartItemPreview(modifier: Modifier = Modifier) {
     PasionariaStoreTheme(darkTheme = true) {
         Column {
-            CartItem(modifier = modifier, cart = Datasource.carts.get(0), onDeleteCartClicked = {})
-            CartItem(modifier = modifier, cart = Datasource.carts.get(1), onDeleteCartClicked = {})
-            CartItem(modifier = modifier, cart = Datasource.carts.get(2), onDeleteCartClicked = {})
+            CartItem(
+                modifier = modifier,
+                cart = Datasource.carts.get(0),
+                onDeleteCartClicked = {},
+                onCartClicked = {})
+            CartItem(
+                modifier = modifier,
+                cart = Datasource.carts.get(1),
+                onDeleteCartClicked = {},
+                onCartClicked = {})
+            CartItem(
+                modifier = modifier,
+                cart = Datasource.carts.get(2),
+                onDeleteCartClicked = {},
+                onCartClicked = {})
         }
     }
 }
@@ -84,7 +95,8 @@ fun ScreenPreivew(modifier: Modifier = Modifier) {
             cartListViewModel = CartListViewModel(cartRepository = CartRepositoryFake()),
             stateFlow = MutableStateFlow(CartListUIState(carts = Datasource.carts.toMutableStateList())),
             onCreateNewCartClicked = {},
-            onDeleteCartClicked = {}
+            onDeleteCartClicked = {},
+            onNavigteToCart = {}
         )
     }
 }
@@ -96,7 +108,8 @@ fun CartListScreen(
     cartListViewModel: CartListViewModel,
     stateFlow: StateFlow<CartListUIState>,
     onCreateNewCartClicked: () -> Unit,
-    onDeleteCartClicked: (Cart) -> Unit
+    onDeleteCartClicked: (Cart) -> Unit,
+    onNavigteToCart: (Long) -> Unit
 ) {
     val state by stateFlow.collectAsState()
     Box(modifier = modifier) {
@@ -106,7 +119,12 @@ fun CartListScreen(
                 stateButtons = state.stateFilters,
                 onUpdateChip = { cartListViewModel.updateChipStatus(it) }
             )
-            CartList(modifier, state.carts, onDeleteCartClicked)
+            CartList(
+                modifier = modifier,
+                carts = state.carts,
+                onDeleteCartClicked = onDeleteCartClicked,
+                onCartClicked = { onNavigteToCart(it.id) }
+            )
         }
         FloatingActionButton(
             onClick = onCreateNewCartClicked,
@@ -175,16 +193,31 @@ fun CartFormFilterStates(
 }
 
 @Composable
-fun CartList(modifier: Modifier, carts: MutableList<Cart>, onDeleteCartClicked: (Cart) -> Unit) {
+fun CartList(
+    modifier: Modifier,
+    carts: MutableList<Cart>,
+    onDeleteCartClicked: (Cart) -> Unit,
+    onCartClicked: (Cart) -> Unit
+) {
     LazyColumn {
         items(carts) {
-            CartItem(modifier, it, onDeleteCartClicked = onDeleteCartClicked)
+            CartItem(
+                modifier,
+                it,
+                onDeleteCartClicked = onDeleteCartClicked,
+                onCartClicked = onCartClicked
+            )
         }
     }
 }
 
 @Composable
-fun CartItem(modifier: Modifier, cart: Cart, onDeleteCartClicked: (Cart) -> Unit) {
+fun CartItem(
+    modifier: Modifier,
+    cart: Cart,
+    onDeleteCartClicked: (Cart) -> Unit,
+    onCartClicked: (Cart) -> Unit
+) {
     Card(
         modifier = modifier
             .padding(5.dp)
@@ -218,7 +251,7 @@ fun CartItem(modifier: Modifier, cart: Cart, onDeleteCartClicked: (Cart) -> Unit
             }
             if (cart.status.equals(CartStatus.PENDING.name))
                 CardActionButtons(
-                    onCartProductClicked = { /*TODO*/ },
+                    onCartProductClicked = { onCartClicked(cart) },
                     onDeleteProductClicked = { onDeleteCartClicked(cart) },
                     labelDelete = "Eliminar",
                     labelEdit = "Editar productos"

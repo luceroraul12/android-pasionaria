@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -117,7 +118,8 @@ fun PasionariaStore(
                         cartListViewModel = cartListViewModel,
                         stateFlow = cartListViewModel.state,
                         onCreateNewCartClicked = { cartListViewModel.createNewCart() },
-                        onDeleteCartClicked = { cartListViewModel.deleteCart(it) }
+                        onDeleteCartClicked = { cartListViewModel.deleteCart(it) },
+                        onNavigteToCart = { navController.navigate("${MyScreens.CartList.route}/$it") }
                     )
                 }
                 composable(
@@ -125,7 +127,9 @@ fun PasionariaStore(
                     arguments = listOf(navArgument("cart_id") { type = NavType.LongType })
                 ) {
                     val cartId: Long = it.arguments!!.getLong("cart_id")
-                    cartViewModel.initScreenByCart(cartId)
+                    LaunchedEffect(key1 = "initCart") {
+                        cartViewModel.initScreenByCart(cartId)
+                    }
                     CartScreen(
                         modifier = modifier,
                         cartPrice = cartViewModel.calculateCartPrice(),
@@ -142,7 +146,8 @@ fun PasionariaStore(
                             )
                         },
                         formatValue = { cartViewModel.formatPriceNumber(it) },
-                        productCartList = state.value.productCartList
+                        productCartList = state.value.productCartList,
+                        stateFlow = cartViewModel.state
                     )
                 }
                 composable(route = MyScreens.CartProduct.route) {
