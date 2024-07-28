@@ -253,7 +253,7 @@ fun CardActionButtons(
     Row() {
         Button(
             onClick = onDeleteProductClicked, colors = ButtonColors(
-                containerColor = colorResource(id = R.color.delete),
+                containerColor = colorResource(id = R.color.delete_active),
                 contentColor = Color.White,
                 disabledContentColor = Color.Black,
                 disabledContainerColor = Color.Gray
@@ -270,7 +270,7 @@ fun CardActionButtons(
         Button(
             onClick = onCartProductClicked,
             colors = ButtonColors(
-                containerColor = colorResource(id = R.color.update),
+                containerColor = colorResource(id = R.color.update_active),
                 contentColor = Color.White,
                 disabledContentColor = Color.Black,
                 disabledContainerColor = Color.Gray

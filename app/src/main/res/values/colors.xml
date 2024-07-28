@@ -7,7 +7,11 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="finalized">#7CB342</color>
-    <color name="update">#1E88E5</color>
-    <color name="delete">#E53935</color>
+    <color name="finalized_active">#7CB342</color>
+    <color name="update_active">#1E88E5</color>
+    <color name="delete_active">#E53935</color>
+
+    <color name="finalized_inactive">#647CB342</color>
+    <color name="update_inactive">#641E88E5</color>
+    <color name="delete_inactive">#64E53935</color>
 </resources>

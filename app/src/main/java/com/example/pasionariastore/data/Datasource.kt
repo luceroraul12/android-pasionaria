@@ -6,6 +6,7 @@ import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.model.Unit
+import java.util.Date
 
 object Datasource {
     val units: List<Unit> = listOf(
@@ -21,17 +22,13 @@ object Datasource {
     val products: List<Product> = listOf(
         Product(
             name = "Aceitunas", description = "Libanti x 500g", priceList = 1595.0, unitId = 1
-        ),
-        Product(
+        ), Product(
             name = "Pera", description = "Libanti x 500g", priceList = 23.0, unitId = 2
-        ),
-        Product(
+        ), Product(
             name = "Manzana", description = "Libanti x 500g", priceList = 344.0, unitId = 3
-        ),
-        Product(
+        ), Product(
             name = "Carne", description = "Libanti x 500g", priceList = 500.0, unitId = 4
-        ),
-        Product(
+        ), Product(
             name = "Especie", description = "Libanti x 500g", priceList = 24500.0, unitId = 5
         )
     )
@@ -39,17 +36,13 @@ object Datasource {
     val productsWithUnit: List<ProductWithUnit> = listOf(
         ProductWithUnit(
             product = products.get(0), unit = units.get(0)
-        ),
-        ProductWithUnit(
+        ), ProductWithUnit(
             product = products.get(1), unit = units.get(1)
-        ),
-        ProductWithUnit(
+        ), ProductWithUnit(
             product = products.get(2), unit = units.get(2)
-        ),
-        ProductWithUnit(
+        ), ProductWithUnit(
             product = products.get(3), unit = units.get(3)
-        ),
-        ProductWithUnit(
+        ), ProductWithUnit(
             product = products.get(4), unit = units.get(4)
         )
     )
@@ -57,18 +50,11 @@ object Datasource {
     val cartProducts: List<ProductCartWithData> = listOf(
         ProductCartWithData(
             productCart = ProductCart(
-                quantity = "233",
-                productCartId = 2,
-                totalPrice = 2500.0,
-                productId = 3
+                quantity = "233", productCartId = 2, totalPrice = 2500.0, productId = 3
             ), productWithUnit = productsWithUnit.get(2)
-        ),
-        ProductCartWithData(
+        ), ProductCartWithData(
             productCart = ProductCart(
-                quantity = "500",
-                productCartId = 3,
-                totalPrice = 3625.0,
-                productId = 3
+                quantity = "500", productCartId = 3, totalPrice = 3625.0, productId = 3
             ), productWithUnit = productsWithUnit.get(3)
         )
     )
@@ -78,5 +64,10 @@ object Datasource {
         Cart(status = "PENDING"),
         Cart(status = "FINALIZED"),
         Cart(),
-    )
+        Cart(dateCreated = Date(15624)),
+        Cart(status = "FINALIZED", dateCreated = Date(1562624)),
+        Cart(status = "PENDING", dateCreated = Date(155959624)),
+        Cart(status = "INACTIVE", dateCreated = Date(124)),
+
+        )
 }

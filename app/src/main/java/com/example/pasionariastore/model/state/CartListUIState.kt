@@ -14,21 +14,25 @@ data class CartListUIState(
 enum class CartStatus(
     val label: String,
     val enabled: Boolean = true,
-    @ColorRes val backgroundColor: Int
+    @ColorRes val backgroundColorActive: Int,
+    @ColorRes val backgroundColorInactive: Int
 ) {
     INACTIVE(
         label = "Inactivo",
         enabled = true,
-        backgroundColor = R.color.delete
+        backgroundColorActive = R.color.delete_active,
+        backgroundColorInactive = R.color.delete_inactive
     ),
     PENDING(
         label = "Pendiente",
         enabled = true,
-        backgroundColor = R.color.update
+        backgroundColorActive = R.color.update_active,
+        backgroundColorInactive = R.color.update_inactive
     ),
     FINALIZED(
         label = "Finalizado",
-        enabled = true,
-        backgroundColor = R.color.finalized
+        enabled = false,
+        backgroundColorActive = R.color.finalized_active,
+        backgroundColorInactive = R.color.finalized_inactive
     ),
 }

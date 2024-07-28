@@ -266,7 +266,7 @@ fun CartProductActionButtons(
     Row {
         Button(
             onClick = onCancelButtonClicked,
-            colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.delete)),
+            colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.delete_active)),
             shape = RoundedCornerShape(
                 0.dp
             ),
@@ -279,7 +279,7 @@ fun CartProductActionButtons(
         Button(
             enabled = (productCartWithData?.productCart?.quantity?.toDoubleOrNull() ?: 0.0) > 0.0,
             onClick = onAddButtonClicked,
-            colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.update)),
+            colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.update_active)),
             shape = RoundedCornerShape(
                 0.dp
             ),
@@ -362,7 +362,7 @@ fun ModalSearchProduct(
                     onClick = onCancelSearch, modifier = modifier
                         .fillMaxWidth()
                         .padding(10.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.delete))
+                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.delete_active))
                 ) {
                     Text(text = "Cancelar")
                 }

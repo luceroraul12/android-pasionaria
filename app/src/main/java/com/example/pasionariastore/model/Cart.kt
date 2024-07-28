@@ -3,7 +3,6 @@ package com.example.pasionariastore.model
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 data class Cart(
     val id: Long = 0,
