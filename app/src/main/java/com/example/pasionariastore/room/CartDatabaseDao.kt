@@ -7,12 +7,17 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.example.pasionariastore.model.Cart
+import com.example.pasionariastore.model.CartWithData
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithData
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CartDatabaseDao {
+    @Transaction
+    @Query("SELECT * FROM Cart WHERE cart_id = :cartId")
+    fun getCartWithData(cartId: Long): Flow<CartWithData>
+
     @Transaction
     @Query("SELECT * FROM Cart WHERE status IN (:status) ORDER BY date_created DESC")
     fun getCartsWithStatus(status: List<String>): Flow<List<Cart>>

@@ -46,6 +46,14 @@ class CartViewModel @Inject constructor(
         }
     }
 
+    fun initScreenByCart(cartId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            cartRepository.getCartWithData(cartId).collect {
+
+            }
+        }
+    }
+
     /**
      * Indica si es posible utilizar el buscador y restablece valores
      */
@@ -78,11 +86,12 @@ class CartViewModel @Inject constructor(
     }
 
     fun selectProductSearched(productSearched: ProductWithUnit) {
+        // TODO arreglar el cartId de los productCart ya que tuve que colocarlo en 0 para que no moleste
         _state.update {
             it.copy(
                 currentProductCart = ProductCartWithData(
                     productWithUnit = productSearched,
-                    productCart = ProductCart(productId = productSearched.product.productId)
+                    productCart = ProductCart(productId = productSearched.product.productId, cartId = 0)
                 ), showModalProductSearch = false
             )
         }
@@ -212,6 +221,4 @@ class CartViewModel @Inject constructor(
 
         return format.format(value)
     }
-
-
 }

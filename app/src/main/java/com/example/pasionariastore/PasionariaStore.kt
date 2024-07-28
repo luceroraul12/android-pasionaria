@@ -28,10 +28,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.pasionariastore.data.CustomDataStore
 import com.example.pasionariastore.ui.screen.CartListScreen
 import com.example.pasionariastore.ui.screen.CartProductScreen
@@ -42,9 +44,9 @@ import com.example.pasionariastore.viewmodel.CartViewModel
 
 enum class MyScreens(@StringRes val title: Int, val route: String) {
     Resume(title = R.string.resume, route = "resume"),
-    CartList(title = R.string.cart_list, route = "cart/{id}"),
-    Cart(title = R.string.cart, route = "cart"),
-    CartProduct(title = R.string.cart_product, route = "cart_product/{id}"),
+    CartList(title = R.string.cart_list, route = "cart"),
+    Cart(title = R.string.cart, route = "cart/{cart_id}"),
+    CartProduct(title = R.string.cart_product, route = "cart_product/{product_id}"),
     CartResume(title = R.string.cart_resume, route = "cart_resume"),
 }
 
@@ -100,14 +102,17 @@ fun PasionariaStore(
                     .padding(innerPadding)
             ) {
                 composable(route = MyScreens.Resume.route) {
+                    // TODO: Hay que quitar el boton que accede a un pedido sin ID
                     ResumeScreen(
                         modifier = modifier,
-                        onCartButtonClicked = { navController.navigate(MyScreens.Cart.route) },
+                        onCartButtonClicked = { navController.navigate("${MyScreens.Cart.route}/1") },
                         onCartListButtonClicked = { navController.navigate(MyScreens.CartList.route) },
                         dataStore = dataStore,
                     )
                 }
-                composable(route = MyScreens.CartList.route) {
+                composable(
+                    route = MyScreens.CartList.route,
+                ) {
                     CartListScreen(
                         cartListViewModel = cartListViewModel,
                         stateFlow = cartListViewModel.state,
@@ -115,7 +120,12 @@ fun PasionariaStore(
                         onDeleteCartClicked = { cartListViewModel.deleteCart(it) }
                     )
                 }
-                composable(route = MyScreens.Cart.route) {
+                composable(
+                    route = MyScreens.Cart.route,
+                    arguments = listOf(navArgument("cart_id") { type = NavType.LongType })
+                ) {
+                    val cartId: Long = it.arguments!!.getLong("cart_id")
+                    cartViewModel.initScreenByCart(cartId)
                     CartScreen(
                         modifier = modifier,
                         cartPrice = cartViewModel.calculateCartPrice(),

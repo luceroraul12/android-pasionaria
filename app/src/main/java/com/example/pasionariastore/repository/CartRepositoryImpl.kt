@@ -1,6 +1,7 @@
 package com.example.pasionariastore.repository
 
 import com.example.pasionariastore.model.Cart
+import com.example.pasionariastore.model.CartWithData
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.room.CartDatabaseDao
@@ -14,13 +15,16 @@ import javax.inject.Singleton
 @Singleton
 class CartRepositoryImpl @Inject constructor(private val cartDatabaseDao: CartDatabaseDao) :
     CartRepository {
+    override fun getCartWithData(cartId: Long): Flow<CartWithData> {
+        return cartDatabaseDao.getCartWithData(cartId).flowOn(Dispatchers.IO).conflate()
+    }
 
     override fun getProducts(): Flow<List<ProductCartWithData>> {
         return cartDatabaseDao.getCartProducts().flowOn(Dispatchers.IO).conflate()
     }
 
     override fun getCartsWithStatus(status: List<String>): Flow<List<Cart>> {
-        return cartDatabaseDao.getCartsWithStatus(status)
+        return cartDatabaseDao.getCartsWithStatus(status).flowOn(Dispatchers.IO).conflate()
     }
 
     override suspend fun insertProductCart(productCart: ProductCart) {
