@@ -112,7 +112,7 @@ fun PasionariaStore(
                 composable(route = MyScreens.CartList.name) {
                     CartListScreen(
                         cartListViewModel = cartListViewModel,
-                        state = cartListViewModel.state.collectAsState().value
+                        state = cartListViewModel.state.collectAsState()
                     )
                 }
                 composable(route = MyScreens.Cart.name) {

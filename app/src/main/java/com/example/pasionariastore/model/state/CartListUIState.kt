@@ -1,11 +1,12 @@
 package com.example.pasionariastore.model.state
 
 import androidx.annotation.ColorRes
+import androidx.compose.runtime.mutableStateListOf
 import com.example.pasionariastore.R
 import com.example.pasionariastore.model.Cart
 
 data class CartListUIState(
-    val stateFilters: List<CartStatus> = listOf(
+    val stateFilters: MutableList<CartStatus> = mutableStateListOf(
         CartStatus.INACTIVE, CartStatus.PENDING, CartStatus.FINALIZED
     ),
     val carts: List<Cart> = emptyList()
@@ -13,7 +14,7 @@ data class CartListUIState(
 
 enum class CartStatus(
     val label: String,
-    val enabled: Boolean = true,
+    var enabled: Boolean = true,
     @ColorRes val backgroundColorActive: Int,
     @ColorRes val backgroundColorInactive: Int
 ) {

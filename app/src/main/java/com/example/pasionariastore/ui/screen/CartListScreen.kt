@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,6 +23,9 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -71,7 +75,7 @@ fun ListPreview(modifier: Modifier = Modifier) {
         CartListScreen(
             modifier = modifier,
             cartListViewModel = CartListViewModel(cartRepository = CartRepositoryFake()),
-            state = CartListUIState(carts = Datasource.carts)
+            state = mutableStateOf(CartListUIState(carts = Datasource.carts))
         )
     }
 }
@@ -81,13 +85,14 @@ fun ListPreview(modifier: Modifier = Modifier) {
 fun CartListScreen(
     modifier: Modifier = Modifier,
     cartListViewModel: CartListViewModel,
-    state: CartListUIState
+    state: State<CartListUIState>
 ) {
+    val state = state.value
     Column(modifier = modifier.fillMaxSize()) {
         CartForm(
             modifier = modifier,
             stateButtons = state.stateFilters,
-            onUpdateChip = { cartListViewModel.onUpdateChip(it) }
+            onUpdateChip = { cartListViewModel.updateChipStatus(it) }
         )
         CartList(modifier, state.carts)
     }
@@ -97,7 +102,7 @@ fun CartListScreen(
 @Composable
 fun CartForm(
     modifier: Modifier,
-    stateButtons: List<CartStatus>,
+    stateButtons: MutableList<CartStatus>,
     onUpdateChip: (CartStatus) -> Unit
 ) {
     Card(
@@ -118,7 +123,7 @@ fun CartForm(
 @Composable
 fun CartFormFilterStates(
     modifier: Modifier,
-    status: List<CartStatus>,
+    status: MutableList<CartStatus>,
     onUpdateChip: (CartStatus) -> Unit
 ) {
     Row(horizontalArrangement = Arrangement.SpaceBetween) {
