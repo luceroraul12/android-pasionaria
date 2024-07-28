@@ -3,6 +3,7 @@ package com.example.pasionariastore.ui.screen
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -14,16 +15,19 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
@@ -75,7 +79,8 @@ fun ScreenPreivew(modifier: Modifier = Modifier) {
         CartListScreen(
             modifier = modifier,
             cartListViewModel = CartListViewModel(cartRepository = CartRepositoryFake()),
-            state = mutableStateOf(CartListUIState(carts = Datasource.carts.toMutableStateList()))
+            state = mutableStateOf(CartListUIState(carts = Datasource.carts.toMutableStateList())),
+            onCreateNewCartClicked = {}
         )
     }
 }
@@ -85,16 +90,27 @@ fun ScreenPreivew(modifier: Modifier = Modifier) {
 fun CartListScreen(
     modifier: Modifier = Modifier,
     cartListViewModel: CartListViewModel,
-    state: State<CartListUIState>
+    state: State<CartListUIState>,
+    onCreateNewCartClicked: () -> Unit
 ) {
     val state = state.value
-    Column(modifier = modifier.fillMaxSize()) {
-        CartForm(
-            modifier = modifier,
-            stateButtons = state.stateFilters,
-            onUpdateChip = { cartListViewModel.updateChipStatus(it) }
-        )
-        CartList(modifier, state.carts)
+    Box(modifier = modifier) {
+        Column(modifier = modifier.fillMaxSize()) {
+            CartForm(
+                modifier = modifier,
+                stateButtons = state.stateFilters,
+                onUpdateChip = { cartListViewModel.updateChipStatus(it) }
+            )
+            CartList(modifier, state.carts)
+        }
+        FloatingActionButton(
+            onClick = onCreateNewCartClicked ,
+            modifier = modifier
+                .align(Alignment.BottomEnd)
+                .padding(25.dp)
+        ) {
+            Icon(Icons.Filled.Add, "New Cart")
+        }
     }
 }
 

@@ -3,7 +3,7 @@ package com.example.pasionariastore.viewmodel
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.pasionariastore.model.Cart
 import com.example.pasionariastore.model.state.CartListUIState
 import com.example.pasionariastore.model.state.CartStatus
 import com.example.pasionariastore.repository.CartRepository
@@ -50,6 +50,12 @@ class CartListViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+    fun createNewCart(): Unit {
+        viewModelScope.launch(Dispatchers.IO) {
+            cartRepository.insertCart(Cart())
         }
     }
 }
