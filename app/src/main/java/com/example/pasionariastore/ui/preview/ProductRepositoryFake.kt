@@ -1,6 +1,7 @@
 package com.example.pasionariastore.ui.preview
 
 import com.example.pasionariastore.data.Datasource
+import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.model.Unit
 import com.example.pasionariastore.repository.ProductRepository
@@ -10,6 +11,10 @@ import kotlinx.coroutines.flow.flow
 class ProductRepositoryFake : ProductRepository {
     override fun getProductsWithUnit(): Flow<List<ProductWithUnit>> =
         flow { Datasource.productsWithUnit }
+
+    override fun getProducts(): Flow<List<Product>> {
+        TODO("Not yet implemented")
+    }
 
     override fun getProductsWithUnitBySearch(search: String): Flow<List<ProductWithUnit>> =
         flow { Datasource.productsWithUnit.filter { p -> p.product.name.contains(search) } }

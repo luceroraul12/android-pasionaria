@@ -23,13 +23,13 @@ object Datasource {
         Product(
             name = "Aceitunas", description = "Libanti x 500g", priceList = 1595.0, unitId = 1
         ), Product(
-            name = "Pera", description = "Libanti x 500g", priceList = 23.0, unitId = 2
+            name = "Pera", description = "tiras x 500g", priceList = 232.0, unitId = 2
         ), Product(
-            name = "Manzana", description = "Libanti x 500g", priceList = 344.0, unitId = 3
+            name = "Manzana", description = "etes x 500g", priceList = 3444.0, unitId = 3
         ), Product(
-            name = "Carne", description = "Libanti x 500g", priceList = 500.0, unitId = 4
+            name = "Carne", description = "urus x 500g", priceList = 5002.0, unitId = 4
         ), Product(
-            name = "Especie", description = "Libanti x 500g", priceList = 24500.0, unitId = 5
+            name = "Especie", description = "weaweg x 500g", priceList = 24500.0, unitId = 5
         )
     )
 

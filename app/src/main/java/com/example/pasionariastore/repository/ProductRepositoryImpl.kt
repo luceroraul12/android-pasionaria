@@ -1,6 +1,7 @@
 package com.example.pasionariastore.repository
 
 import com.example.pasionariastore.data.Datasource
+import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.room.ProductDatabaseDao
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +17,10 @@ class ProductRepositoryImpl @Inject constructor(private val productDatabaseDao: 
     override fun getProductsWithUnit(): Flow<List<ProductWithUnit>> =
         productDatabaseDao.getProductsWithUnit().flowOn(Dispatchers.IO).conflate()
 
+    override fun getProducts(): Flow<List<Product>> {
+        return productDatabaseDao.getProducts().flowOn(Dispatchers.IO).conflate()
+    }
+
     override fun getProductsWithUnitBySearch(search: String) =
         productDatabaseDao.getProductsBySearch("%$search%").flowOn(Dispatchers.IO).conflate()
 
@@ -30,12 +35,7 @@ class ProductRepositoryImpl @Inject constructor(private val productDatabaseDao: 
     }
 
     override suspend fun saveFirstProducts() {
-        // Creo los productos
         productDatabaseDao.insertProducts(Datasource.products)
-        // Los recupero y creo los WithUnit
-//        productDatabaseDao.getProducts().collect(
-//            productDatabaseDao.insert
-//        )
     }
 
 }

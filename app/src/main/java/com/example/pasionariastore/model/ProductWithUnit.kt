@@ -7,7 +7,7 @@ import androidx.room.Relation
 data class ProductWithUnit(
     @Embedded val product: Product,
     @Relation(
-        parentColumn = "product_id",
+        parentColumn = "unit_id",
         entityColumn = "unit_id"
     )
     val unit: Unit

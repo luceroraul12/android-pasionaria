@@ -9,6 +9,7 @@ import com.example.pasionariastore.repository.ProductRepositoryImpl
 import com.example.pasionariastore.room.CartDatabaseDao
 import com.example.pasionariastore.room.PasionariaDatabase
 import com.example.pasionariastore.room.ProductDatabaseDao
+import com.example.pasionariastore.viewmodel.CheckDatabaseViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

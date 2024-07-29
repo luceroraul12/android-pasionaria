@@ -14,14 +14,16 @@ interface ProductDatabaseDao {
     @Query("SELECT * FROM Product p")
     fun getProductsWithUnit(): Flow<List<ProductWithUnit>>
 
+    @Query("SELECT * FROM Product p")
+    fun getProducts(): Flow<List<Product>>
+
     @Query("SELECT * FROM Product p where p.product_id = :id")
     fun getProductsWithUnitById(id: Long): Flow<ProductWithUnit>
 
     @Query(
         """
         SELECT *
-        FROM Product p
-            INNER JOIN Unit u ON u.unit_id = p.unit_id
+        FROM product
         WHERE 
             name like :search OR description like :search
     """

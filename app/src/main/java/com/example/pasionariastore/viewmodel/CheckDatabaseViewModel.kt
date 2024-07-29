@@ -13,7 +13,7 @@ class CheckDatabaseViewModel @Inject constructor(
     private val productRepository: ProductRepository
 ) : ViewModel() {
     init {
-//        checkData()
+        checkData()
     }
 
     fun checkData() {
@@ -24,14 +24,7 @@ class CheckDatabaseViewModel @Inject constructor(
             }
         }
         viewModelScope.launch(Dispatchers.IO) {
-            productRepository.getProductsWithUnit().collect {
-                if (it.isNullOrEmpty())
-                    productRepository.saveFirstProducts()
-            }
-        }
-
-        viewModelScope.launch(Dispatchers.IO) {
-            productRepository.getProductsWithUnit().collect {
+            productRepository.getProducts().collect {
                 if (it.isNullOrEmpty())
                     productRepository.saveFirstProducts()
             }
