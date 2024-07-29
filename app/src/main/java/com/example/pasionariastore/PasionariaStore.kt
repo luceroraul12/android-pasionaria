@@ -124,7 +124,7 @@ fun PasionariaStore(
                 }
                 composable(
                     route = MyScreens.Cart.route,
-                    arguments = listOf(navArgument("cart_id") { type = NavType.LongType })
+                    arguments = listOf(navArgument("cart_id") { type = NavType.LongType }),
                 ) {
                     val cartId: Long = it.arguments!!.getLong("cart_id")
                     LaunchedEffect(key1 = "initCart") {
@@ -147,7 +147,11 @@ fun PasionariaStore(
                         },
                         formatValue = { cartViewModel.formatPriceNumber(it) },
                         productCartList = state.value.productCartList,
-                        stateFlow = cartViewModel.state
+                        stateFlow = cartViewModel.state,
+                        cleanState = {
+                            cartViewModel.cleanState()
+                            navController.popBackStack()
+                        }
                     )
                 }
                 composable(route = MyScreens.CartProduct.route) {

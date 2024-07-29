@@ -8,10 +8,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.pasionariastore.MyScreens
-import com.example.pasionariastore.model.state.CartUIState
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.ProductWithUnit
+import com.example.pasionariastore.model.state.CartUIState
 import com.example.pasionariastore.repository.CartRepository
 import com.example.pasionariastore.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,15 +47,20 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    fun initScreenByCart(cartId: Long) {
+    fun cleanState() {
         _state.update {
             CartUIState()
         }
+    }
+
+    fun initScreenByCart(cartId: Long) {
+        cleanState()
         viewModelScope.launch(Dispatchers.IO) {
             cartRepository.getCartWithData(cartId).collect { cart ->
-                _state.update {
-                    it.copy(cartWithData = mutableStateOf(cart))
-                }
+                if (cart != null)
+                    _state.update {
+                        it.copy(cartWithData = mutableStateOf(cart))
+                    }
             }
         }
     }
@@ -97,7 +102,10 @@ class CartViewModel @Inject constructor(
             it.copy(
                 currentProductCart = ProductCartWithData(
                     productWithUnit = productSearched,
-                    productCart = ProductCart(productId = productSearched.product.productId, cartId = 0)
+                    productCart = ProductCart(
+                        productId = productSearched.product.productId,
+                        cartId = 0
+                    )
                 ), showModalProductSearch = false
             )
         }
@@ -227,4 +235,5 @@ class CartViewModel @Inject constructor(
 
         return format.format(value)
     }
+
 }

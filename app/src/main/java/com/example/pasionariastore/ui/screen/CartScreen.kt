@@ -1,5 +1,6 @@
 package com.example.pasionariastore.ui.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -91,7 +92,8 @@ fun CartPreview() {
                 onCardProductButtonClicked = {},
                 onRemoveProductCart = {},
                 formatValue = { "0.0" },
-                stateFlow = MutableStateFlow(CartUIState())
+                stateFlow = MutableStateFlow(CartUIState()),
+                cleanState = {}
             )
         }
     }
@@ -105,7 +107,8 @@ fun CartScreen(
     onCardProductButtonClicked: (ProductCartWithData) -> Unit,
     onRemoveProductCart: (ProductCartWithData) -> Unit,
     formatValue: (Double) -> String,
-    stateFlow: StateFlow<CartUIState>
+    stateFlow: StateFlow<CartUIState>,
+    cleanState: () -> Unit
 ) {
     val state = stateFlow.collectAsState().value
     Column(modifier = modifier.padding(horizontal = 10.dp)) {
@@ -117,6 +120,9 @@ fun CartScreen(
             onProductCartDelete = onRemoveProductCart,
             formatValue = formatValue
         )
+    }
+    BackHandler {
+        cleanState()
     }
 }
 

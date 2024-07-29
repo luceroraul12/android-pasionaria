@@ -7,7 +7,7 @@ import com.example.pasionariastore.model.ProductCartWithData
 import kotlinx.coroutines.flow.Flow
 
 interface CartRepository {
-    fun getCartWithData(cartId: Long): Flow<CartWithData>
+    fun getCartWithData(cartId: Long): Flow<CartWithData?>
     fun getProducts(): Flow<List<ProductCartWithData>>
     fun getCartsWithStatus(status: List<String>): Flow<List<Cart>>
     suspend fun insertProductCart(productCart: ProductCart)
