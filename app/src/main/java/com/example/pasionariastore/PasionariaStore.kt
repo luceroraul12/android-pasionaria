@@ -132,7 +132,6 @@ fun PasionariaStore(
                     }
                     CartScreen(
                         modifier = modifier,
-                        cartPrice = cartViewModel.calculateCartPrice(),
                         onRemoveProductCart = {
                             cartViewModel.removeProductFromCart(
                                 data = it,

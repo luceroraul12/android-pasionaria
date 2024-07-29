@@ -141,9 +141,12 @@ class CartViewModel @Inject constructor(
     }
 
     fun calculateCartPrice(): String {
-        val result =
-            (_state.value.cartWithData.value.productCartWithData.map { p -> p.productCart.totalPrice }
-                .reduceOrNull { acc, price -> acc + price } ?: 0.0)
+        val products = state.value.cartWithData.value.productCartWithData ?: emptyList()
+        var result = 0.0
+        if (products.isNotEmpty()) {
+            result = (products.map { p -> p.productCart.totalPrice }
+                .reduce { acc, price -> acc + price })
+        }
         return formatPriceNumber(result)
     }
 

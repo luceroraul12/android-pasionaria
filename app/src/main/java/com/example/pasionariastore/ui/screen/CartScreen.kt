@@ -23,7 +23,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,8 +36,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pasionariastore.R
 import com.example.pasionariastore.data.Datasource
-import com.example.pasionariastore.model.Cart
+import com.example.pasionariastore.model.CartWithData
 import com.example.pasionariastore.model.ProductCartWithData
+import com.example.pasionariastore.model.calculateTotalPriceLabel
 import com.example.pasionariastore.model.format
 import com.example.pasionariastore.model.state.CartUIState
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
@@ -87,7 +87,6 @@ fun CartPreview() {
         ) { innerPadding ->
             CartScreen(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-                cartPrice = "123",
                 onCardProductButtonClicked = {},
                 onRemoveProductCart = {},
                 formatValue = { "0.0" },
@@ -101,7 +100,6 @@ fun CartPreview() {
 @Composable
 fun CartScreen(
     modifier: Modifier = Modifier,
-    cartPrice: String,
     onCardProductButtonClicked: (ProductCartWithData) -> Unit,
     onRemoveProductCart: (ProductCartWithData) -> Unit,
     formatValue: (Double) -> String,
@@ -110,7 +108,7 @@ fun CartScreen(
 ) {
     val state = stateFlow.collectAsState().value
     Column(modifier = modifier.padding(horizontal = 10.dp)) {
-        CartHeader(modifier, state.cartWithData.value.cart, cartPrice)
+        CartHeader(modifier, state.cartWithData.value)
         CartListProducts(
             productCartList = state.cartWithData.value.productCartWithData,
             modifier = modifier,
@@ -125,7 +123,7 @@ fun CartScreen(
 }
 
 @Composable
-fun CartHeader(modifier: Modifier, cart: Cart, totalPrice: String) {
+fun CartHeader(modifier: Modifier, cartWithData: CartWithData) {
     Card(
         shape = RoundedCornerShape(
             topStart = 0.dp, topEnd = 0.dp, bottomStart = 25.dp, bottomEnd = 25.dp
@@ -140,9 +138,9 @@ fun CartHeader(modifier: Modifier, cart: Cart, totalPrice: String) {
         modifier = modifier.padding(top = 0.dp, end = 5.dp, start = 5.dp, bottom = 5.dp),
     ) {
         Column(modifier = modifier.padding(10.dp)) {
-            CartHeaderRow("Identificador de producto", cart.id.toString(), modifier)
-            CartHeaderRow("Fecha de creación", cart.dateCreated.format(), modifier)
-            CartHeaderRow("Precio total", totalPrice, modifier)
+            CartHeaderRow("Identificador de producto", cartWithData.cart.id.toString(), modifier)
+            CartHeaderRow("Fecha de creación", cartWithData.cart.dateCreated.format(), modifier)
+            CartHeaderRow("Precio total", cartWithData.calculateTotalPriceLabel(), modifier)
         }
     }
 }
@@ -160,7 +158,7 @@ fun CartHeaderRow(firstLabel: String, secondLabel: String, modifier: Modifier) {
 
 @Composable
 fun CartListProducts(
-    productCartList: List<ProductCartWithData>,
+    productCartList: List<ProductCartWithData>?,
     modifier: Modifier,
     onCardProductButtonClicked: (ProductCartWithData) -> Unit,
     onProductCartDelete: (ProductCartWithData) -> Unit,
