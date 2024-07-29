@@ -58,7 +58,6 @@ class CartViewModel @Inject constructor(
 
     fun goToAddNewProductCartScreen(navController: NavHostController) {
         navController.navigate(MyScreens.CartProduct.route)
-        _state.update { CartUIState() }
         viewModelScope.launch {
             delay(1000)
             state.value.lastSearch.emit(value = Unit)

@@ -115,9 +115,6 @@ fun CartScreen(
             formatValue = formatValue
         )
     }
-//    BackHandler {
-//        cleanState()
-//    }
 }
 
 @Composable
