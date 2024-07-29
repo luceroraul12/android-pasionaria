@@ -16,6 +16,9 @@ class CartRepositoryFake : CartRepository {
 
     override fun getProducts(): Flow<List<ProductCartWithData>> = flow { Datasource.cartProducts }
     override fun getCartsWithStatus(status: List<String>): Flow<List<Cart>> = flow { Datasource.carts }
+    override fun getCartProductWithDataById(productCartId: Long): Flow<ProductCartWithData> {
+        TODO("Not yet implemented")
+    }
 
     override suspend fun insertProductCart(productCart: ProductCart) {}
     override suspend fun deleteProductCart(productCart: ProductCart) {}

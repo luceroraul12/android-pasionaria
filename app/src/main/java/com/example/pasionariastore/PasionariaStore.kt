@@ -17,7 +17,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,6 +40,7 @@ import com.example.pasionariastore.ui.screen.CartProductScreen
 import com.example.pasionariastore.ui.screen.CartScreen
 import com.example.pasionariastore.ui.screen.ResumeScreen
 import com.example.pasionariastore.viewmodel.CartListViewModel
+import com.example.pasionariastore.viewmodel.CartProductViewModel
 import com.example.pasionariastore.viewmodel.CartViewModel
 
 enum class MyScreens(@StringRes val title: Int, val route: String) {
@@ -58,12 +58,13 @@ fun PasionariaStore(
     navController: NavHostController = rememberNavController(),
     cartViewModel: CartViewModel = viewModel(),
     cartListViewModel: CartListViewModel = viewModel(),
+    cartProductViewModel: CartProductViewModel = viewModel(),
     dataStore: CustomDataStore = CustomDataStore(LocalContext.current)
 ) {
     // Intento recuperar ultimo valor de navegacion
     val backStackEntry by navController.currentBackStackEntryAsState()
     val context = LocalContext.current
-    val state = cartViewModel.state.collectAsState()
+    val cartProductState = cartProductViewModel.state
     Scaffold(
         topBar = {
             val lastRoute =
@@ -153,19 +154,20 @@ fun PasionariaStore(
                         modifier = modifier,
                         onCancelButtonClicked = { navController.navigate(MyScreens.Cart.route) },
                         onAddButtonClicked = {
-                            cartViewModel.addProductToCart(context = context)
-                            navController.popBackStack()
+                            cartProductViewModel.createOrUpdateProductCart(
+                                context = context,
+                                { navController.popBackStack() })
                         },
-                        onCancelSearch = { cartViewModel.cancelProductSearch() },
-                        priceCalculated = cartViewModel.calculatePrice(),
-                        formatPriceNumber = { cartViewModel.formatPriceNumber(it) },
-                        state = state.value,
-                        onSearchProducts = { cartViewModel.searchProducts(context = context) },
-                        updateCurrentSearch = { cartViewModel.updateCurrentSearch(it) },
-                        onProductSearchClicked = { cartViewModel.selectProductSearched(it) },
-                        updateQuantity = { cartViewModel.updateCurrentQuantity(it) },
-                        canEditQuantity = { cartViewModel.canEditQuantity()}
-                        )
+                        onCancelSearch = { cartProductViewModel.setShowModal(false) },
+                        priceCalculated = cartProductViewModel.calculatePriceProductCart(),
+                        formatPriceNumber = { cartProductViewModel.formatPriceNumber(it) },
+                        stateFlow = cartProductState,
+                        onSearchProducts = { cartProductViewModel.searchProducts(context = context) },
+                        updateCurrentSearch = { cartProductViewModel.updateCurrentSearch(it) },
+                        onProductSearchClicked = { cartProductViewModel.selectProductSearched(it) },
+                        updateQuantity = { cartProductViewModel.updateCurrentQuantity(it) },
+                        canEditQuantity = { cartProductViewModel.canUpdateQuantity() }
+                    )
                 }
             }
         }

@@ -18,6 +18,10 @@ class CartRepositoryFake : CartRepository {
         TODO("Not yet implemented")
     }
 
+    override fun getCartProductWithDataById(productCartId: Long): Flow<ProductCartWithData> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun insertProductCart(productCart: ProductCart) {}
     override suspend fun deleteProductCart(productCart: ProductCart) {}
     override suspend fun insertCart(cart: Cart) {

@@ -26,6 +26,10 @@ interface CartDatabaseDao {
     @Query("SELECT * FROM ProductCart")
     fun getCartProducts(): Flow<List<ProductCartWithData>>
 
+    @Transaction
+    @Query("SELECT * FROM ProductCart WHERE product_cart_id = :productCartId")
+    fun getProductCartWithDataById(productCartId: Long): Flow<ProductCartWithData>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCartProduct(product: ProductCart)
 
@@ -37,4 +41,5 @@ interface CartDatabaseDao {
 
     @Delete
     suspend fun deleteCart(cart: Cart)
+
 }

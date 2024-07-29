@@ -10,8 +10,10 @@ interface CartRepository {
     fun getCartWithData(cartId: Long): Flow<CartWithData?>
     fun getProducts(): Flow<List<ProductCartWithData>>
     fun getCartsWithStatus(status: List<String>): Flow<List<Cart>>
+    fun getCartProductWithDataById(productCartId: Long): Flow<ProductCartWithData>
     suspend fun insertProductCart(productCart: ProductCart)
     suspend fun deleteProductCart(productCart: ProductCart)
     suspend fun insertCart(cart: Cart)
     suspend fun deleteCart(cart: Cart)
+
 }

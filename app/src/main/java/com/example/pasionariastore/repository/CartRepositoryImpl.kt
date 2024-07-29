@@ -27,6 +27,10 @@ class CartRepositoryImpl @Inject constructor(private val cartDatabaseDao: CartDa
         return cartDatabaseDao.getCartsWithStatus(status).flowOn(Dispatchers.IO).conflate()
     }
 
+    override fun getCartProductWithDataById(productCartId: Long): Flow<ProductCartWithData> {
+        return cartDatabaseDao.getProductCartWithDataById(productCartId).flowOn(Dispatchers.IO).conflate()
+    }
+
     override suspend fun insertProductCart(productCart: ProductCart) {
         cartDatabaseDao.insertCartProduct(productCart)
     }

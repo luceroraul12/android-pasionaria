@@ -10,7 +10,7 @@ data class ProductCart(
     @ColumnInfo(name = "product_cart_id")
     val productCartId: Long = 0,
     @ColumnInfo(name = "quantity")
-    val quantity: String = "",
+    val quantity: Double = 0.0,
     @ColumnInfo(name = "totalPrice")
     val totalPrice: Double = 0.0,
     @ColumnInfo(name = "product_id")

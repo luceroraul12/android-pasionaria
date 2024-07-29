@@ -25,6 +25,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,10 +47,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.pasionariastore.R
 import com.example.pasionariastore.data.Datasource
-import com.example.pasionariastore.model.state.CartUIState
-import com.example.pasionariastore.model.ProductCartWithData
+import com.example.pasionariastore.model.ProductCart
+import com.example.pasionariastore.model.state.CartProductUIState
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -67,7 +70,7 @@ fun ProductScreenPreview() {
                 onCancelSearch = {},
                 onProductSearchClicked = {},
                 formatPriceNumber = { "203" },
-                state = CartUIState(),
+                stateFlow = MutableStateFlow(CartProductUIState()),
                 updateQuantity = {},
                 canEditQuantity = {true}
             )
@@ -80,18 +83,19 @@ fun CartProductScreen(
     modifier: Modifier = Modifier,
     onAddButtonClicked: () -> Unit,
     onCancelButtonClicked: () -> Unit,
-    state: CartUIState,
+    stateFlow: MutableStateFlow<CartProductUIState>,
     onProductSearchClicked: (ProductWithUnit) -> Unit,
     onCancelSearch: () -> Unit,
     formatPriceNumber: (Double) -> String,
     priceCalculated: String,
     onSearchProducts: () -> Unit,
     updateCurrentSearch: (String) -> Unit,
-    updateQuantity: (String) -> Unit,
+    updateQuantity: (Double) -> Unit,
     canEditQuantity: () -> Boolean
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
+    val state = stateFlow.collectAsState().value
     LaunchedEffect(Unit) {
         state.lastSearch.collectLatest {
             focusRequester.requestFocus()
@@ -101,7 +105,7 @@ fun CartProductScreen(
     if (state.showModalProductSearch) {
         // Antes de abrir el modal tengo que ver si existen coincidencias
         ModalSearchProduct(
-            productList = state.currentProductSearcheds,
+            productList = state.productsFound,
             onProductSearchClicked = { onProductSearchClicked(it) },
             search = state.currentSearch,
             modifier = modifier,
@@ -121,7 +125,7 @@ fun CartProductScreen(
                     canSearchProducts = state.canSearchProducts,
                     onSearchProducts = onSearchProducts,
                     currentSearch = state.currentSearch,
-                    updateCurrentSearch = updateCurrentSearch,
+                    updateCurrentSearch = {updateCurrentSearch(it)},
                     focusRequester = focusRequester
                 )
             }
@@ -130,7 +134,7 @@ fun CartProductScreen(
         Card(modifier = modifier.weight(1f)) {
             ProductDescription(
                 modifier.fillMaxWidth(),
-                state.currentProductCart,
+                state.currentProductWithUnit,
                 formatValue = formatPriceNumber
             )
         }
@@ -138,7 +142,7 @@ fun CartProductScreen(
         Card {
             ProductFormCalculator(
                 modifier = modifier,
-                state = state,
+                quantity = state.currentProductCart.quantity,
                 updateQuantity = { updateQuantity(it) },
                 priceCalculated = priceCalculated,
                 focusRequester = focusRequester,
@@ -149,7 +153,7 @@ fun CartProductScreen(
                 modifier = modifier,
                 onCancelButtonClicked = onCancelButtonClicked,
                 onAddButtonClicked = onAddButtonClicked,
-                productCartWithData = state.currentProductCart,
+                productCart = state.currentProductCart,
             )
         }
     }
@@ -159,14 +163,14 @@ fun CartProductScreen(
 @Composable
 fun ProductDescription(
     modifier: Modifier = Modifier,
-    relation: ProductCartWithData?,
+    relation: ProductWithUnit,
     formatValue: (Double) -> String
 ) {
     var name: String = "Nombre del producto"
     var description: String = "Descripcion del producto"
     var price: String = "0.0"
     var unit: String = "SIN UNIDAD"
-    relation?.productWithUnit?.let {
+    relation.let {
         it.product.let { product ->
             name = product.name
             description = product.description
@@ -186,7 +190,7 @@ fun ProductDescription(
             )
             DescriptionItem(
                 title = "Precio Lista",
-                description = formatValue(relation?.productWithUnit?.product?.priceList ?: 0.0),
+                description = formatValue(relation.product.priceList ?: 0.0),
                 modifier = modifier
             )
             Row(horizontalArrangement = Arrangement.SpaceBetween) {
@@ -264,7 +268,7 @@ fun CartProductActionButtons(
     modifier: Modifier,
     onCancelButtonClicked: () -> Unit,
     onAddButtonClicked: () -> Unit,
-    productCartWithData: ProductCartWithData?,
+    productCart: ProductCart,
 ) {
     Row {
         Button(
@@ -280,7 +284,7 @@ fun CartProductActionButtons(
             Text(text = "Cancelar")
         }
         Button(
-            enabled = (productCartWithData?.productCart?.quantity?.toDoubleOrNull() ?: 0.0) > 0.0,
+            enabled = (productCart.quantity) > 0.0,
             onClick = onAddButtonClicked,
             colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.update_active)),
             shape = RoundedCornerShape(
@@ -290,17 +294,17 @@ fun CartProductActionButtons(
                 .weight(1f)
                 .height(IntrinsicSize.Max),
         ) {
-            Text(text = if (productCartWithData?.productCart != null) "Agregar" else "Actualizar")
+            Text(text = if (productCart.cartId == 0L) "Agregar" else "Actualizar")
         }
     }
 }
 
 @Composable
 fun ProductFormCalculator(
-    state: CartUIState,
+    quantity: Double,
     modifier: Modifier,
     priceCalculated: String,
-    updateQuantity: (String) -> Unit,
+    updateQuantity: (Double) -> Unit,
     focusRequester: FocusRequester,
     onAddButtonClicked: () -> Unit,
     canEditQuantity: () -> Boolean
@@ -322,8 +326,8 @@ fun ProductFormCalculator(
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(onDone = { onAddButtonClicked() }),
-                value = state.currentProductCart.productCart.quantity,
-                onValueChange = { updateQuantity(it) },
+                value = quantity.toString(),
+                onValueChange = { updateQuantity(it.toDoubleOrNull() ?: 0.0) },
                 modifier = modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester),
