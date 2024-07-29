@@ -18,12 +18,12 @@ data class Product(
     @ColumnInfo(name = "product_id")
     val productId: Long = 0,
     @ColumnInfo(name = "name")
-    val name: String,
+    val name: String = "SIN NOMBRE",
     @ColumnInfo(name = "description")
     val description: String = "SIN DESCRIPCION",
     @ColumnInfo(name = "price_list")
-    val priceList: Double,
+    val priceList: Double = 0.0,
     @ColumnInfo(name = "unit_id")
-    val unitId: Long
+    val unitId: Long = 0
 )
 

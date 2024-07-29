@@ -146,10 +146,6 @@ fun PasionariaStore(
                         },
                         formatValue = { cartViewModel.formatPriceNumber(it) },
                         stateFlow = cartViewModel.state,
-                        cleanState = {
-                            cartViewModel.cleanState()
-                            navController.popBackStack()
-                        }
                     )
                 }
                 composable(route = MyScreens.CartProduct.route) {
@@ -168,7 +164,7 @@ fun PasionariaStore(
                         updateCurrentSearch = { cartViewModel.updateCurrentSearch(it) },
                         onProductSearchClicked = { cartViewModel.selectProductSearched(it) },
                         updateQuantity = { cartViewModel.updateCurrentQuantity(it) },
-
+                        canEditQuantity = { cartViewModel.canEditQuantity()}
                         )
                 }
             }

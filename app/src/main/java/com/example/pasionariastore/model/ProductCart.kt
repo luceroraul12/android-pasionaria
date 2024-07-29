@@ -14,7 +14,7 @@ data class ProductCart(
     @ColumnInfo(name = "totalPrice")
     val totalPrice: Double = 0.0,
     @ColumnInfo(name = "product_id")
-    val productId: Long,
+    val productId: Long = 0,
     @ColumnInfo(name = "cart_id")
-    val cartId: Long,
+    val cartId: Long = 0,
 )

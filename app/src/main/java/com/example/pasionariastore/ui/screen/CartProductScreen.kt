@@ -69,6 +69,7 @@ fun ProductScreenPreview() {
                 formatPriceNumber = { "203" },
                 state = CartUIState(),
                 updateQuantity = {},
+                canEditQuantity = {true}
             )
         }
     }
@@ -87,6 +88,7 @@ fun CartProductScreen(
     onSearchProducts: () -> Unit,
     updateCurrentSearch: (String) -> Unit,
     updateQuantity: (String) -> Unit,
+    canEditQuantity: () -> Boolean
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
@@ -140,7 +142,8 @@ fun CartProductScreen(
                 updateQuantity = { updateQuantity(it) },
                 priceCalculated = priceCalculated,
                 focusRequester = focusRequester,
-                onAddButtonClicked = onAddButtonClicked
+                onAddButtonClicked = onAddButtonClicked,
+                canEditQuantity = canEditQuantity
             )
             CartProductActionButtons(
                 modifier = modifier,
@@ -299,7 +302,8 @@ fun ProductFormCalculator(
     priceCalculated: String,
     updateQuantity: (String) -> Unit,
     focusRequester: FocusRequester,
-    onAddButtonClicked: () -> Unit
+    onAddButtonClicked: () -> Unit,
+    canEditQuantity: () -> Boolean
 ) {
     Card(modifier = modifier.padding(10.dp)) {
         Column(
@@ -318,13 +322,13 @@ fun ProductFormCalculator(
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(onDone = { onAddButtonClicked() }),
-                value = state.currentProductCart?.productCart?.quantity ?: "",
+                value = state.currentProductCart.productCart.quantity,
                 onValueChange = { updateQuantity(it) },
                 modifier = modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester),
                 singleLine = true,
-                enabled = state.currentProductCart != null,
+                enabled = canEditQuantity(),
                 label = { Text(text = "Cantidad del producto") },
             )
         }

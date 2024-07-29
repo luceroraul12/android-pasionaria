@@ -91,7 +91,6 @@ fun CartPreview() {
                 onRemoveProductCart = {},
                 formatValue = { "0.0" },
                 stateFlow = MutableStateFlow(CartUIState()),
-                cleanState = {}
             )
         }
     }
@@ -104,7 +103,6 @@ fun CartScreen(
     onRemoveProductCart: (ProductCartWithData) -> Unit,
     formatValue: (Double) -> String,
     stateFlow: StateFlow<CartUIState>,
-    cleanState: () -> Unit
 ) {
     val state = stateFlow.collectAsState().value
     Column(modifier = modifier.padding(horizontal = 10.dp)) {
@@ -117,9 +115,9 @@ fun CartScreen(
             formatValue = formatValue
         )
     }
-    BackHandler {
-        cleanState()
-    }
+//    BackHandler {
+//        cleanState()
+//    }
 }
 
 @Composable

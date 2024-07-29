@@ -58,14 +58,7 @@ class CartViewModel @Inject constructor(
 
     fun goToAddNewProductCartScreen(navController: NavHostController) {
         navController.navigate(MyScreens.CartProduct.route)
-        _state.update {
-            it.copy(
-                canSearchProducts = true,
-                currentSearch = "",
-                showModalProductSearch = false,
-                currentProductCart = null
-            )
-        }
+        _state.update { CartUIState() }
         viewModelScope.launch {
             delay(1000)
             state.value.lastSearch.emit(value = Unit)
@@ -89,7 +82,8 @@ class CartViewModel @Inject constructor(
             it.copy(
                 currentProductCart = ProductCartWithData(
                     productWithUnit = productSearched, productCart = ProductCart(
-                        productId = productSearched.product.productId, cartId = 0
+                        productId = productSearched.product.productId,
+                        cartId = it.cartWithData.value.cart.id
                     )
                 ), showModalProductSearch = false
             )
@@ -103,13 +97,13 @@ class CartViewModel @Inject constructor(
     }
 
     fun searchProducts(context: Context) {
-        if (state.value.currentSearch.isNullOrEmpty()) {
+        if (state.value.currentSearch.isEmpty()) {
             Toast.makeText(context, "Debe escribir algo para buscar", Toast.LENGTH_SHORT).show()
         } else {
             viewModelScope.launch(Dispatchers.IO) {
                 productRepository.getProductsWithUnitBySearch(state.value.currentSearch)
                     .collect { products ->
-                        if (products.isNullOrEmpty()) {
+                        if (products.isEmpty()) {
                             showMessage(context = context, message = "No hay coincidencias")
                         } else {
                             _state.update {
@@ -133,7 +127,7 @@ class CartViewModel @Inject constructor(
     fun updateCurrentQuantity(newQuantity: String) {
         _state.update {
             it.copy(
-                currentProductCart = it.currentProductCart!!.copy(
+                currentProductCart = it.currentProductCart.copy(
                     it.currentProductCart.productCart.copy(
                         quantity = newQuantity
                     )
@@ -157,7 +151,7 @@ class CartViewModel @Inject constructor(
         var result = 0.0
         var quantity = 0.0
         var price = 0.0
-        state.value.currentProductCart?.let { productCart ->
+        state.value.currentProductCart.let { productCart ->
             quantity = productCart.productCart.quantity.toDoubleOrNull() ?: 0.0
             price = productCart.productWithUnit.product.priceList
             result = (price * quantity / 1000)
@@ -177,7 +171,11 @@ class CartViewModel @Inject constructor(
     fun addProductToCart(context: Context) {
         // persisto el producto en la base de datos
         viewModelScope.launch(Dispatchers.IO) {
-            state.value.currentProductCart?.productCart?.let {
+            state.value.let {
+                it.currentProductCart
+            }
+
+            state.value.currentProductCart.productCart.let {
                 var message = "El producto fue agregado al pedido"
                 cartRepository.insertProductCart(it)
                 if (it.productCartId != 0L) message = "El producto fue actualizado"
@@ -222,6 +220,10 @@ class CartViewModel @Inject constructor(
         format.currency = Currency.getInstance("ARS")
 
         return format.format(value)
+    }
+
+    fun canEditQuantity(): Boolean{
+        return state.value.currentProductCart.productCart.cartId != 0L
     }
 
 }

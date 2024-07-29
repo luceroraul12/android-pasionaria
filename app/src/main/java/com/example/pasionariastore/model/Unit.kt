@@ -10,9 +10,9 @@ data class Unit(
     @ColumnInfo(name = "unit_id")
     val unitId: Long = 0,
     @ColumnInfo(name = "name_unit")
-    val name: String,
+    val name: String = "x100gr",
     @ColumnInfo(name = "name_type")
     val nameType: String = "Gramos",
     @ColumnInfo(name = "value")
-    val value: Double = 0.0
+    val value: Double = 0.1
 )
