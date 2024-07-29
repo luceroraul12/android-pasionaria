@@ -26,7 +26,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -72,7 +71,6 @@ fun ProductScreenPreview() {
                 formatPriceNumber = { "203" },
                 stateFlow = MutableStateFlow(CartProductUIState()),
                 updateQuantity = {},
-                canEditQuantity = {true}
             )
         }
     }
@@ -91,23 +89,22 @@ fun CartProductScreen(
     onSearchProducts: () -> Unit,
     updateCurrentSearch: (String) -> Unit,
     updateQuantity: (Double) -> Unit,
-    canEditQuantity: () -> Boolean
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
-    val state = stateFlow.collectAsState().value
+    val state = stateFlow.collectAsState()
     LaunchedEffect(Unit) {
-        state.lastSearch.collectLatest {
+        state.value.lastSearch.collectLatest {
             focusRequester.requestFocus()
             focusManager.moveFocus(FocusDirection.Down)
         }
     }
-    if (state.showModalProductSearch) {
+    if (state.value.showModalProductSearch) {
         // Antes de abrir el modal tengo que ver si existen coincidencias
         ModalSearchProduct(
-            productList = state.productsFound,
+            productList = state.value.productsFound,
             onProductSearchClicked = { onProductSearchClicked(it) },
-            search = state.currentSearch,
+            search = state.value.currentSearch,
             modifier = modifier,
             onCancelSearch = onCancelSearch
         )
@@ -118,13 +115,13 @@ fun CartProductScreen(
             .padding(10.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        if (state.canSearchProducts) {
+        if (state.value.canSearchProducts) {
             Card {
                 ProductSearcher(
                     modifier.fillMaxWidth(),
-                    canSearchProducts = state.canSearchProducts,
+                    canSearchProducts = true,
                     onSearchProducts = onSearchProducts,
-                    currentSearch = state.currentSearch,
+                    currentSearch = state.value.currentSearch,
                     updateCurrentSearch = {updateCurrentSearch(it)},
                     focusRequester = focusRequester
                 )
@@ -134,7 +131,7 @@ fun CartProductScreen(
         Card(modifier = modifier.weight(1f)) {
             ProductDescription(
                 modifier.fillMaxWidth(),
-                state.currentProductWithUnit,
+                state.value.currentProductWithUnit,
                 formatValue = formatPriceNumber
             )
         }
@@ -142,18 +139,18 @@ fun CartProductScreen(
         Card {
             ProductFormCalculator(
                 modifier = modifier,
-                quantity = state.currentProductCart.quantity,
+                quantity = state.value.currentProductCart.quantity,
                 updateQuantity = { updateQuantity(it) },
                 priceCalculated = priceCalculated,
                 focusRequester = focusRequester,
                 onAddButtonClicked = onAddButtonClicked,
-                canEditQuantity = canEditQuantity
+                canEditQuantity = state.value.canUpdateQuantity
             )
             CartProductActionButtons(
                 modifier = modifier,
                 onCancelButtonClicked = onCancelButtonClicked,
                 onAddButtonClicked = onAddButtonClicked,
-                productCart = state.currentProductCart,
+                productCart = state.value.currentProductCart,
             )
         }
     }
@@ -307,7 +304,7 @@ fun ProductFormCalculator(
     updateQuantity: (Double) -> Unit,
     focusRequester: FocusRequester,
     onAddButtonClicked: () -> Unit,
-    canEditQuantity: () -> Boolean
+    canEditQuantity: Boolean
 ) {
     Card(modifier = modifier.padding(10.dp)) {
         Column(
@@ -332,7 +329,7 @@ fun ProductFormCalculator(
                     .fillMaxWidth()
                     .focusRequester(focusRequester),
                 singleLine = true,
-                enabled = canEditQuantity(),
+                enabled = canEditQuantity,
                 label = { Text(text = "Cantidad del producto") },
             )
         }

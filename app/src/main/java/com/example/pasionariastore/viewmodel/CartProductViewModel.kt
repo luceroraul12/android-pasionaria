@@ -13,6 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Currency
@@ -52,7 +53,9 @@ class CartProductViewModel @Inject constructor(
     }
 
     private fun updateState(newState: CartProductUIState) {
-        state = MutableStateFlow(newState)
+        state.update {
+            newState
+        }
     }
 
     fun updateCurrentQuantity(newValue: Double) {
@@ -124,15 +127,10 @@ class CartProductViewModel @Inject constructor(
                     productId = productCartWithUnit.product.productId,
                 ),
                 currentProductWithUnit = productCartWithUnit,
-                showModalProductSearch = false
+                showModalProductSearch = false,
+                canUpdateQuantity = true
             )
         )
-    }
-
-    fun canUpdateQuantity(): Boolean {
-        return state.value.let {
-            it.currentProductCart.productId > 0
-        }
     }
 
     fun canCreateOrUpdate(): Boolean {

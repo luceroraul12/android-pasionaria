@@ -165,8 +165,7 @@ fun PasionariaStore(
                         onSearchProducts = { cartProductViewModel.searchProducts(context = context) },
                         updateCurrentSearch = { cartProductViewModel.updateCurrentSearch(it) },
                         onProductSearchClicked = { cartProductViewModel.selectProductSearched(it) },
-                        updateQuantity = { cartProductViewModel.updateCurrentQuantity(it) },
-                        canEditQuantity = { cartProductViewModel.canUpdateQuantity() }
+                        updateQuantity = { cartProductViewModel.updateCurrentQuantity(it) }
                     )
                 }
             }
