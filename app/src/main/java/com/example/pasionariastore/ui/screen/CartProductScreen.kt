@@ -312,6 +312,7 @@ fun ProductFormCalculator(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier
         ) {
+            val quantityValue = if (quantity.equals(0.0)) "" else quantity.toString()
             DescriptionItem(
                 title = "Calculadora",
                 description = priceCalculated,
@@ -323,7 +324,7 @@ fun ProductFormCalculator(
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(onDone = { onAddButtonClicked() }),
-                value = quantity.toString(),
+                value = quantityValue,
                 onValueChange = { updateQuantity(it.toDoubleOrNull() ?: 0.0) },
                 modifier = modifier
                     .fillMaxWidth()
