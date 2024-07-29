@@ -28,24 +28,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
-    private val cartRepository: CartRepository,
-    private val productRepository: ProductRepository
+    private val cartRepository: CartRepository, private val productRepository: ProductRepository
 ) : ViewModel() {
     private var _state = MutableStateFlow(CartUIState())
     val state = _state.asStateFlow()
-
-    private val _cartProducts = MutableStateFlow<List<ProductCartWithData>>(emptyList())
-    val cartProducts = _cartProducts.asStateFlow()
-
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            cartRepository.getProducts().collect { products ->
-                _state.update {
-                    _state.value.copy(productCartList = products.toMutableList())
-                }
-            }
-        }
-    }
 
     fun cleanState() {
         _state.update {
@@ -57,10 +43,9 @@ class CartViewModel @Inject constructor(
         cleanState()
         viewModelScope.launch(Dispatchers.IO) {
             cartRepository.getCartWithData(cartId).collect { cart ->
-                if (cart != null)
-                    _state.update {
-                        it.copy(cartWithData = mutableStateOf(cart))
-                    }
+                if (cart != null) _state.update {
+                    it.copy(cartWithData = mutableStateOf(cart))
+                }
             }
         }
     }
@@ -101,10 +86,8 @@ class CartViewModel @Inject constructor(
         _state.update {
             it.copy(
                 currentProductCart = ProductCartWithData(
-                    productWithUnit = productSearched,
-                    productCart = ProductCart(
-                        productId = productSearched.product.productId,
-                        cartId = 0
+                    productWithUnit = productSearched, productCart = ProductCart(
+                        productId = productSearched.product.productId, cartId = 0
                     )
                 ), showModalProductSearch = false
             )
@@ -158,8 +141,9 @@ class CartViewModel @Inject constructor(
     }
 
     fun calculateCartPrice(): String {
-        val result = (state.value.productCartList.map { p -> p.productCart.totalPrice }
-            .reduceOrNull { acc, price -> acc + price } ?: 0.0)
+        val result =
+            (_state.value.cartWithData.value.productCartWithData.map { p -> p.productCart.totalPrice }
+                .reduceOrNull { acc, price -> acc + price } ?: 0.0)
         return formatPriceNumber(result)
     }
 

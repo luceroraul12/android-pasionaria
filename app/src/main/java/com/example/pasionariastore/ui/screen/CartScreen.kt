@@ -87,7 +87,6 @@ fun CartPreview() {
         ) { innerPadding ->
             CartScreen(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-                productCartList = emptyList(),
                 cartPrice = "123",
                 onCardProductButtonClicked = {},
                 onRemoveProductCart = {},
@@ -102,7 +101,6 @@ fun CartPreview() {
 @Composable
 fun CartScreen(
     modifier: Modifier = Modifier,
-    productCartList: List<ProductCartWithData>,
     cartPrice: String,
     onCardProductButtonClicked: (ProductCartWithData) -> Unit,
     onRemoveProductCart: (ProductCartWithData) -> Unit,
@@ -114,7 +112,7 @@ fun CartScreen(
     Column(modifier = modifier.padding(horizontal = 10.dp)) {
         CartHeader(modifier, state.cartWithData.value.cart, cartPrice)
         CartListProducts(
-            productCartList = productCartList,
+            productCartList = state.cartWithData.value.productCartWithData,
             modifier = modifier,
             onCardProductButtonClicked = onCardProductButtonClicked,
             onProductCartDelete = onRemoveProductCart,

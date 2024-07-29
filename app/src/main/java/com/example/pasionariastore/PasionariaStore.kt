@@ -146,7 +146,6 @@ fun PasionariaStore(
                             )
                         },
                         formatValue = { cartViewModel.formatPriceNumber(it) },
-                        productCartList = state.value.productCartList,
                         stateFlow = cartViewModel.state,
                         cleanState = {
                             cartViewModel.cleanState()
