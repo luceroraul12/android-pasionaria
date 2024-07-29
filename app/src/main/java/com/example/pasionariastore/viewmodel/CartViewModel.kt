@@ -174,7 +174,7 @@ class CartViewModel @Inject constructor(
         return formatPriceNumber(result)
     }
 
-    fun addProductToCart(navController: NavHostController, context: Context) {
+    fun addProductToCart(context: Context) {
         // persisto el producto en la base de datos
         viewModelScope.launch(Dispatchers.IO) {
             state.value.currentProductCart?.productCart?.let {
@@ -184,7 +184,6 @@ class CartViewModel @Inject constructor(
                 showMessage(context = context, message = message)
             }
         }
-        navController.navigate(MyScreens.Cart.route)
     }
 
     fun removeProductFromCart(data: ProductCartWithData, context: Context) {

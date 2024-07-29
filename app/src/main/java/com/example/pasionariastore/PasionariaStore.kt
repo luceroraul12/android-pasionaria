@@ -157,10 +157,8 @@ fun PasionariaStore(
                         modifier = modifier,
                         onCancelButtonClicked = { navController.navigate(MyScreens.Cart.route) },
                         onAddButtonClicked = {
-                            cartViewModel.addProductToCart(
-                                navController = navController,
-                                context = context
-                            )
+                            cartViewModel.addProductToCart(context = context)
+                            navController.popBackStack()
                         },
                         onCancelSearch = { cartViewModel.cancelProductSearch() },
                         priceCalculated = cartViewModel.calculatePrice(),
