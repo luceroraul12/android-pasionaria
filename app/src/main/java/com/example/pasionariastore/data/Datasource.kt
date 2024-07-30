@@ -50,11 +50,11 @@ object Datasource {
     val cartProducts: List<ProductCartWithData> = listOf(
         ProductCartWithData(
             productCart = ProductCart(
-                quantity = 233.0, productCartId = 2, totalPrice = 2500.0, productId = 3, cartId = 0
+                quantity = "233", productCartId = 2, totalPrice = 2500.0, productId = 3, cartId = 0
             ), productWithUnit = productsWithUnit.get(2)
         ), ProductCartWithData(
             productCart = ProductCart(
-                quantity = 500.0, productCartId = 3, totalPrice = 3625.0, productId = 3, cartId = 0
+                quantity = "500", productCartId = 3, totalPrice = 3625.0, productId = 3, cartId = 0
             ), productWithUnit = productsWithUnit.get(3)
         )
     )

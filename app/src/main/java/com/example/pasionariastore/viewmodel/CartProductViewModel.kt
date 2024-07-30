@@ -58,7 +58,7 @@ class CartProductViewModel @Inject constructor(
         }
     }
 
-    fun updateCurrentQuantity(newValue: Double) {
+    fun updateCurrentQuantity(newValue: String) {
         updateState(
             state.value.copy(
                 currentProductCart = state.value.currentProductCart.copy(
@@ -134,7 +134,7 @@ class CartProductViewModel @Inject constructor(
     }
 
     fun canCreateOrUpdate(): Boolean {
-        return state.value.currentProductCart.quantity > 0.0
+        return (state.value.currentProductCart.quantity.toIntOrNull() ?: 0) > 0
     }
 
     fun setShowModal(show: Boolean) {
@@ -143,12 +143,12 @@ class CartProductViewModel @Inject constructor(
 
     fun calculatePriceProductCart(): String {
         var result = 0.0
-        var quantity = 0.0
+        var quantity = ""
         var price = 0.0
         state.value.let { item ->
             quantity = item.currentProductCart.quantity
             price = item.currentProductWithUnit.product.priceList
-            result = (price * quantity / 1000)
+            result = (price * (quantity.toDoubleOrNull() ?: 0.0)) / 1000
             val currentProductCart = state.value.currentProductCart.copy(
                 quantity = quantity,
                 totalPrice = result,

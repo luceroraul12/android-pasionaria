@@ -47,8 +47,8 @@ import androidx.compose.ui.window.Dialog
 import com.example.pasionariastore.R
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.ProductCart
-import com.example.pasionariastore.model.state.CartProductUIState
 import com.example.pasionariastore.model.ProductWithUnit
+import com.example.pasionariastore.model.state.CartProductUIState
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -88,7 +88,7 @@ fun CartProductScreen(
     priceCalculated: String,
     onSearchProducts: () -> Unit,
     updateCurrentSearch: (String) -> Unit,
-    updateQuantity: (Double) -> Unit,
+    updateQuantity: (String) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
@@ -122,7 +122,7 @@ fun CartProductScreen(
                     canSearchProducts = true,
                     onSearchProducts = onSearchProducts,
                     currentSearch = state.value.currentSearch,
-                    updateCurrentSearch = {updateCurrentSearch(it)},
+                    updateCurrentSearch = { updateCurrentSearch(it) },
                     focusRequester = focusRequester
                 )
             }
@@ -281,7 +281,7 @@ fun CartProductActionButtons(
             Text(text = "Cancelar")
         }
         Button(
-            enabled = (productCart.quantity) > 0.0,
+            enabled = (productCart.quantity.toIntOrNull() ?: 0) > 0,
             onClick = onAddButtonClicked,
             colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.update_active)),
             shape = RoundedCornerShape(
@@ -298,10 +298,10 @@ fun CartProductActionButtons(
 
 @Composable
 fun ProductFormCalculator(
-    quantity: Double,
+    quantity: String,
     modifier: Modifier,
     priceCalculated: String,
-    updateQuantity: (Double) -> Unit,
+    updateQuantity: (String) -> Unit,
     focusRequester: FocusRequester,
     onAddButtonClicked: () -> Unit,
     canEditQuantity: Boolean
@@ -312,7 +312,6 @@ fun ProductFormCalculator(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier
         ) {
-            val quantityValue = if (quantity.equals(0.0)) "" else quantity.toString()
             DescriptionItem(
                 title = "Calculadora",
                 description = priceCalculated,
@@ -324,8 +323,10 @@ fun ProductFormCalculator(
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(onDone = { onAddButtonClicked() }),
-                value = quantityValue,
-                onValueChange = { updateQuantity(it.toDoubleOrNull() ?: 0.0) },
+                value = quantity,
+                onValueChange = {
+                    updateQuantity(it)
+                },
                 modifier = modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester),
