@@ -39,7 +39,7 @@ class CartViewModel @Inject constructor(
     }
 
     fun initScreenByCart(cartId: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
             cartRepository.getCartWithData(cartId).collect { cart ->
                 if (cart != null) _state.update {
                     it.copy(cartWithData = mutableStateOf(cart))

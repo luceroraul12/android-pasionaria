@@ -104,9 +104,6 @@ fun PasionariaStore(
                     arguments = listOf(navArgument("cartId") { type = NavType.LongType }),
                 ) {
                     val cartId: Long = it.arguments!!.getLong("cartId")
-                    LaunchedEffect(key1 = "initCart") {
-                        cartViewModel.initScreenByCart(cartId)
-                    }
                     CartScreen(modifier = modifier,
                         onRemoveProductCart = {
                             cartViewModel.removeProductFromCart(
@@ -125,7 +122,8 @@ fun PasionariaStore(
                         stateFlow = cartViewModel.state,
                         goToNewProduct = {
                             cartViewModel.goToAddNewProductCartScreen({ navController.navigate("${MyScreens.CartProduct.name}/$it") })
-                        })
+                        },
+                        fetchData = {cartViewModel.initScreenByCart(cartId)})
                 }
                 composable(
                     route = "${MyScreens.CartProduct.name}/{cartId}?productCartId={productCartId}",

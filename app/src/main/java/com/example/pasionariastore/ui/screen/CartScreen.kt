@@ -95,7 +95,8 @@ fun CartPreview() {
                 onRemoveProductCart = {},
                 formatValue = { "0.0" },
                 stateFlow = MutableStateFlow(CartUIState()),
-                goToNewProduct = {}
+                goToNewProduct = {},
+                fetchData = {}
             )
         }
     }
@@ -108,9 +109,11 @@ fun CartScreen(
     onRemoveProductCart: (ProductCartWithData) -> Unit,
     formatValue: (Double) -> String,
     stateFlow: StateFlow<CartUIState>,
-    goToNewProduct: (Long) -> Unit
+    goToNewProduct: (Long) -> Unit,
+    fetchData: () -> Unit
 ) {
     val state = stateFlow.collectAsState().value
+    fetchData()
     Box(modifier = modifier.fillMaxSize()) {
         Column(modifier = modifier.padding(horizontal = 10.dp)) {
             CartHeader(modifier, state.cartWithData.value)
