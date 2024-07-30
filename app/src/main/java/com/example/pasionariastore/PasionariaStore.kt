@@ -1,15 +1,10 @@
 package com.example.pasionariastore
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -23,7 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -43,12 +37,8 @@ import com.example.pasionariastore.viewmodel.CartListViewModel
 import com.example.pasionariastore.viewmodel.CartProductViewModel
 import com.example.pasionariastore.viewmodel.CartViewModel
 
-enum class MyScreens(@StringRes val title: Int, val route: String) {
-    Resume(title = R.string.resume, route = "resume"),
-    CartList(title = R.string.cart_list, route = "cart"),
-    Cart(title = R.string.cart, route = "cart/{cart_id}"),
-    CartProduct(title = R.string.cart_product, route = "cart_product/{product_id}"),
-    CartResume(title = R.string.cart_resume, route = "cart_resume"),
+enum class MyScreens {
+    Resume, CartList, Cart, CartProduct
 }
 
 @Preview(showBackground = true)
@@ -67,26 +57,10 @@ fun PasionariaStore(
     val cartProductState = cartProductViewModel.state
     Scaffold(
         topBar = {
-            val lastRoute =
-                backStackEntry?.destination?.route ?: MyScreens.Resume.route
             PasionariaTopAppBar(
-                screen = MyScreens.entries.first { lastRoute.equals(it.route) }, modifier
+                modifier
             )
-        },
-        floatingActionButton = {
-            // El floating button solo se ve en la vista de pedidos
-            if (backStackEntry?.destination?.route.equals(MyScreens.Cart.route))
-                FloatingActionButton(
-                    onClick = {
-                        cartViewModel.goToAddNewProductCartScreen(
-                            navController = navController
-                        )
-                    },
-                ) {
-                    Icon(Icons.Filled.Add, "Floating action button.")
-                }
-        },
-        modifier = Modifier.fillMaxSize()
+        }, modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
         Box {
             Image(
@@ -98,64 +72,79 @@ fun PasionariaStore(
             )
             NavHost(
                 navController = navController,
-                startDestination = MyScreens.Resume.route,
+                startDestination = MyScreens.Resume.name,
                 modifier = modifier
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                composable(route = MyScreens.Resume.route) {
+                composable(route = MyScreens.Resume.name) {
                     // TODO: Hay que quitar el boton que accede a un pedido sin ID
                     ResumeScreen(
                         modifier = modifier,
-                        onCartButtonClicked = { navController.navigate("${MyScreens.Cart.route}/1") },
-                        onCartListButtonClicked = { navController.navigate(MyScreens.CartList.route) },
+                        onCartButtonClicked = { },
+                        onCartListButtonClicked = { navController.navigate(MyScreens.CartList.name) },
                         dataStore = dataStore,
                     )
                 }
                 composable(
-                    route = MyScreens.CartList.route,
+                    route = MyScreens.CartList.name,
                 ) {
-                    CartListScreen(
-                        cartListViewModel = cartListViewModel,
+                    CartListScreen(cartListViewModel = cartListViewModel,
                         stateFlow = cartListViewModel.state,
-                        onCreateNewCartClicked = { cartListViewModel.createNewCart() },
+                        onCreateNewCartClicked = {
+                            cartListViewModel.createNewCart()
+                        },
                         onDeleteCartClicked = { cartListViewModel.deleteCart(it) },
-                        onNavigteToCart = { navController.navigate("${MyScreens.CartList.route}/$it") }
-                    )
+                        goToCartScreen = {
+                            navController.navigate("${MyScreens.Cart.name}/$it")
+                        })
                 }
                 composable(
-                    route = MyScreens.Cart.route,
-                    arguments = listOf(navArgument("cart_id") { type = NavType.LongType }),
+                    route = "${MyScreens.Cart.name}/{cartId}",
+                    arguments = listOf(navArgument("cartId") { type = NavType.LongType }),
                 ) {
-                    val cartId: Long = it.arguments!!.getLong("cart_id")
+                    val cartId: Long = it.arguments!!.getLong("cartId")
                     LaunchedEffect(key1 = "initCart") {
                         cartViewModel.initScreenByCart(cartId)
                     }
-                    CartScreen(
-                        modifier = modifier,
+                    CartScreen(modifier = modifier,
                         onRemoveProductCart = {
                             cartViewModel.removeProductFromCart(
-                                data = it,
-                                context = context
+                                data = it, context = context
                             )
                         },
                         onCardProductButtonClicked = {
                             cartViewModel.goToUpdateProductCart(
                                 product = it,
-                                navController = navController
+                                goToCartProductScreen = { cartId, productCartId ->
+                                    navController.navigate("${MyScreens.CartProduct.name}/${cartId}?productCartId=${productCartId}")
+                                },
                             )
                         },
                         formatValue = { cartViewModel.formatPriceNumber(it) },
                         stateFlow = cartViewModel.state,
-                    )
+                        goToNewProduct = {
+                            cartViewModel.goToAddNewProductCartScreen({ navController.navigate("${MyScreens.CartProduct.name}/$it") })
+                        })
                 }
-                composable(route = MyScreens.CartProduct.route) {
-                    CartProductScreen(
-                        modifier = modifier,
+                composable(
+                    route = "${MyScreens.CartProduct.name}/{cartId}?productCartId={productCartId}",
+                    arguments = listOf(
+                        navArgument("cartId") { type = NavType.LongType },
+                        navArgument("productCartId") { type = NavType.LongType; defaultValue = 0L })
+                ) {
+                    val cartId: Long = it.arguments!!.getLong("cartId")
+                    val produccartId: Long =
+                        it.arguments?.getLong("productCartId") ?: 0L
+                    LaunchedEffect(key1 = "initProductCart") {
+                        cartProductViewModel.initScreen(
+                            cartId = cartId, productCartId = produccartId
+                        )
+                    }
+                    CartProductScreen(modifier = modifier,
                         onCancelButtonClicked = { navController.popBackStack() },
                         onAddButtonClicked = {
-                            cartProductViewModel.createOrUpdateProductCart(
-                                context = context,
+                            cartProductViewModel.createOrUpdateProductCart(context = context,
                                 { navController.popBackStack() })
                         },
                         onCancelSearch = { cartProductViewModel.setShowModal(false) },
@@ -165,8 +154,7 @@ fun PasionariaStore(
                         onSearchProducts = { cartProductViewModel.searchProducts(context = context) },
                         updateCurrentSearch = { cartProductViewModel.updateCurrentSearch(it) },
                         onProductSearchClicked = { cartProductViewModel.selectProductSearched(it) },
-                        updateQuantity = { cartProductViewModel.updateCurrentQuantity(it) }
-                    )
+                        updateQuantity = { cartProductViewModel.updateCurrentQuantity(it) })
                 }
             }
         }
@@ -176,12 +164,11 @@ fun PasionariaStore(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PasionariaTopAppBar(screen: MyScreens, modifier: Modifier = Modifier) {
+fun PasionariaTopAppBar(modifier: Modifier = Modifier) {
     TopAppBar(
         title = {
-            Text(text = stringResource(id = screen.title), fontWeight = FontWeight.Bold)
-        },
-        colors = TopAppBarColors(
+            Text(text = "Pasionaria", fontWeight = FontWeight.Bold)
+        }, colors = TopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
             titleContentColor = MaterialTheme.colorScheme.secondaryContainer,
             navigationIconContentColor = Color.Gray,
@@ -190,4 +177,3 @@ fun PasionariaTopAppBar(screen: MyScreens, modifier: Modifier = Modifier) {
         )
     )
 }
-

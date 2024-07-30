@@ -5,7 +5,6 @@ import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.pasionariastore.MyScreens
 import com.example.pasionariastore.model.ProductCartWithData
@@ -40,7 +39,6 @@ class CartViewModel @Inject constructor(
     }
 
     fun initScreenByCart(cartId: Long) {
-        cleanState()
         viewModelScope.launch(Dispatchers.IO) {
             cartRepository.getCartWithData(cartId).collect { cart ->
                 if (cart != null) _state.update {
@@ -54,8 +52,8 @@ class CartViewModel @Inject constructor(
      * Indica si es posible utilizar el buscador y restablece valores
      */
 
-    fun goToAddNewProductCartScreen(navController: NavHostController) {
-        navController.navigate(MyScreens.CartProduct.route)
+    fun goToAddNewProductCartScreen(goToNewProductCart: (Long) -> Unit) {
+        goToNewProductCart(state.value.cartWithData.value.cart.id)
         viewModelScope.launch {
             delay(1000)
             state.value.lastSearch.emit(value = Unit)
@@ -77,7 +75,7 @@ class CartViewModel @Inject constructor(
     }
 
     fun goToUpdateProductCart(
-        product: ProductCartWithData, navController: NavController
+        product: ProductCartWithData, goToCartProductScreen: (Long, Long) -> Unit
     ) {
         _state.update {
             it.copy(
@@ -85,7 +83,9 @@ class CartViewModel @Inject constructor(
                 canSearchProducts = false,
             )
         }
-        navController.navigate(MyScreens.CartProduct.route)
+        state.value.currentProductCart.productCart.let {
+            goToCartProductScreen(it.cartId, it.productCartId)
+        }
         viewModelScope.launch {
             delay(1000)
             state.value.lastSearch.emit(Unit)

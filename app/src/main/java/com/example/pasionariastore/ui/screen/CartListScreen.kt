@@ -96,7 +96,7 @@ fun ScreenPreivew(modifier: Modifier = Modifier) {
             stateFlow = MutableStateFlow(CartListUIState(carts = Datasource.carts.toMutableStateList())),
             onCreateNewCartClicked = {},
             onDeleteCartClicked = {},
-            onNavigteToCart = {}
+            goToCartScreen = {}
         )
     }
 }
@@ -109,7 +109,7 @@ fun CartListScreen(
     stateFlow: StateFlow<CartListUIState>,
     onCreateNewCartClicked: () -> Unit,
     onDeleteCartClicked: (Cart) -> Unit,
-    onNavigteToCart: (Long) -> Unit
+    goToCartScreen: (Long) -> Unit
 ) {
     val state by stateFlow.collectAsState()
     Box(modifier = modifier) {
@@ -123,7 +123,9 @@ fun CartListScreen(
                 modifier = modifier,
                 carts = state.carts,
                 onDeleteCartClicked = onDeleteCartClicked,
-                onCartClicked = { onNavigteToCart(it.id) }
+                onCartClicked = {
+                    goToCartScreen(it.id)
+                }
             )
         }
         FloatingActionButton(

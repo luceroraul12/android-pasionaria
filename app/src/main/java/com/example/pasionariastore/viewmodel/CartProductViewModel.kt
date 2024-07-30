@@ -4,6 +4,7 @@ import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.model.state.CartProductUIState
 import com.example.pasionariastore.repository.CartRepository
@@ -78,7 +79,7 @@ class CartProductViewModel @Inject constructor(
                         updateState(
                             state.value.copy(
                                 // Seteo las propiedades del producto
-                                currentProductCart = productCartWithData.productCart,
+                                currentProductCart = productCartWithData.productCart.copy(cartId = cartId),
                                 currentProductWithUnit = productCartWithData.productWithUnit,
                                 // Al existir, no tiene que dejar buscar productos
                                 canSearchProducts = false
@@ -86,6 +87,14 @@ class CartProductViewModel @Inject constructor(
                         )
                     }
             }
+        } else {
+            updateState(
+                state.value.copy(
+                    // Seteo las propiedades del producto
+                    currentProductCart = ProductCart(cartId = cartId),
+                    canSearchProducts = true
+                )
+            )
         }
         emitFocus()
     }
