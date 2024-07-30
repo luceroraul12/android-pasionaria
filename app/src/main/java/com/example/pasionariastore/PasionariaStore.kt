@@ -152,7 +152,7 @@ fun PasionariaStore(
                 composable(route = MyScreens.CartProduct.route) {
                     CartProductScreen(
                         modifier = modifier,
-                        onCancelButtonClicked = { navController.navigate(MyScreens.Cart.route) },
+                        onCancelButtonClicked = { navController.popBackStack() },
                         onAddButtonClicked = {
                             cartProductViewModel.createOrUpdateProductCart(
                                 context = context,

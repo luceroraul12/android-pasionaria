@@ -150,7 +150,7 @@ class CartProductViewModel @Inject constructor(
             price = item.currentProductWithUnit.product.priceList
             result = (price * (quantity.toDoubleOrNull() ?: 0.0)) / 1000
             val currentProductCart = state.value.currentProductCart.copy(
-                quantity = quantity,
+                quantity = quantity.toString(),
                 totalPrice = result,
             )
             updateState(
