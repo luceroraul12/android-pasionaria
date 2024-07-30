@@ -153,13 +153,13 @@ fun CartHeaderRow(firstLabel: String, secondLabel: String, modifier: Modifier) {
 
 @Composable
 fun CartListProducts(
-    productCartList: List<ProductCartWithData>?,
+    productCartList: List<ProductCartWithData>,
     modifier: Modifier,
     onCardProductButtonClicked: (ProductCartWithData) -> Unit,
     onProductCartDelete: (ProductCartWithData) -> Unit,
     formatValue: (Double) -> String
 ) {
-    if (productCartList.isNullOrEmpty()) {
+    if (productCartList.isEmpty()) {
         Card(
             modifier = modifier
                 .fillMaxWidth()

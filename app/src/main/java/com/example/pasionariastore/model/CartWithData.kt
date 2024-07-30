@@ -12,7 +12,7 @@ data class CartWithData(
         parentColumn = "cart_id",
         entityColumn = "cart_id"
     )
-    val productCartWithData: List<ProductCartWithData>?
+    val productCartWithData: List<ProductCartWithData>
 )
 
 fun CartWithData.calculateTotalPriceLabel(): String{
