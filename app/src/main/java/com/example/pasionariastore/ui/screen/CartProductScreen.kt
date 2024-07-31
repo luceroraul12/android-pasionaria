@@ -68,7 +68,7 @@ fun ProductScreenPreview() {
                 onCancelSearch = {},
                 onProductSearchClicked = {},
                 formatPriceNumber = { "203" },
-                stateFlow = MutableStateFlow(CartProductUIState()),
+                state = CartProductUIState(),
                 updateQuantity = {},
             )
         }
@@ -80,7 +80,7 @@ fun CartProductScreen(
     modifier: Modifier = Modifier,
     onAddButtonClicked: () -> Unit,
     onCancelButtonClicked: () -> Unit,
-    stateFlow: MutableStateFlow<CartProductUIState>,
+    state: CartProductUIState,
     onProductSearchClicked: (ProductWithUnit) -> Unit,
     onCancelSearch: () -> Unit,
     formatPriceNumber: (Double) -> String,
@@ -90,19 +90,18 @@ fun CartProductScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
-    val state = stateFlow.collectAsState()
     LaunchedEffect(Unit) {
-        state.value.lastSearch.collectLatest {
+        state.lastSearch.collectLatest {
             focusRequester.requestFocus()
             focusManager.moveFocus(FocusDirection.Down)
         }
     }
-    if (state.value.showModalProductSearch) {
+    if (state.showModalProductSearch) {
         // Antes de abrir el modal tengo que ver si existen coincidencias
         ModalSearchProduct(
-            productList = state.value.productsFound,
+            productList = state.productsFound,
             onProductSearchClicked = { onProductSearchClicked(it) },
-            search = state.value.currentSearch,
+            search = state.currentSearch,
             modifier = modifier,
             onCancelSearch = onCancelSearch
         )
@@ -113,13 +112,13 @@ fun CartProductScreen(
             .padding(10.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        if (state.value.canSearchProducts) {
+        if (state.canSearchProducts) {
             Card {
                 ProductSearcher(
                     modifier.fillMaxWidth(),
                     canSearchProducts = true,
                     onSearchProducts = onSearchProducts,
-                    currentSearch = state.value.currentSearch,
+                    currentSearch = state.currentSearch,
                     updateCurrentSearch = { updateCurrentSearch(it) },
                     focusRequester = focusRequester
                 )
@@ -129,7 +128,7 @@ fun CartProductScreen(
         Card(modifier = modifier.weight(1f)) {
             ProductDescription(
                 modifier.fillMaxWidth(),
-                state.value.currentProductWithUnit,
+                state.currentProductWithUnit,
                 formatValue = formatPriceNumber
             )
         }
@@ -137,18 +136,18 @@ fun CartProductScreen(
         Card {
             ProductFormCalculator(
                 modifier = modifier,
-                quantity = state.value.currentProductCart.quantity,
+                quantity = state.currentProductCart.quantity,
                 updateQuantity = { updateQuantity(it) },
-                priceCalculated = state.value.currentProductCart.totalPrice.toString(),
+                priceCalculated = state.currentProductCart.totalPrice.toString(),
                 focusRequester = focusRequester,
                 onAddButtonClicked = onAddButtonClicked,
-                canEditQuantity = state.value.canUpdateQuantity
+                canEditQuantity = state.canUpdateQuantity
             )
             CartProductActionButtons(
                 modifier = modifier,
                 onCancelButtonClicked = onCancelButtonClicked,
                 onAddButtonClicked = onAddButtonClicked,
-                productCart = state.value.currentProductCart,
+                productCart = state.currentProductCart,
             )
         }
     }

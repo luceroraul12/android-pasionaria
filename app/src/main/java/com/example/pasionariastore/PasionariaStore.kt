@@ -12,6 +12,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,7 +26,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.pasionariastore.data.CustomDataStore
@@ -51,10 +51,10 @@ fun PasionariaStore(
     cartProductViewModel: CartProductViewModel = viewModel(),
     dataStore: CustomDataStore = CustomDataStore(LocalContext.current)
 ) {
-    // Intento recuperar ultimo valor de navegacion
-    val backStackEntry by navController.currentBackStackEntryAsState()
     val context = LocalContext.current
-    val cartProductState = cartProductViewModel.state
+    val cartProductState by cartProductViewModel.state.collectAsState()
+    val cartState by cartViewModel.state.collectAsState()
+    val cartListState by cartListViewModel.state.collectAsState()
     Scaffold(
         topBar = {
             PasionariaTopAppBar(
@@ -89,8 +89,9 @@ fun PasionariaStore(
                 composable(
                     route = MyScreens.CartList.name,
                 ) {
-                    CartListScreen(cartListViewModel = cartListViewModel,
-                        stateFlow = cartListViewModel.state,
+                    CartListScreen(
+                        cartListViewModel = cartListViewModel,
+                        state = cartListState,
                         onCreateNewCartClicked = {
                             cartListViewModel.createNewCart()
                         },
@@ -104,7 +105,8 @@ fun PasionariaStore(
                     arguments = listOf(navArgument("cartId") { type = NavType.LongType }),
                 ) {
                     val cartId: Long = it.arguments!!.getLong("cartId")
-                    CartScreen(modifier = modifier,
+                    CartScreen(
+                        modifier = modifier,
                         onRemoveProductCart = {
                             cartViewModel.removeProductFromCart(
                                 data = it, context = context
@@ -119,7 +121,7 @@ fun PasionariaStore(
                             )
                         },
                         formatValue = { cartViewModel.formatPriceNumber(it) },
-                        stateFlow = cartViewModel.state,
+                        state = cartState,
                         goToNewProduct = {
                             cartViewModel.goToAddNewProductCartScreen({ navController.navigate("${MyScreens.CartProduct.name}/$it") })
                         },
@@ -139,7 +141,8 @@ fun PasionariaStore(
                             cartId = cartId, productCartId = produccartId
                         )
                     }
-                    CartProductScreen(modifier = modifier,
+                    CartProductScreen(
+                        modifier = modifier,
                         onCancelButtonClicked = { navController.popBackStack() },
                         onAddButtonClicked = {
                             cartProductViewModel.createOrUpdateProductCart(context = context,
@@ -147,7 +150,7 @@ fun PasionariaStore(
                         },
                         onCancelSearch = { cartProductViewModel.setShowModal(false) },
                         formatPriceNumber = { cartProductViewModel.formatPriceNumber(it) },
-                        stateFlow = cartProductState,
+                        state = cartProductState,
                         onSearchProducts = { cartProductViewModel.searchProducts(context = context) },
                         updateCurrentSearch = { cartProductViewModel.updateCurrentSearch(it) },
                         onProductSearchClicked = { cartProductViewModel.selectProductSearched(it) },
