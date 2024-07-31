@@ -11,7 +11,9 @@ class CartViewModelTest {
     val cartRepository: CartRepository = CartRepositoryFake()
     val productRepository: ProductRepository = ProductRepositoryFake()
     val viewModel: CartViewModel =
-        CartViewModel(cartRepository = cartRepository, productRepository = productRepository)
+        CartViewModel(cartRepository = cartRepository,
+            productRepository = productRepository,
+            checkDatabaseViewModel = CheckDatabaseViewModel(ProductRepositoryFake()))
 
     @Test
     fun format_text_rounded_success() {
