@@ -67,6 +67,7 @@ class CartProductViewModel @Inject constructor(
                 )
             )
         )
+        calculatePriceProductCart()
     }
 
     fun initScreen(cartId: Long, productCartId: Long): Unit {

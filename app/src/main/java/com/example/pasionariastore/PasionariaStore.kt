@@ -146,7 +146,6 @@ fun PasionariaStore(
                                 { navController.popBackStack() })
                         },
                         onCancelSearch = { cartProductViewModel.setShowModal(false) },
-                        priceCalculated = cartProductViewModel.calculatePriceProductCart(),
                         formatPriceNumber = { cartProductViewModel.formatPriceNumber(it) },
                         stateFlow = cartProductState,
                         onSearchProducts = { cartProductViewModel.searchProducts(context = context) },
