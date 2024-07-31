@@ -23,7 +23,7 @@ class CartRepositoryImpl @Inject constructor(private val cartDatabaseDao: CartDa
         return cartDatabaseDao.getCartProducts().flowOn(Dispatchers.IO).conflate()
     }
 
-    override fun getCartsWithStatus(status: List<String>): Flow<List<Cart>> {
+    override fun getCartsWithStatus(status: List<String>): Flow<List<CartWithData>> {
         return cartDatabaseDao.getCartsWithStatus(status).flowOn(Dispatchers.IO).conflate()
     }
 

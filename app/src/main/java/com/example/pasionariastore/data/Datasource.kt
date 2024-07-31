@@ -1,6 +1,7 @@
 package com.example.pasionariastore.data
 
 import com.example.pasionariastore.model.Cart
+import com.example.pasionariastore.model.CartWithData
 import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithData
@@ -68,6 +69,12 @@ object Datasource {
         Cart(status = "FINALIZED", dateCreated = Date(1562624)),
         Cart(status = "PENDING", dateCreated = Date(155959624)),
         Cart(status = "INACTIVE", dateCreated = Date(124)),
+    )
 
-        )
+    val cartWithData: List<CartWithData> = mutableListOf(
+        CartWithData(cart = carts[0], productCartWithData = listOf(cartProducts[1])),
+        CartWithData(cart = carts[1], productCartWithData = listOf(cartProducts[1])),
+        CartWithData(cart = carts[2], productCartWithData = listOf(cartProducts[1])),
+        CartWithData(cart = carts[2], productCartWithData = listOf(cartProducts[1]))
+    )
 }

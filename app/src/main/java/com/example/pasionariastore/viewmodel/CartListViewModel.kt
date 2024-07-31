@@ -11,7 +11,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -55,7 +54,7 @@ class CartListViewModel @Inject constructor(
             cartRepository.getCartsWithStatus(status).collect { carts ->
                 _state.update {
                     it.copy(
-                        carts = carts.toMutableStateList()
+                        cartsWithData = carts.toMutableStateList()
                     )
                 }
             }

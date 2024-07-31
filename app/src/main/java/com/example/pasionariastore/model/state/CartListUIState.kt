@@ -3,13 +3,13 @@ package com.example.pasionariastore.model.state
 import androidx.annotation.ColorRes
 import androidx.compose.runtime.mutableStateListOf
 import com.example.pasionariastore.R
-import com.example.pasionariastore.model.Cart
+import com.example.pasionariastore.model.CartWithData
 
 data class CartListUIState(
     val stateFilters: MutableList<CartStatus> = mutableStateListOf(
         CartStatus.INACTIVE, CartStatus.PENDING, CartStatus.FINALIZED
     ),
-    val carts: MutableList<Cart> = mutableStateListOf()
+    val cartsWithData: MutableList<CartWithData> = mutableStateListOf()
 )
 
 enum class CartStatus(

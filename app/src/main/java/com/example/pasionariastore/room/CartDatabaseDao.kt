@@ -20,7 +20,7 @@ interface CartDatabaseDao {
 
     @Transaction
     @Query("SELECT * FROM Cart WHERE status IN (:status) ORDER BY date_created DESC")
-    fun getCartsWithStatus(status: List<String>): Flow<List<Cart>>
+    fun getCartsWithStatus(status: List<String>): Flow<List<CartWithData>>
 
     @Transaction
     @Query("SELECT * FROM ProductCart")

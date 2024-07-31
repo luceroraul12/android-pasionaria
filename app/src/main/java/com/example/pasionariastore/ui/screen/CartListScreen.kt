@@ -38,6 +38,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.Cart
+import com.example.pasionariastore.model.CartWithData
+import com.example.pasionariastore.model.calculateTotalPriceLabel
 import com.example.pasionariastore.model.format
 import com.example.pasionariastore.model.state.CartListUIState
 import com.example.pasionariastore.model.state.CartStatus
@@ -65,17 +67,17 @@ fun CartItemPreview(modifier: Modifier = Modifier) {
         Column {
             CartItem(
                 modifier = modifier,
-                cart = Datasource.carts.get(0),
+                cartWithData = Datasource.cartWithData.get(0),
                 onDeleteCartClicked = {},
                 onCartClicked = {})
             CartItem(
                 modifier = modifier,
-                cart = Datasource.carts.get(1),
+                cartWithData = Datasource.cartWithData.get(1),
                 onDeleteCartClicked = {},
                 onCartClicked = {})
             CartItem(
                 modifier = modifier,
-                cart = Datasource.carts.get(2),
+                cartWithData = Datasource.cartWithData.get(2),
                 onDeleteCartClicked = {},
                 onCartClicked = {})
         }
@@ -89,7 +91,7 @@ fun ScreenPreivew(modifier: Modifier = Modifier) {
         CartListScreen(
             modifier = modifier,
             cartListViewModel = CartListViewModel(cartRepository = CartRepositoryFake()),
-            state = CartListUIState(carts = Datasource.carts.toMutableStateList()),
+            state = CartListUIState(cartsWithData = Datasource.cartWithData.toMutableStateList()),
             onCreateNewCartClicked = {},
             onDeleteCartClicked = {},
             goToCartScreen = {}
@@ -116,7 +118,7 @@ fun CartListScreen(
             )
             CartList(
                 modifier = modifier,
-                carts = state.carts,
+                carts = state.cartsWithData,
                 onDeleteCartClicked = onDeleteCartClicked,
                 onCartClicked = {
                     goToCartScreen(it.id)
@@ -192,7 +194,7 @@ fun CartFormFilterStates(
 @Composable
 fun CartList(
     modifier: Modifier,
-    carts: MutableList<Cart>,
+    carts: MutableList<CartWithData>,
     onDeleteCartClicked: (Cart) -> Unit,
     onCartClicked: (Cart) -> Unit
 ) {
@@ -211,7 +213,7 @@ fun CartList(
 @Composable
 fun CartItem(
     modifier: Modifier,
-    cart: Cart,
+    cartWithData: CartWithData,
     onDeleteCartClicked: (Cart) -> Unit,
     onCartClicked: (Cart) -> Unit
 ) {
@@ -223,15 +225,15 @@ fun CartItem(
         border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondary)
     ) {
         Column(modifier = modifier, verticalArrangement = Arrangement.Center) {
-            CartItemStatusLabel(modifier = modifier, cart = CartStatus.valueOf(cart.status))
+            CartItemStatusLabel(modifier = modifier, cart = CartStatus.valueOf(cartWithData.cart.status))
             Column(modifier = modifier.padding(10.dp)) {
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = modifier.fillMaxWidth()
                 ) {
-                    Text(text = "#${cart.id}", style = MaterialTheme.typography.titleLarge)
+                    Text(text = "#${cartWithData.cart.id}", style = MaterialTheme.typography.titleLarge)
                     Text(
-                        text = cart.totalPrice.toString(),
+                        text = cartWithData.calculateTotalPriceLabel(),
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
@@ -240,16 +242,16 @@ fun CartItem(
                     modifier = modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = cart.dateCreated.format(),
+                        text = cartWithData.cart.dateCreated.format(),
                         style = MaterialTheme.typography.bodyLarge
                     )
-                    Text(text = cart.usernameSeller, style = MaterialTheme.typography.bodyLarge)
+                    Text(text = cartWithData.cart.usernameSeller, style = MaterialTheme.typography.bodyLarge)
                 }
             }
-            if (cart.status.equals(CartStatus.PENDING.name))
+            if (cartWithData.cart.status.equals(CartStatus.PENDING.name))
                 CardActionButtons(
-                    onCartProductClicked = { onCartClicked(cart) },
-                    onDeleteProductClicked = { onDeleteCartClicked(cart) },
+                    onCartProductClicked = { onCartClicked(cartWithData.cart) },
+                    onDeleteProductClicked = { onDeleteCartClicked(cartWithData.cart) },
                     labelDelete = "Eliminar",
                     labelEdit = "Editar productos"
                 )
