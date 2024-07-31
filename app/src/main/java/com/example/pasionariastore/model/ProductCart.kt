@@ -2,9 +2,13 @@ package com.example.pasionariastore.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(
+    indices = [
+        Index(value = ["product_id", "cart_id"], unique = true)]
+)
 data class ProductCart(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "product_cart_id")
