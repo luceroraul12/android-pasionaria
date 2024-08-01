@@ -24,7 +24,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +53,7 @@ import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.model.state.CartProductUIState
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -61,7 +66,7 @@ fun ProductScreenPreview() {
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
                 onAddButtonClicked = {},
                 onCancelButtonClicked = {},
-                state = CartProductUIState(),
+                stateFlow = MutableStateFlow(CartProductUIState()),
                 onProductSearchClicked = {},
                 onCancelSearch = {},
                 formatPriceNumber = { "203" },
@@ -69,6 +74,7 @@ fun ProductScreenPreview() {
                 updateCurrentSearch = {},
                 updateQuantity = {},
                 fetchData = {},
+                onClose = {}
             )
         }
     }
@@ -79,7 +85,7 @@ fun CartProductScreen(
     modifier: Modifier = Modifier,
     onAddButtonClicked: () -> Unit,
     onCancelButtonClicked: () -> Unit,
-    state: CartProductUIState,
+    stateFlow: MutableStateFlow<CartProductUIState>,
     onProductSearchClicked: (ProductWithUnit) -> Unit,
     onCancelSearch: () -> Unit,
     formatPriceNumber: (Double) -> String,
@@ -87,10 +93,12 @@ fun CartProductScreen(
     updateCurrentSearch: (String) -> Unit,
     updateQuantity: (String) -> Unit,
     fetchData: () -> Unit,
+    onClose: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
-    LaunchedEffect(Unit) {
+    val state by stateFlow.collectAsState()
+    LaunchedEffect(key1 = "Init") {
         fetchData()
         state.lastSearch.collectLatest {
             focusRequester.requestFocus()
@@ -153,7 +161,9 @@ fun CartProductScreen(
             )
         }
     }
-
+    DisposableEffect(key1 = "Close") {
+        onDispose(onClose)
+    }
 }
 
 @Composable

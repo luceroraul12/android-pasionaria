@@ -51,7 +51,6 @@ fun PasionariaStore(
     dataStore: CustomDataStore = CustomDataStore(LocalContext.current)
 ) {
     val context = LocalContext.current
-    val cartProductState by cartProductViewModel.state.collectAsState()
     val cartState by cartViewModel.state.collectAsState()
     val cartListState = cartListViewModel.state.collectAsState()
     Scaffold(
@@ -139,12 +138,12 @@ fun PasionariaStore(
                         modifier = modifier,
                         onCancelButtonClicked = { navController.popBackStack() },
                         onAddButtonClicked = {
-                            cartProductViewModel.createOrUpdateProductCart(context = context,
-                                { navController.popBackStack() })
+                            cartProductViewModel.createOrUpdateProductCart(context = context)
+                            navController.popBackStack()
                         },
                         onCancelSearch = { cartProductViewModel.setShowModal(false) },
                         formatPriceNumber = { cartProductViewModel.formatPriceNumber(it) },
-                        state = cartProductState,
+                        stateFlow = cartProductViewModel.state,
                         onSearchProducts = { cartProductViewModel.searchProducts(context = context) },
                         updateCurrentSearch = { cartProductViewModel.updateCurrentSearch(it) },
                         onProductSearchClicked = { cartProductViewModel.selectProductSearched(it) },
@@ -153,7 +152,8 @@ fun PasionariaStore(
                             cartProductViewModel.initScreen(
                                 cartId = cartId, productCartId = produccartId
                             )
-                        })
+                        },
+                        onClose = {cartProductViewModel.cleanState()})
                 }
             }
         }

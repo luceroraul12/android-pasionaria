@@ -51,7 +51,7 @@ class CartProductViewModel @Inject constructor(
         return format.format(value)
     }
 
-    private fun cleanState(): Unit {
+    fun cleanState(): Unit {
         updateState(CartProductUIState())
     }
 
@@ -89,7 +89,8 @@ class CartProductViewModel @Inject constructor(
                                 currentProductWithUnit = productCartWithData.productWithUnit,
                                 // Al existir, no tiene que dejar buscar productos
                                 canSearchProducts = false,
-                                canUpdateQuantity = true
+                                canUpdateQuantity = true,
+                                showModalProductSearch = false
                             )
                         )
                     }
@@ -99,7 +100,8 @@ class CartProductViewModel @Inject constructor(
                         // Seteo las propiedades del producto
                         currentProductCart = ProductCart(cartId = cartId),
                         canSearchProducts = true,
-                        canUpdateQuantity = false
+                        canUpdateQuantity = false,
+                        showModalProductSearch = false
                     )
                 )
             }
@@ -155,7 +157,7 @@ class CartProductViewModel @Inject constructor(
     }
 
     fun setShowModal(show: Boolean) {
-        updateState(CartProductUIState(showModalProductSearch = show))
+        updateState(state.value.copy(showModalProductSearch = show))
     }
 
     fun calculatePriceProductCart(): String {
@@ -179,7 +181,7 @@ class CartProductViewModel @Inject constructor(
         return formatPriceNumber(result)
     }
 
-    fun createOrUpdateProductCart(context: Context, onReturn: () -> Unit): Unit {
+    fun createOrUpdateProductCart(context: Context): Unit {
         viewModelScope.launch(Dispatchers.IO) {
             state.value.let {
                 var message = "El producto fue agregado al pedido"
@@ -190,10 +192,6 @@ class CartProductViewModel @Inject constructor(
                     cartRepository.updateProductCart(it.currentProductCart)
                 }
                 showMessage(context = context, message = message)
-            }
-            withContext(Dispatchers.Main){
-                cleanState()
-                onReturn()
             }
         }
     }
