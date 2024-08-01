@@ -54,6 +54,7 @@ import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.model.state.CartProductUIState
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -85,7 +86,7 @@ fun CartProductScreen(
     modifier: Modifier = Modifier,
     onAddButtonClicked: () -> Unit,
     onCancelButtonClicked: () -> Unit,
-    stateFlow: MutableStateFlow<CartProductUIState>,
+    stateFlow: StateFlow<CartProductUIState>,
     onProductSearchClicked: (ProductWithUnit) -> Unit,
     onCancelSearch: () -> Unit,
     formatPriceNumber: (Double) -> String,

@@ -5,8 +5,6 @@ import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
-import com.example.pasionariastore.MyScreens
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.state.CartUIState
 import com.example.pasionariastore.repository.CartRepository
@@ -16,7 +14,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -33,9 +30,7 @@ class CartViewModel @Inject constructor(
         private set
 
     fun cleanState() {
-        state.update {
-            CartUIState()
-        }
+        state.value = CartUIState()
     }
 
     fun initScreenByCart(cartId: Long) {
@@ -54,16 +49,6 @@ class CartViewModel @Inject constructor(
 
     fun goToAddNewProductCartScreen(goToNewProductCart: (Long) -> Unit) {
         goToNewProductCart(state.value.cartWithData.value.cart.id)
-        viewModelScope.launch {
-            delay(1000)
-            state.value.lastSearch.emit(value = Unit)
-        }
-    }
-
-    fun cancelProductSearch() {
-        state.update {
-            it.copy(showModalProductSearch = false)
-        }
     }
 
     fun removeProductFromCart(data: ProductCartWithData, context: Context) {
@@ -77,18 +62,8 @@ class CartViewModel @Inject constructor(
     fun goToUpdateProductCart(
         product: ProductCartWithData, goToCartProductScreen: (Long, Long) -> Unit
     ) {
-        state.update {
-            it.copy(
-                currentProductCart = product,
-                canSearchProducts = false,
-            )
-        }
         state.value.currentProductCart.productCart.let {
             goToCartProductScreen(it.cartId, it.productCartId)
-        }
-        viewModelScope.launch {
-            delay(1000)
-            state.value.lastSearch.emit(Unit)
         }
     }
 
