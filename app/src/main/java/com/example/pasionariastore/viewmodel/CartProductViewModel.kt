@@ -32,7 +32,7 @@ class CartProductViewModel @Inject constructor(
 
     fun emitFocus(): Unit {
         viewModelScope.launch {
-            delay(1000)
+            delay(500)
             state.value.lastSearch.emit(value = Unit)
         }
     }
