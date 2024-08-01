@@ -21,8 +21,8 @@ class CartListViewModel @Inject constructor(
     private val cartRepository: CartRepository
 
 ) : ViewModel() {
-    private var _state = MutableStateFlow(CartListUIState())
-    val state = _state.asStateFlow()
+    var state = MutableStateFlow(CartListUIState())
+        private set
 
     init {
         getCarts()
@@ -30,12 +30,12 @@ class CartListViewModel @Inject constructor(
 
 
     fun updateChipStatus(chip: CartStatus): Unit {
-        val index: Int = _state.value.stateFilters.indexOf(chip)
-        val statues: MutableList<CartStatus> = _state.value.stateFilters
+        val index: Int = state.value.stateFilters.indexOf(chip)
+        val statues: MutableList<CartStatus> = state.value.stateFilters
         statues.set(index, chip.apply {
             enabled = !enabled
         })
-        _state.update {
+        state.update {
             it.copy(
                 stateFilters = statues.toMutableStateList()
             )
@@ -52,7 +52,7 @@ class CartListViewModel @Inject constructor(
                 status = state.value.stateFilters.filter(CartStatus::enabled).map { it.name }
             }
             cartRepository.getCartsWithStatus(status).collect { carts ->
-                _state.update {
+                state.update {
                     it.copy(
                         cartsWithData = carts.toMutableStateList()
                     )
