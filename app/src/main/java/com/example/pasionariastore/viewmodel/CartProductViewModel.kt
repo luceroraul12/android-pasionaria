@@ -2,7 +2,6 @@ package com.example.pasionariastore.viewmodel
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pasionariastore.model.ProductCart
@@ -15,9 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.util.Currency
 import javax.inject.Inject
@@ -74,32 +71,31 @@ class CartProductViewModel @Inject constructor(
         // Si cuenta con ProductCartId, significa que previamente se habia guardado el producto y no necesita volver a buscar productos
         // Busco el producto
         viewModelScope.launch(Dispatchers.IO) {
-            state.update {
-                state.value.copy(initCartId = cartId, isNew = productCartId == 0L)
-            }
             if (productCartId > 0) {
                 cartRepository.getCartProductWithDataById(productCartId)
                     .collect { productCartWithData ->
-                        updateState(
-                            state.value.copy(
-                                // Seteo las propiedades del producto
-                                currentProductCart = productCartWithData.productCart.copy(cartId = cartId),
-                                currentProductWithUnit = productCartWithData.productWithUnit,
-                                // Al existir, no tiene que dejar buscar productos
-                                canSearchProducts = false,
-                                canUpdateQuantity = true,
-                                showModalProductSearch = false
+                        if (productCartWithData != null)
+                            updateState(
+                                state.value.copy(
+                                    currentProductCart = productCartWithData.productCart.copy(cartId = cartId),
+                                    currentProductWithUnit = productCartWithData.productWithUnit,
+                                    canSearchProducts = false,
+                                    canUpdateQuantity = true,
+                                    showModalProductSearch = false,
+                                    initCartId = cartId,
+                                    isNew = false
+                                )
                             )
-                        )
                     }
             } else {
                 updateState(
                     state.value.copy(
-                        // Seteo las propiedades del producto
                         currentProductCart = ProductCart(cartId = cartId),
                         canSearchProducts = true,
                         canUpdateQuantity = false,
-                        showModalProductSearch = false
+                        showModalProductSearch = false,
+                        initCartId = cartId,
+                        isNew = true
                     )
                 )
             }
@@ -183,7 +179,7 @@ class CartProductViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             state.value.let {
                 var message = "El producto fue agregado al pedido"
-                if (it.isNew){
+                if (it.isNew) {
                     cartRepository.insertProductCart(it.currentProductCart)
                 } else {
                     message = "El producto fue actualizado"
