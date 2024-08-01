@@ -28,6 +28,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -46,6 +48,8 @@ import com.example.pasionariastore.model.calculateTotalPriceLabel
 import com.example.pasionariastore.model.format
 import com.example.pasionariastore.model.state.CartUIState
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @Preview(showBackground = true)
 @Composable
@@ -92,7 +96,7 @@ fun CartPreview() {
                 onCardProductButtonClicked = {},
                 onRemoveProductCart = {},
                 formatValue = { "0.0" },
-                state = CartUIState(),
+                stateFlow = MutableStateFlow(CartUIState()),
                 goToNewProduct = {},
                 fetchData = {}
             )
@@ -106,10 +110,11 @@ fun CartScreen(
     onCardProductButtonClicked: (ProductCartWithData) -> Unit,
     onRemoveProductCart: (ProductCartWithData) -> Unit,
     formatValue: (Double) -> String,
-    state: CartUIState,
+    stateFlow: StateFlow<CartUIState>,
     goToNewProduct: (Long) -> Unit,
     fetchData: () -> Unit
 ) {
+    val state by stateFlow.collectAsState()
     LaunchedEffect(key1 = "init") {
         fetchData()
     }

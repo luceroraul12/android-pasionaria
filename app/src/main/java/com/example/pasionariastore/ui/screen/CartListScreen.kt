@@ -27,9 +27,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +48,8 @@ import com.example.pasionariastore.model.state.CartStatus
 import com.example.pasionariastore.ui.preview.CartRepositoryFake
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.CartListViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 @Preview
@@ -94,7 +95,7 @@ fun ScreenPreivew(modifier: Modifier = Modifier) {
         CartListScreen(
             modifier = modifier,
             cartListViewModel = CartListViewModel(cartRepository = CartRepositoryFake()),
-            stateFlow = mutableStateOf(CartListUIState(cartsWithData = Datasource.cartWithData.toMutableStateList())),
+            stateFlow = MutableStateFlow(CartListUIState(cartsWithData = Datasource.cartWithData.toMutableStateList())),
             onCreateNewCartClicked = {},
             onDeleteCartClicked = {},
             goToCartScreen = {}
@@ -107,12 +108,12 @@ fun ScreenPreivew(modifier: Modifier = Modifier) {
 fun CartListScreen(
     modifier: Modifier = Modifier,
     cartListViewModel: CartListViewModel,
-    stateFlow: State<CartListUIState>,
+    stateFlow: StateFlow<CartListUIState>,
     onCreateNewCartClicked: () -> Unit,
     onDeleteCartClicked: (Cart) -> Unit,
     goToCartScreen: (Long) -> Unit
 ) {
-    val state by stateFlow
+    val state by stateFlow.collectAsState()
     Box(modifier = modifier) {
         Column(modifier = modifier.fillMaxSize()) {
             CartForm(

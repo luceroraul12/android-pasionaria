@@ -11,8 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -51,8 +49,6 @@ fun PasionariaStore(
     dataStore: CustomDataStore = CustomDataStore(LocalContext.current)
 ) {
     val context = LocalContext.current
-    val cartState by cartViewModel.state.collectAsState()
-    val cartListState = cartListViewModel.state.collectAsState()
     Scaffold(
         topBar = {
             PasionariaTopAppBar(
@@ -89,7 +85,7 @@ fun PasionariaStore(
                 ) {
                     CartListScreen(
                         cartListViewModel = cartListViewModel,
-                        stateFlow = cartListState,
+                        stateFlow = cartListViewModel.state,
                         onCreateNewCartClicked = {
                             cartListViewModel.createNewCart()
                         },
@@ -119,7 +115,7 @@ fun PasionariaStore(
                             )
                         },
                         formatValue = { cartViewModel.formatPriceNumber(it) },
-                        state = cartState,
+                        stateFlow = cartViewModel.state,
                         goToNewProduct = {
                             cartViewModel.goToAddNewProductCartScreen({ navController.navigate("${MyScreens.CartProduct.name}/$it") })
                         },

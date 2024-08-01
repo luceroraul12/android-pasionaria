@@ -29,11 +29,11 @@ class CartViewModel @Inject constructor(
     private val productRepository: ProductRepository,
     private val checkDatabaseViewModel: CheckDatabaseViewModel
 ) : ViewModel() {
-    private var _state = MutableStateFlow(CartUIState())
-    val state = _state.asStateFlow()
+    var state = MutableStateFlow(CartUIState())
+        private set
 
     fun cleanState() {
-        _state.update {
+        state.update {
             CartUIState()
         }
     }
@@ -41,7 +41,7 @@ class CartViewModel @Inject constructor(
     fun initScreenByCart(cartId: Long) {
         viewModelScope.launch(Dispatchers.Main) {
             cartRepository.getCartWithData(cartId).collect { cart ->
-                if (cart != null) _state.update {
+                if (cart != null) state.update {
                     it.copy(cartWithData = mutableStateOf(cart))
                 }
             }
@@ -61,7 +61,7 @@ class CartViewModel @Inject constructor(
     }
 
     fun cancelProductSearch() {
-        _state.update {
+        state.update {
             it.copy(showModalProductSearch = false)
         }
     }
@@ -77,7 +77,7 @@ class CartViewModel @Inject constructor(
     fun goToUpdateProductCart(
         product: ProductCartWithData, goToCartProductScreen: (Long, Long) -> Unit
     ) {
-        _state.update {
+        state.update {
             it.copy(
                 currentProductCart = product,
                 canSearchProducts = false,
