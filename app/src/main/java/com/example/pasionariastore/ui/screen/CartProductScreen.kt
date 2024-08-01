@@ -98,7 +98,7 @@ fun CartProductScreen(
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
     val state by stateFlow.collectAsState()
-    LaunchedEffect(key1 = "Init") {
+    LaunchedEffect(key1 = state.currentProductCart.productCartId) {
         fetchData()
         state.lastSearch.collectLatest {
             focusRequester.requestFocus()
@@ -157,7 +157,7 @@ fun CartProductScreen(
                 onCancelButtonClicked = onCancelButtonClicked,
                 onAddButtonClicked = onAddButtonClicked,
                 productCart = state.currentProductCart,
-                isNew = state.isNew.value
+                isNew = state.isNew
             )
         }
     }

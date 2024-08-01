@@ -115,7 +115,7 @@ fun CartScreen(
     fetchData: () -> Unit
 ) {
     val state by stateFlow.collectAsState()
-    LaunchedEffect(key1 = "init") {
+    LaunchedEffect(key1 = state.cartWithData.value.cart.id) {
         fetchData()
     }
     Box(modifier = modifier.fillMaxSize()) {

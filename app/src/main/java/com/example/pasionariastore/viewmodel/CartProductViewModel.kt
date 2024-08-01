@@ -56,9 +56,7 @@ class CartProductViewModel @Inject constructor(
     }
 
     private fun updateState(newState: CartProductUIState) {
-        state.update {
-            newState
-        }
+        state.value = newState
     }
 
     fun updateCurrentQuantity(newValue: String) {
@@ -77,7 +75,7 @@ class CartProductViewModel @Inject constructor(
         // Busco el producto
         viewModelScope.launch(Dispatchers.IO) {
             state.update {
-                state.value.copy(initCartId = cartId, isNew = mutableStateOf(productCartId == 0L))
+                state.value.copy(initCartId = cartId, isNew = productCartId == 0L)
             }
             if (productCartId > 0) {
                 cartRepository.getCartProductWithDataById(productCartId)
@@ -185,7 +183,7 @@ class CartProductViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             state.value.let {
                 var message = "El producto fue agregado al pedido"
-                if (it.isNew.value){
+                if (it.isNew){
                     cartRepository.insertProductCart(it.currentProductCart)
                 } else {
                     message = "El producto fue actualizado"
