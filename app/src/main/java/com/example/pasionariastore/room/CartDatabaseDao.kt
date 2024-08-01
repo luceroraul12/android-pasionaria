@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import com.example.pasionariastore.model.Cart
 import com.example.pasionariastore.model.CartWithData
 import com.example.pasionariastore.model.ProductCart
@@ -32,6 +33,10 @@ interface CartDatabaseDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCartProduct(product: ProductCart)
+
+    @Update
+    fun updateCartProduct(productCart: ProductCart)
+
 
     @Delete
     suspend fun deleteProductCart(product: ProductCart)

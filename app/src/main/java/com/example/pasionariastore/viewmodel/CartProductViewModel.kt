@@ -73,8 +73,11 @@ class CartProductViewModel @Inject constructor(
     fun initScreen(cartId: Long, productCartId: Long): Unit {
         // Si cuenta con ProductCartId, significa que previamente se habia guardado el producto y no necesita volver a buscar productos
         // Busco el producto
-        if (productCartId > 0) {
-            viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
+            state.update {
+                state.value.copy(initCartId = cartId, isNew = productCartId == 0L)
+            }
+            if (productCartId > 0) {
                 cartRepository.getCartProductWithDataById(productCartId)
                     .collect { productCartWithData ->
                         updateState(
@@ -83,21 +86,23 @@ class CartProductViewModel @Inject constructor(
                                 currentProductCart = productCartWithData.productCart.copy(cartId = cartId),
                                 currentProductWithUnit = productCartWithData.productWithUnit,
                                 // Al existir, no tiene que dejar buscar productos
-                                canSearchProducts = false
+                                canSearchProducts = false,
+                                canUpdateQuantity = true
                             )
                         )
                     }
-            }
-        } else {
-            updateState(
-                state.value.copy(
-                    // Seteo las propiedades del producto
-                    currentProductCart = ProductCart(cartId = cartId),
-                    canSearchProducts = true
+            } else {
+                updateState(
+                    state.value.copy(
+                        // Seteo las propiedades del producto
+                        currentProductCart = ProductCart(cartId = cartId),
+                        canSearchProducts = true,
+                        canUpdateQuantity = false
+                    )
                 )
-            )
+            }
+            emitFocus()
         }
-        emitFocus()
     }
 
     fun updateCurrentSearch(newValue: String): Unit {
@@ -111,7 +116,10 @@ class CartProductViewModel @Inject constructor(
             Toast.makeText(context, "Debe escribir algo para buscar", Toast.LENGTH_SHORT).show()
         } else {
             viewModelScope.launch(Dispatchers.IO) {
-                productRepository.getProductsWithUnitBySearch(state.value.currentSearch)
+                productRepository.getProductsWithUnitBySearch(
+                    search = state.value.currentSearch,
+                    cartId = state.value.initCartId
+                )
                     .collect { products ->
                         if (products.isEmpty()) {
                             showMessage(context = context, message = "No hay coincidencias")
@@ -143,10 +151,6 @@ class CartProductViewModel @Inject constructor(
         )
     }
 
-    fun canCreateOrUpdate(): Boolean {
-        return (state.value.currentProductCart.quantity.toIntOrNull() ?: 0) > 0
-    }
-
     fun setShowModal(show: Boolean) {
         updateState(CartProductUIState(showModalProductSearch = show))
     }
@@ -174,18 +178,17 @@ class CartProductViewModel @Inject constructor(
 
     fun createOrUpdateProductCart(context: Context, onReturn: () -> Unit): Unit {
         viewModelScope.launch(Dispatchers.IO) {
-            state.value.currentProductCart.let {
-                cartRepository.insertProductCart(it)
+            state.value.let {
                 var message = "El producto fue agregado al pedido"
-                if (it.productCartId > 0) message = "El producto fue actualizado"
+                if (it.isNew){
+                    cartRepository.insertProductCart(it.currentProductCart)
+                } else {
+                    message = "El producto fue actualizado"
+                    cartRepository.updateProductCart(it.currentProductCart)
+                }
                 showMessage(context = context, message = message)
             }
         }
-        onReturn()
-        cleanState()
-    }
-
-    fun cancelCreateOrUpdateProductCart(onReturn: () -> Unit): Unit {
         onReturn()
         cleanState()
     }

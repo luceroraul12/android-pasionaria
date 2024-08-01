@@ -11,7 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -125,7 +124,7 @@ fun PasionariaStore(
                         goToNewProduct = {
                             cartViewModel.goToAddNewProductCartScreen({ navController.navigate("${MyScreens.CartProduct.name}/$it") })
                         },
-                        fetchData = {cartViewModel.initScreenByCart(cartId)})
+                        fetchData = { cartViewModel.initScreenByCart(cartId) })
                 }
                 composable(
                     route = "${MyScreens.CartProduct.name}/{cartId}?productCartId={productCartId}",
@@ -136,11 +135,6 @@ fun PasionariaStore(
                     val cartId: Long = it.arguments!!.getLong("cartId")
                     val produccartId: Long =
                         it.arguments?.getLong("productCartId") ?: 0L
-                    LaunchedEffect(key1 = "initProductCart") {
-                        cartProductViewModel.initScreen(
-                            cartId = cartId, productCartId = produccartId
-                        )
-                    }
                     CartProductScreen(
                         modifier = modifier,
                         onCancelButtonClicked = { navController.popBackStack() },
@@ -154,7 +148,12 @@ fun PasionariaStore(
                         onSearchProducts = { cartProductViewModel.searchProducts(context = context) },
                         updateCurrentSearch = { cartProductViewModel.updateCurrentSearch(it) },
                         onProductSearchClicked = { cartProductViewModel.selectProductSearched(it) },
-                        updateQuantity = { cartProductViewModel.updateCurrentQuantity(it) })
+                        updateQuantity = { cartProductViewModel.updateCurrentQuantity(it) },
+                        fetchData = {
+                            cartProductViewModel.initScreen(
+                                cartId = cartId, productCartId = produccartId
+                            )
+                        })
                 }
             }
         }

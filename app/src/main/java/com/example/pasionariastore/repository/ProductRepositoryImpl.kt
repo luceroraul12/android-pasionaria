@@ -21,8 +21,8 @@ class ProductRepositoryImpl @Inject constructor(private val productDatabaseDao: 
         return productDatabaseDao.getProducts().flowOn(Dispatchers.IO).conflate()
     }
 
-    override fun getProductsWithUnitBySearch(search: String) =
-        productDatabaseDao.getProductsBySearch("%$search%").flowOn(Dispatchers.IO).conflate()
+    override fun getProductsWithUnitBySearch(search: String, cartId: Long) =
+        productDatabaseDao.getProductsBySearch("%$search%", cartId).flowOn(Dispatchers.IO).conflate()
 
     override fun getProductsWithUnitById(id: Long): Flow<ProductWithUnit> =
         productDatabaseDao.getProductsWithUnitById(id).flowOn(Dispatchers.IO).conflate()

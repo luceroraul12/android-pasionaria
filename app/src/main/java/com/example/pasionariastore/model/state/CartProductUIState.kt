@@ -13,4 +13,6 @@ data class CartProductUIState(
     val showModalProductSearch: Boolean = false,
     val canUpdateQuantity: Boolean = false,
     val lastSearch: MutableSharedFlow<Unit> = MutableSharedFlow<Unit>(),
+    val initCartId: Long = 0,
+    val isNew: Boolean = false
 )

@@ -23,12 +23,17 @@ interface ProductDatabaseDao {
     @Query(
         """
         SELECT *
-        FROM product
+        FROM product p
         WHERE 
-            name like :search OR description like :search
+            (p.name like :search OR p.description like :search)
+            AND p.product_id NOT IN 
+                (SELECT pr.product_id
+                FROM product pr 
+                    INNER JOIN ProductCart pc ON pc.product_id = pr.product_id 
+                    WHERE pc.cart_id = :cartId)
     """
     )
-    fun getProductsBySearch(search: String): Flow<List<ProductWithUnit>>
+    fun getProductsBySearch(search: String, cartId: Long): Flow<List<ProductWithUnit>>
 
     @Query("SELECT * FROM Unit")
     fun getUnits(): Flow<List<Unit>>

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface ProductRepository {
     fun getProductsWithUnit(): Flow<List<ProductWithUnit>>
     fun getProducts(): Flow<List<Product>>
-    fun getProductsWithUnitBySearch(search: String): Flow<List<ProductWithUnit>>
+    fun getProductsWithUnitBySearch(search: String, cartId: Long): Flow<List<ProductWithUnit>>
     fun getProductsWithUnitById(id: Long): Flow<ProductWithUnit>
     fun getUnits(): Flow<List<Unit>>
     suspend fun saveFirstUnits()

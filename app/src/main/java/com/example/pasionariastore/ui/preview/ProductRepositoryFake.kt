@@ -16,7 +16,7 @@ class ProductRepositoryFake : ProductRepository {
         TODO("Not yet implemented")
     }
 
-    override fun getProductsWithUnitBySearch(search: String): Flow<List<ProductWithUnit>> =
+    override fun getProductsWithUnitBySearch(search: String, cartId: Long): Flow<List<ProductWithUnit>> =
         flow { Datasource.productsWithUnit.filter { p -> p.product.name.contains(search) } }
 
     override fun getProductsWithUnitById(id: Long): Flow<ProductWithUnit> =

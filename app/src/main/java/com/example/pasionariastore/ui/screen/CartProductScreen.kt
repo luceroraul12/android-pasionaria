@@ -25,7 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,7 +49,6 @@ import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.model.state.CartProductUIState
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -63,13 +61,14 @@ fun ProductScreenPreview() {
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
                 onAddButtonClicked = {},
                 onCancelButtonClicked = {},
+                state = CartProductUIState(),
+                onProductSearchClicked = {},
+                onCancelSearch = {},
+                formatPriceNumber = { "203" },
                 onSearchProducts = {},
                 updateCurrentSearch = {},
-                onCancelSearch = {},
-                onProductSearchClicked = {},
-                formatPriceNumber = { "203" },
-                state = CartProductUIState(),
                 updateQuantity = {},
+                fetchData = {},
             )
         }
     }
@@ -87,10 +86,12 @@ fun CartProductScreen(
     onSearchProducts: () -> Unit,
     updateCurrentSearch: (String) -> Unit,
     updateQuantity: (String) -> Unit,
+    fetchData: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
     LaunchedEffect(Unit) {
+        fetchData()
         state.lastSearch.collectLatest {
             focusRequester.requestFocus()
             focusManager.moveFocus(FocusDirection.Down)
@@ -148,6 +149,7 @@ fun CartProductScreen(
                 onCancelButtonClicked = onCancelButtonClicked,
                 onAddButtonClicked = onAddButtonClicked,
                 productCart = state.currentProductCart,
+                isNew = state.isNew
             )
         }
     }
@@ -263,6 +265,7 @@ fun CartProductActionButtons(
     onCancelButtonClicked: () -> Unit,
     onAddButtonClicked: () -> Unit,
     productCart: ProductCart,
+    isNew: Boolean
 ) {
     Row {
         Button(
@@ -288,7 +291,7 @@ fun CartProductActionButtons(
                 .weight(1f)
                 .height(IntrinsicSize.Max),
         ) {
-            Text(text = if (productCart.cartId == 0L) "Agregar" else "Actualizar")
+            Text(text = if (isNew) "Agregar" else "Actualizar")
         }
     }
 }
