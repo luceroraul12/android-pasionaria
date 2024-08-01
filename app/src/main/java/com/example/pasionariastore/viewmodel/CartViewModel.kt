@@ -8,11 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.state.CartUIState
 import com.example.pasionariastore.repository.CartRepository
-import com.example.pasionariastore.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -23,15 +21,10 @@ import javax.inject.Inject
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val cartRepository: CartRepository,
-    private val productRepository: ProductRepository,
-    private val checkDatabaseViewModel: CheckDatabaseViewModel
 ) : ViewModel() {
     var state = MutableStateFlow(CartUIState())
         private set
 
-    fun cleanState() {
-        state.value = CartUIState()
-    }
 
     fun initScreenByCart(cartId: Long) {
         viewModelScope.launch(Dispatchers.Main) {
@@ -60,7 +53,7 @@ class CartViewModel @Inject constructor(
     }
 
     fun goToUpdateProductCart(
-        product: ProductCartWithData, goToCartProductScreen: (Long, Long) -> Unit
+        goToCartProductScreen: (Long, Long) -> Unit
     ) {
         state.value.currentProductCart.productCart.let {
             goToCartProductScreen(it.cartId, it.productCartId)

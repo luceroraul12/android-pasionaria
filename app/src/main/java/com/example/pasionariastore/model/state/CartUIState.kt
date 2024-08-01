@@ -9,7 +9,6 @@ import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.ProductWithUnit
-import kotlinx.coroutines.flow.MutableSharedFlow
 
 data class CartUIState(
     val currentProductCart: ProductCartWithData = ProductCartWithData(

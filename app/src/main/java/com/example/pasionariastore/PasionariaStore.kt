@@ -108,7 +108,6 @@ fun PasionariaStore(
                         },
                         onCardProductButtonClicked = {
                             cartViewModel.goToUpdateProductCart(
-                                product = it,
                                 goToCartProductScreen = { cartId, productCartId ->
                                     navController.navigate("${MyScreens.CartProduct.name}/${cartId}?productCartId=${productCartId}")
                                 },

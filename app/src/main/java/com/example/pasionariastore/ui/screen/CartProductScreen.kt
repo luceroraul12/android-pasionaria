@@ -173,10 +173,10 @@ fun ProductDescription(
     relation: ProductWithUnit,
     formatValue: (Double) -> String
 ) {
-    var name: String = "Nombre del producto"
-    var description: String = "Descripcion del producto"
-    var price: String = "0.0"
-    var unit: String = "SIN UNIDAD"
+    var name: String
+    var description: String
+    var price: String
+    var unit: String
     relation.let {
         it.product.let { product ->
             name = product.name
@@ -197,7 +197,7 @@ fun ProductDescription(
             )
             DescriptionItem(
                 title = "Precio Lista",
-                description = formatValue(relation.product.priceList ?: 0.0),
+                description = formatValue(relation.product.priceList),
                 modifier = modifier
             )
             Row(horizontalArrangement = Arrangement.SpaceBetween) {
