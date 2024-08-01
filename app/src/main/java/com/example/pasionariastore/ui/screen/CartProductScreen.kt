@@ -149,7 +149,7 @@ fun CartProductScreen(
                 onCancelButtonClicked = onCancelButtonClicked,
                 onAddButtonClicked = onAddButtonClicked,
                 productCart = state.currentProductCart,
-                isNew = state.isNew
+                isNew = state.isNew.value
             )
         }
     }

@@ -1,5 +1,7 @@
 package com.example.pasionariastore.model.state
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductWithUnit
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -14,5 +16,5 @@ data class CartProductUIState(
     val canUpdateQuantity: Boolean = false,
     val lastSearch: MutableSharedFlow<Unit> = MutableSharedFlow<Unit>(),
     val initCartId: Long = 0,
-    val isNew: Boolean = false
+    val isNew: MutableState<Boolean> = mutableStateOf(false)
 )

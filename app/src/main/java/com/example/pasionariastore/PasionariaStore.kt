@@ -53,7 +53,7 @@ fun PasionariaStore(
     val context = LocalContext.current
     val cartProductState by cartProductViewModel.state.collectAsState()
     val cartState by cartViewModel.state.collectAsState()
-    val cartListState by cartListViewModel.state.collectAsState()
+    val cartListState = cartListViewModel.state.collectAsState()
     Scaffold(
         topBar = {
             PasionariaTopAppBar(
@@ -90,7 +90,7 @@ fun PasionariaStore(
                 ) {
                     CartListScreen(
                         cartListViewModel = cartListViewModel,
-                        state = cartListState,
+                        stateFlow = cartListState,
                         onCreateNewCartClicked = {
                             cartListViewModel.createNewCart()
                         },

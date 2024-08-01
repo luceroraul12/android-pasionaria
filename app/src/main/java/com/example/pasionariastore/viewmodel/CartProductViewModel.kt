@@ -2,6 +2,7 @@ package com.example.pasionariastore.viewmodel
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pasionariastore.model.ProductCart
@@ -16,6 +17,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.util.Currency
 import javax.inject.Inject
@@ -75,7 +77,7 @@ class CartProductViewModel @Inject constructor(
         // Busco el producto
         viewModelScope.launch(Dispatchers.IO) {
             state.update {
-                state.value.copy(initCartId = cartId, isNew = productCartId == 0L)
+                state.value.copy(initCartId = cartId, isNew = mutableStateOf(productCartId == 0L))
             }
             if (productCartId > 0) {
                 cartRepository.getCartProductWithDataById(productCartId)
@@ -180,7 +182,7 @@ class CartProductViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             state.value.let {
                 var message = "El producto fue agregado al pedido"
-                if (it.isNew){
+                if (it.isNew.value){
                     cartRepository.insertProductCart(it.currentProductCart)
                 } else {
                     message = "El producto fue actualizado"
@@ -188,8 +190,10 @@ class CartProductViewModel @Inject constructor(
                 }
                 showMessage(context = context, message = message)
             }
+            withContext(Dispatchers.Main){
+                cleanState()
+                onReturn()
+            }
         }
-        onReturn()
-        cleanState()
     }
 }

@@ -27,6 +27,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -91,7 +94,7 @@ fun ScreenPreivew(modifier: Modifier = Modifier) {
         CartListScreen(
             modifier = modifier,
             cartListViewModel = CartListViewModel(cartRepository = CartRepositoryFake()),
-            state = CartListUIState(cartsWithData = Datasource.cartWithData.toMutableStateList()),
+            stateFlow = mutableStateOf(CartListUIState(cartsWithData = Datasource.cartWithData.toMutableStateList())),
             onCreateNewCartClicked = {},
             onDeleteCartClicked = {},
             goToCartScreen = {}
@@ -104,11 +107,12 @@ fun ScreenPreivew(modifier: Modifier = Modifier) {
 fun CartListScreen(
     modifier: Modifier = Modifier,
     cartListViewModel: CartListViewModel,
-    state: CartListUIState,
+    stateFlow: State<CartListUIState>,
     onCreateNewCartClicked: () -> Unit,
     onDeleteCartClicked: (Cart) -> Unit,
     goToCartScreen: (Long) -> Unit
 ) {
+    val state by stateFlow
     Box(modifier = modifier) {
         Column(modifier = modifier.fillMaxSize()) {
             CartForm(
@@ -225,13 +229,19 @@ fun CartItem(
         border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondary)
     ) {
         Column(modifier = modifier, verticalArrangement = Arrangement.Center) {
-            CartItemStatusLabel(modifier = modifier, cart = CartStatus.valueOf(cartWithData.cart.status))
+            CartItemStatusLabel(
+                modifier = modifier,
+                cart = CartStatus.valueOf(cartWithData.cart.status)
+            )
             Column(modifier = modifier.padding(10.dp)) {
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = modifier.fillMaxWidth()
                 ) {
-                    Text(text = "#${cartWithData.cart.id}", style = MaterialTheme.typography.titleLarge)
+                    Text(
+                        text = "#${cartWithData.cart.id}",
+                        style = MaterialTheme.typography.titleLarge
+                    )
                     Text(
                         text = cartWithData.calculateTotalPriceLabel(),
                         style = MaterialTheme.typography.titleLarge
@@ -245,7 +255,10 @@ fun CartItem(
                         text = cartWithData.cart.dateCreated.format(),
                         style = MaterialTheme.typography.bodyLarge
                     )
-                    Text(text = cartWithData.cart.usernameSeller, style = MaterialTheme.typography.bodyLarge)
+                    Text(
+                        text = cartWithData.cart.usernameSeller,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
                 }
             }
             if (cartWithData.cart.status.equals(CartStatus.PENDING.name))
