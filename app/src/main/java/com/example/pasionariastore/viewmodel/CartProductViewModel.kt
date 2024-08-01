@@ -151,6 +151,7 @@ class CartProductViewModel @Inject constructor(
                 canUpdateQuantity = true
             )
         )
+        emitFocus()
     }
 
     fun setShowModal(show: Boolean) {
