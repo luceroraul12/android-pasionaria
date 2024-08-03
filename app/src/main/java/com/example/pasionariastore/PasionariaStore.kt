@@ -18,8 +18,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -30,9 +28,6 @@ import com.example.pasionariastore.ui.screen.CartListScreen
 import com.example.pasionariastore.ui.screen.CartProductScreen
 import com.example.pasionariastore.ui.screen.CartScreen
 import com.example.pasionariastore.ui.screen.ResumeScreen
-import com.example.pasionariastore.viewmodel.CartListViewModel
-import com.example.pasionariastore.viewmodel.CartProductViewModel
-import com.example.pasionariastore.viewmodel.CartViewModel
 
 enum class MyScreens {
     Resume, CartList, Cart, CartProduct
@@ -42,13 +37,9 @@ enum class MyScreens {
 @Composable
 fun PasionariaStore(
     modifier: Modifier = Modifier,
-    navController: NavHostController = rememberNavController(),
-    cartViewModel: CartViewModel = viewModel(),
-    cartListViewModel: CartListViewModel = viewModel(),
-    cartProductViewModel: CartProductViewModel = viewModel(),
     dataStore: CustomDataStore = CustomDataStore(LocalContext.current)
 ) {
-    val context = LocalContext.current
+    val navController = rememberNavController()
     Scaffold(
         topBar = {
             PasionariaTopAppBar(
@@ -84,15 +75,8 @@ fun PasionariaStore(
                     route = MyScreens.CartList.name,
                 ) {
                     CartListScreen(
-                        cartListViewModel = cartListViewModel,
-                        stateFlow = cartListViewModel.state,
-                        onCreateNewCartClicked = {
-                            cartListViewModel.createNewCart()
-                        },
-                        onDeleteCartClicked = { cartListViewModel.deleteCart(it) },
-                        goToCartScreen = {
-                            navController.navigate("${MyScreens.Cart.name}/$it")
-                        })
+                        navController = navController
+                    )
                 }
                 composable(
                     route = "${MyScreens.Cart.name}/{cartId}",
@@ -101,24 +85,9 @@ fun PasionariaStore(
                     val cartId: Long = it.arguments!!.getLong("cartId")
                     CartScreen(
                         modifier = modifier,
-                        onRemoveProductCart = {
-                            cartViewModel.removeProductFromCart(
-                                data = it, context = context
-                            )
-                        },
-                        onCardProductButtonClicked = {
-                            cartViewModel.goToUpdateProductCart(
-                                goToCartProductScreen = { cartId, productCartId ->
-                                    navController.navigate("${MyScreens.CartProduct.name}/${cartId}?productCartId=${productCartId}")
-                                },
-                            )
-                        },
-                        formatValue = { cartViewModel.formatPriceNumber(it) },
-                        stateFlow = cartViewModel.state,
-                        goToNewProduct = {
-                            cartViewModel.goToAddNewProductCartScreen({ navController.navigate("${MyScreens.CartProduct.name}/$it") })
-                        },
-                        fetchData = { cartViewModel.initScreenByCart(cartId) })
+                        navController = navController,
+                        initialCartId = cartId
+                    )
                 }
                 composable(
                     route = "${MyScreens.CartProduct.name}/{cartId}?productCartId={productCartId}",
@@ -130,25 +99,11 @@ fun PasionariaStore(
                     val produccartId: Long =
                         it.arguments?.getLong("productCartId") ?: 0L
                     CartProductScreen(
+                        cartId = cartId,
+                        productCartId = produccartId,
+                        navController = navController,
                         modifier = modifier,
-                        onCancelButtonClicked = { navController.popBackStack() },
-                        onAddButtonClicked = {
-                            cartProductViewModel.createOrUpdateProductCart(context = context)
-                            navController.popBackStack()
-                        },
-                        onCancelSearch = { cartProductViewModel.setShowModal(false) },
-                        formatPriceNumber = { cartProductViewModel.formatPriceNumber(it) },
-                        stateFlow = cartProductViewModel.state,
-                        onSearchProducts = { cartProductViewModel.searchProducts(context = context) },
-                        updateCurrentSearch = { cartProductViewModel.updateCurrentSearch(it) },
-                        onProductSearchClicked = { cartProductViewModel.selectProductSearched(it) },
-                        updateQuantity = { cartProductViewModel.updateCurrentQuantity(it) },
-                        fetchData = {
-                            cartProductViewModel.initScreen(
-                                cartId = cartId, productCartId = produccartId
-                            )
-                        },
-                        onClose = {cartProductViewModel.cleanState()})
+                    )
                 }
             }
         }

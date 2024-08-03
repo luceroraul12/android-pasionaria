@@ -1,5 +1,6 @@
 package com.example.pasionariastore.ui.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,11 +30,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -46,14 +49,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductWithUnit
-import com.example.pasionariastore.model.state.CartProductUIState
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import com.example.pasionariastore.viewmodel.CartProductViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -64,17 +69,10 @@ fun ProductScreenPreview() {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             CartProductScreen(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-                onAddButtonClicked = {},
-                onCancelButtonClicked = {},
-                stateFlow = MutableStateFlow(CartProductUIState()),
-                onProductSearchClicked = {},
-                onCancelSearch = {},
-                formatPriceNumber = { "203" },
-                onSearchProducts = {},
-                updateCurrentSearch = {},
-                updateQuantity = {},
-                fetchData = {},
-                onClose = {}
+                navController = rememberNavController(),
+                cartProductViewModel = viewModel(),
+                cartId = 0L,
+                productCartId = 0L
             )
         }
     }
@@ -83,36 +81,34 @@ fun ProductScreenPreview() {
 @Composable
 fun CartProductScreen(
     modifier: Modifier = Modifier,
-    onAddButtonClicked: () -> Unit,
-    onCancelButtonClicked: () -> Unit,
-    stateFlow: StateFlow<CartProductUIState>,
-    onProductSearchClicked: (ProductWithUnit) -> Unit,
-    onCancelSearch: () -> Unit,
-    formatPriceNumber: (Double) -> String,
-    onSearchProducts: () -> Unit,
-    updateCurrentSearch: (String) -> Unit,
-    updateQuantity: (String) -> Unit,
-    fetchData: () -> Unit,
-    onClose: () -> Unit
+    navController: NavHostController,
+    cartProductViewModel: CartProductViewModel = hiltViewModel(),
+    cartId: Long,
+    productCartId: Long
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
-    val state by stateFlow.collectAsState()
+    val state by cartProductViewModel.state.collectAsState()
+    val context = LocalContext.current
+
     LaunchedEffect(key1 = state.currentProductCart.productCartId) {
-        fetchData()
+        cartProductViewModel.initScreen(cartId, productCartId)
         state.lastSearch.collectLatest {
             focusRequester.requestFocus()
             focusManager.moveFocus(FocusDirection.Down)
         }
     }
-    if (state.showModalProductSearch) {
+
+    if (state.productsFound.isNotEmpty()) {
         // Antes de abrir el modal tengo que ver si existen coincidencias
         ModalSearchProduct(
             productList = state.productsFound,
-            onProductSearchClicked = { onProductSearchClicked(it) },
+            onProductSearchClicked = {
+                cartProductViewModel.selectProductSearched(it)
+            },
             search = state.currentSearch,
             modifier = modifier,
-            onCancelSearch = onCancelSearch
+            onCancelSearch = { cartProductViewModel.cleanProductsFound() }
         )
     }
     Column(
@@ -126,9 +122,9 @@ fun CartProductScreen(
                 ProductSearcher(
                     modifier.fillMaxWidth(),
                     canSearchProducts = true,
-                    onSearchProducts = onSearchProducts,
+                    onSearchProducts = { cartProductViewModel.searchProducts(context) },
                     currentSearch = state.currentSearch,
-                    updateCurrentSearch = { updateCurrentSearch(it) },
+                    updateCurrentSearch = { cartProductViewModel.updateCurrentSearch(it) },
                     focusRequester = focusRequester
                 )
             }
@@ -138,7 +134,7 @@ fun CartProductScreen(
             ProductDescription(
                 modifier.fillMaxWidth(),
                 state.currentProductWithUnit,
-                formatValue = formatPriceNumber
+                formatValue = cartProductViewModel::formatPriceNumber
             )
         }
         Spacer(modifier = modifier.padding(10.dp))
@@ -146,24 +142,28 @@ fun CartProductScreen(
             ProductFormCalculator(
                 modifier = modifier,
                 quantity = state.currentProductCart.quantity,
-                updateQuantity = { updateQuantity(it) },
+                updateQuantity = { cartProductViewModel.updateCurrentQuantity(it) },
                 priceCalculated = state.currentProductCart.totalPrice.toString(),
                 focusRequester = focusRequester,
-                onAddButtonClicked = onAddButtonClicked,
+                onAddButtonClicked = {
+                    cartProductViewModel.createOrUpdateProductCart(context)
+                    navController.popBackStack()
+                },
                 canEditQuantity = state.canUpdateQuantity
             )
             CartProductActionButtons(
                 modifier = modifier,
-                onCancelButtonClicked = onCancelButtonClicked,
-                onAddButtonClicked = onAddButtonClicked,
+                onCancelButtonClicked = navController::popBackStack,
+                onAddButtonClicked = {
+                    cartProductViewModel.createOrUpdateProductCart(context = context)
+                    navController.popBackStack()
+                },
                 productCart = state.currentProductCart,
                 isNew = state.isNew
             )
         }
     }
-    DisposableEffect(key1 = "Close") {
-        onDispose(onClose)
-    }
+
 }
 
 @Composable

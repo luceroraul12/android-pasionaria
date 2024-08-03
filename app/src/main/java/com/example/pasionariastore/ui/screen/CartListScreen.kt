@@ -38,6 +38,10 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.pasionariastore.MyScreens
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.Cart
 import com.example.pasionariastore.model.CartWithData
@@ -95,10 +99,7 @@ fun ScreenPreivew(modifier: Modifier = Modifier) {
         CartListScreen(
             modifier = modifier,
             cartListViewModel = CartListViewModel(cartRepository = CartRepositoryFake()),
-            stateFlow = MutableStateFlow(CartListUIState(cartsWithData = Datasource.cartWithData.toMutableStateList())),
-            onCreateNewCartClicked = {},
-            onDeleteCartClicked = {},
-            goToCartScreen = {}
+            navController = rememberNavController()
         )
     }
 }
@@ -107,13 +108,10 @@ fun ScreenPreivew(modifier: Modifier = Modifier) {
 @Composable
 fun CartListScreen(
     modifier: Modifier = Modifier,
-    cartListViewModel: CartListViewModel,
-    stateFlow: StateFlow<CartListUIState>,
-    onCreateNewCartClicked: () -> Unit,
-    onDeleteCartClicked: (Cart) -> Unit,
-    goToCartScreen: (Long) -> Unit
+    cartListViewModel: CartListViewModel = hiltViewModel(),
+    navController: NavHostController
 ) {
-    val state by stateFlow.collectAsState()
+    val state by cartListViewModel.state.collectAsState()
     Box(modifier = modifier) {
         Column(modifier = modifier.fillMaxSize()) {
             CartForm(
@@ -124,14 +122,14 @@ fun CartListScreen(
             CartList(
                 modifier = modifier,
                 carts = state.cartsWithData,
-                onDeleteCartClicked = onDeleteCartClicked,
+                onDeleteCartClicked = {cartListViewModel.deleteCart(it)},
                 onCartClicked = {
-                    goToCartScreen(it.id)
+                    navController.navigate("${MyScreens.Cart.name}/${it.id}")
                 }
             )
         }
         FloatingActionButton(
-            onClick = onCreateNewCartClicked,
+            onClick = cartListViewModel::createNewCart,
             modifier = modifier
                 .align(Alignment.BottomEnd)
                 .padding(25.dp)

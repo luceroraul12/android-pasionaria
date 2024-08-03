@@ -12,7 +12,6 @@ data class CartProductUIState(
     val currentProductCart: ProductCart = ProductCart(),
     val currentProductWithUnit: ProductWithUnit = ProductWithUnit(),
     val canSearchProducts: Boolean = true,
-    val showModalProductSearch: Boolean = false,
     val canUpdateQuantity: Boolean = false,
     val lastSearch: MutableSharedFlow<Unit> = MutableSharedFlow<Unit>(),
     val initCartId: Long = 0,

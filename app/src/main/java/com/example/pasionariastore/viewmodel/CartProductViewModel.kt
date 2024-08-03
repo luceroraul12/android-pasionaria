@@ -1,6 +1,7 @@
 package com.example.pasionariastore.viewmodel
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,9 +13,12 @@ import com.example.pasionariastore.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.util.Currency
 import javax.inject.Inject
@@ -26,6 +30,8 @@ class CartProductViewModel @Inject constructor(
 ) : ViewModel() {
     var state = MutableStateFlow(CartProductUIState())
         private set
+
+    private var searchJob: Job? = null
 
     fun emitFocus(): Unit {
         viewModelScope.launch {
@@ -49,11 +55,16 @@ class CartProductViewModel @Inject constructor(
     }
 
     fun cleanState(): Unit {
+        Log.d("CartProductViewModel", "Me fijo el job de busqueda ${searchJob?.isActive}")
+        Log.d("CartProductViewModel", "intento cancelarlo ${searchJob?.cancel()}")
+        searchJob = null
+
         updateState(CartProductUIState())
+        Log.d("CartProductViewModel", "Clean completo ${state.value.productsFound.size.toString()}")
     }
 
     private fun updateState(newState: CartProductUIState) {
-        state.value = newState
+        state.update { newState }
     }
 
     fun updateCurrentQuantity(newValue: String) {
@@ -81,7 +92,6 @@ class CartProductViewModel @Inject constructor(
                                     currentProductWithUnit = productCartWithData.productWithUnit,
                                     canSearchProducts = false,
                                     canUpdateQuantity = true,
-                                    showModalProductSearch = false,
                                     initCartId = cartId,
                                     isNew = false
                                 )
@@ -93,7 +103,6 @@ class CartProductViewModel @Inject constructor(
                         currentProductCart = ProductCart(cartId = cartId),
                         canSearchProducts = true,
                         canUpdateQuantity = false,
-                        showModalProductSearch = false,
                         initCartId = cartId,
                         isNew = true
                     )
@@ -113,7 +122,11 @@ class CartProductViewModel @Inject constructor(
         if (state.value.currentSearch.isEmpty()) {
             Toast.makeText(context, "Debe escribir algo para buscar", Toast.LENGTH_SHORT).show()
         } else {
-            viewModelScope.launch(Dispatchers.IO) {
+            Log.d(
+                "CartProductViewModel",
+                "Antes de buscar productos: ${state.value.productsFound.size}"
+            )
+            searchJob = viewModelScope.launch(Dispatchers.IO) {
                 productRepository.getProductsWithUnitBySearch(
                     search = state.value.currentSearch,
                     cartId = state.value.initCartId
@@ -126,10 +139,13 @@ class CartProductViewModel @Inject constructor(
                             updateState(
                                 state.value.copy(
                                     productsFound = products,
-                                    showModalProductSearch = true
                                 )
                             )
                         }
+                        Log.d(
+                            "CartProductViewModel",
+                            "Despues de buscar productos: ${state.value.productsFound.size}"
+                        )
                     }
             }
         }
@@ -143,15 +159,11 @@ class CartProductViewModel @Inject constructor(
                     productId = productWithUnit.product.productId,
                 ),
                 currentProductWithUnit = productWithUnit,
-                showModalProductSearch = false,
+                productsFound = emptyList(),
                 canUpdateQuantity = true
             )
         )
         emitFocus()
-    }
-
-    fun setShowModal(show: Boolean) {
-        updateState(state.value.copy(showModalProductSearch = show))
     }
 
     fun calculatePriceProductCart(): String {
@@ -185,8 +197,25 @@ class CartProductViewModel @Inject constructor(
                     message = "El producto fue actualizado"
                     cartRepository.updateProductCart(it.currentProductCart)
                 }
-                showMessage(context = context, message = message)
+                // Asegúrate de que la operación de inserción se complete antes de continuar
+                withContext(Dispatchers.Main) {
+                    showMessage(context = context, message = message)
+                    cleanState()
+                }
             }
         }
+    }
+
+    fun cleanProductsFound() {
+        state.update {
+            it.copy(
+                currentSearch = "",
+                productsFound = emptyList()
+            )
+        }
+        Log.d(
+            "CartProductViewModel",
+            "Limpieza de productos encontrados: ${state.value.productsFound.size}"
+        )
     }
 }

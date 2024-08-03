@@ -5,6 +5,8 @@ import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
+import com.example.pasionariastore.MyScreens
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.state.CartUIState
 import com.example.pasionariastore.repository.CartRepository
@@ -14,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.util.Currency
 import javax.inject.Inject
@@ -27,8 +30,12 @@ class CartViewModel @Inject constructor(
 
 
     fun initScreenByCart(cartId: Long) {
-        viewModelScope.launch(Dispatchers.Main) {
-            cartRepository.getCartWithData(cartId).collect { cart ->
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                cartRepository.getCartWithData(cartId)
+            }
+
+            result.collect { cart ->
                 if (cart != null) state.update {
                     it.copy(cartWithData = mutableStateOf(cart))
                 }
@@ -52,11 +59,13 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    fun goToUpdateProductCart(
-        goToCartProductScreen: (Long, Long) -> Unit
+    fun goToProductCartScreen(
+        navController: NavController,
+        cartId: Long,
+        productCartId: Long
     ) {
         state.value.currentProductCart.productCart.let {
-            goToCartProductScreen(it.cartId, it.productCartId)
+            navController.navigate("${MyScreens.CartProduct.name}/${cartId}?productCartId=${productCartId}")
         }
     }
 
