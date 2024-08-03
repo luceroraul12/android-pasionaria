@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -29,7 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -40,7 +38,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.MyScreens
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.Cart
@@ -49,11 +46,8 @@ import com.example.pasionariastore.model.calculateTotalPriceLabel
 import com.example.pasionariastore.model.format
 import com.example.pasionariastore.model.state.CartListUIState
 import com.example.pasionariastore.model.state.CartStatus
-import com.example.pasionariastore.ui.preview.CartRepositoryFake
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.CartListViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 @Preview
@@ -97,31 +91,14 @@ fun CartItemPreview(modifier: Modifier = Modifier) {
 fun ScreenPreivew(modifier: Modifier = Modifier) {
     PasionariaStoreTheme(darkTheme = false) {
         val state = CartListUIState(cartsWithData = Datasource.cartWithData.toMutableList())
-        Box(modifier = modifier) {
-            Column(modifier = modifier.fillMaxSize()) {
-                CartForm(
-                    modifier = modifier,
-                    stateButtons = state.stateFilters,
-                    onUpdateChip = { }
-                )
-                CartList(
-                    modifier = modifier,
-                    carts = state.cartsWithData,
-                    onDeleteCartClicked = {},
-                    onCartClicked = {
-
-                    }
-                )
-            }
-            FloatingActionButton(
-                onClick = {},
-                modifier = modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(25.dp)
-            ) {
-                Icon(Icons.Filled.Add, "New Cart")
-            }
-        }
+        CartListBody(
+            state = state,
+            onUpdateChip = {},
+            onDeleteCart = {},
+            onGoToCartClicked = {},
+            onCreateNewCart = {},
+            modifier = modifier
+        )
     }
 }
 
@@ -133,24 +110,43 @@ fun CartListScreen(
     navController: NavHostController
 ) {
     val state by cartListViewModel.state.collectAsState()
+    CartListBody(
+        state = state,
+        modifier = modifier,
+        onUpdateChip = { cartListViewModel.updateChipStatus(it) },
+        onDeleteCart = { cartListViewModel.deleteCart(it) },
+        onGoToCartClicked = {
+            navController.navigate("${MyScreens.Cart.name}/${it.id}")
+        },
+        onCreateNewCart = cartListViewModel::createNewCart
+    )
+}
+
+@Composable
+fun CartListBody(
+    state: CartListUIState,
+    modifier: Modifier = Modifier,
+    onUpdateChip: (CartStatus) -> Unit,
+    onDeleteCart: (Cart) -> Unit,
+    onGoToCartClicked: (Cart) -> Unit,
+    onCreateNewCart: () -> Unit
+) {
     Box(modifier = modifier) {
         Column(modifier = modifier.fillMaxSize()) {
             CartForm(
                 modifier = modifier,
                 stateButtons = state.stateFilters,
-                onUpdateChip = { cartListViewModel.updateChipStatus(it) }
+                onUpdateChip = onUpdateChip
             )
             CartList(
                 modifier = modifier,
                 carts = state.cartsWithData,
-                onDeleteCartClicked = {cartListViewModel.deleteCart(it)},
-                onCartClicked = {
-                    navController.navigate("${MyScreens.Cart.name}/${it.id}")
-                }
+                onDeleteCartClicked = onDeleteCart,
+                onCartClicked = onGoToCartClicked
             )
         }
         FloatingActionButton(
-            onClick = cartListViewModel::createNewCart,
+            onClick = onCreateNewCart,
             modifier = modifier
                 .align(Alignment.BottomEnd)
                 .padding(25.dp)
@@ -158,6 +154,7 @@ fun CartListScreen(
             Icon(Icons.Filled.Add, "New Cart")
         }
     }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -222,7 +219,7 @@ fun CartList(
     onDeleteCartClicked: (Cart) -> Unit,
     onCartClicked: (Cart) -> Unit
 ) {
-    LazyColumn {
+    LazyColumn(modifier.padding(horizontal = 10.dp)) {
         items(carts) {
             CartItem(
                 modifier,
