@@ -74,7 +74,7 @@ fun CartItemPreview() {
 @Composable
 fun CartListPreview() {
     PasionariaStoreTheme(
-        darkTheme = true
+        darkTheme = false
     ) {
         CartListProducts(
             productCartList = Datasource.cartProducts,
@@ -90,7 +90,7 @@ fun CartListPreview() {
 @Composable
 fun CartPreview() {
     PasionariaStoreTheme(
-        darkTheme = true
+        darkTheme = false
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize()
@@ -163,18 +163,19 @@ fun CartScreenBody(
 ) {
     val cartWithData by state.cartWithData.collectAsState()
     Box(modifier = modifier.fillMaxSize()) {
-        Column(modifier = modifier.padding(horizontal = 10.dp)) {
+        Column(modifier = modifier) {
             CartHeader(
-                modifier = modifier,
                 cartWithData = cartWithData
             )
-            CartListProducts(
-                productCartList = cartWithData.productCartWithData,
-                modifier = modifier,
-                onProductCartEditClicked = onEditProduct,
-                onProductCartDelete = onDeleteProduct,
-                formatValue = formatValue
-            )
+            Column(modifier = modifier.padding(horizontal = 15.dp)) {
+                CartListProducts(
+                    productCartList = cartWithData.productCartWithData,
+                    modifier = modifier,
+                    onProductCartEditClicked = onEditProduct,
+                    onProductCartDelete = onDeleteProduct,
+                    formatValue = formatValue
+                )
+            }
         }
         FloatingActionButton(
             onClick = onAddNewProduct,
@@ -189,10 +190,10 @@ fun CartScreenBody(
 }
 
 @Composable
-fun CartHeader(modifier: Modifier, cartWithData: CartWithData) {
+fun CartHeader(modifier: Modifier = Modifier, cartWithData: CartWithData) {
     Card(
         shape = RoundedCornerShape(
-            topStart = 0.dp, topEnd = 0.dp, bottomStart = 25.dp, bottomEnd = 25.dp
+            0.dp
         ),
         colors = CardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -201,7 +202,7 @@ fun CartHeader(modifier: Modifier, cartWithData: CartWithData) {
             contentColor = MaterialTheme.colorScheme.secondary
         ),
         elevation = CardDefaults.cardElevation(5.dp),
-        modifier = modifier.padding(top = 0.dp, end = 5.dp, start = 5.dp, bottom = 5.dp),
+        modifier = modifier.fillMaxWidth(),
     ) {
         Column(modifier = modifier.padding(10.dp)) {
             CartHeaderRow("Identificador de producto", cartWithData.cart.id.toString(), modifier)
@@ -284,7 +285,7 @@ fun CartProductItem(
 ) {
     Card(
         modifier = modifier
-            .padding(5.dp)
+            .padding(vertical = 5.dp)
             .alpha(0.9f),
         elevation = CardDefaults.cardElevation(3.dp),
         border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondary)
