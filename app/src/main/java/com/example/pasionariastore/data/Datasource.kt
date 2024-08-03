@@ -51,17 +51,22 @@ object Datasource {
     val cartProducts: List<ProductCartWithData> = listOf(
         ProductCartWithData(
             productCart = ProductCart(
-                quantity = "233", productCartId = 2, totalPrice = 2500.0, productId = 3, cartId = 0
+                quantity = "233", productCartId = 2, totalPrice = 2500.0, productId = 1, cartId = 1
             ), productWithUnit = productsWithUnit.get(2)
         ), ProductCartWithData(
             productCart = ProductCart(
-                quantity = "500", productCartId = 3, totalPrice = 3625.0, productId = 3, cartId = 0
+                quantity = "1000", productCartId = 3, totalPrice = 3625.0, productId = 2, cartId = 1
+            ), productWithUnit = productsWithUnit.get(3)
+        ),
+        ProductCartWithData(
+            productCart = ProductCart(
+                quantity = "200", productCartId = 4, totalPrice = 230.0, productId = 3, cartId = 1
             ), productWithUnit = productsWithUnit.get(3)
         )
     )
 
     val carts: List<Cart> = listOf(
-        Cart(status = "INACTIVE"),
+        Cart(id = 1, status = "INACTIVE"),
         Cart(status = "PENDING"),
         Cart(status = "FINALIZED"),
         Cart(),
@@ -71,8 +76,11 @@ object Datasource {
         Cart(status = "INACTIVE", dateCreated = Date(124)),
     )
 
-    val cartWithData: List<CartWithData> = mutableListOf(
-        CartWithData(cart = carts[0], productCartWithData = listOf(cartProducts[1])),
+    val cartWithData: List<CartWithData> = listOf(
+        CartWithData(
+            cart = carts[0],
+            productCartWithData = listOf(cartProducts[0],cartProducts[1], cartProducts[2],)
+        ),
         CartWithData(cart = carts[1], productCartWithData = listOf(cartProducts[1])),
         CartWithData(cart = carts[2], productCartWithData = listOf(cartProducts[1])),
         CartWithData(cart = carts[2], productCartWithData = listOf(cartProducts[1]))

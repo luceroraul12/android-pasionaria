@@ -43,16 +43,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.CartWithData
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.calculateTotalPriceLabel
 import com.example.pasionariastore.model.format
-import com.example.pasionariastore.ui.preview.CartRepositoryFake
+import com.example.pasionariastore.model.state.CartUIState
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.CartViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Preview(showBackground = true)
 @Composable
@@ -64,7 +64,7 @@ fun CartItemPreview() {
             onCartProductClicked = { /*TODO*/ },
             onDeleteProductClicked = { /*TODO*/ },
             modifier = Modifier,
-            data = Datasource.cartProducts.get(1),
+            data = Datasource.cartProducts[0],
             formatValue = { "ARS1,500" }
         )
     }
@@ -95,11 +95,19 @@ fun CartPreview() {
         Scaffold(
             modifier = Modifier.fillMaxSize()
         ) { innerPadding ->
-            CartScreen(
+            val mockData = MutableStateFlow(
+                Datasource.cartWithData[0],
+            )
+            val state = CartUIState(
+                cartWithData = mockData
+            )
+            CartScreenBody(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-                cartViewModel = CartViewModel(CartRepositoryFake()),
-                navController = rememberNavController(),
-                initialCartId = 1
+                state = state,
+                onAddNewProduct = { /*TODO*/ },
+                formatValue = { "ARS24,435.23" },
+                onDeleteProduct = {},
+                onEditProduct = { cartId, productCartId -> },
             )
         }
     }
@@ -118,35 +126,58 @@ fun CartScreen(
         cartViewModel.initScreenByCart(initialCartId)
     }
 
+    CartScreenBody(
+        modifier = modifier,
+        state = state,
+        onAddNewProduct = {
+            cartViewModel.goToProductCartScreen(
+                navController = navController,
+                cartId = initialCartId,
+                productCartId = 0
+            )
+        },
+        formatValue = cartViewModel::formatPriceNumber,
+        onDeleteProduct = {
+            cartViewModel.removeProductFromCart(
+                data = it, context = context
+            )
+        },
+        onEditProduct = { cartId, productCartId ->
+            cartViewModel.goToProductCartScreen(
+                navController = navController,
+                cartId = cartId,
+                productCartId = productCartId
+            )
+        }
+    )
+}
+
+@Composable
+fun CartScreenBody(
+    state: CartUIState,
+    modifier: Modifier = Modifier,
+    onAddNewProduct: () -> Unit,
+    formatValue: (Double) -> String,
+    onDeleteProduct: (ProductCartWithData) -> Unit,
+    onEditProduct: (cartId: Long, productCartId: Long) -> Unit
+) {
+    val cartWithData by state.cartWithData.collectAsState()
     Box(modifier = modifier.fillMaxSize()) {
         Column(modifier = modifier.padding(horizontal = 10.dp)) {
-            CartHeader(modifier, state.cartWithData.value)
-            CartListProducts(
-                productCartList = state.cartWithData.value.productCartWithData,
+            CartHeader(
                 modifier = modifier,
-                onProductCartEditClicked = { cartId, productCartId ->
-                    cartViewModel.goToProductCartScreen(
-                        navController = navController,
-                        cartId = cartId,
-                        productCartId = productCartId
-                    )
-                },
-                onProductCartDelete = {
-                    cartViewModel.removeProductFromCart(
-                        data = it, context = context
-                    )
-                },
-                formatValue = cartViewModel::formatPriceNumber
+                cartWithData = cartWithData
+            )
+            CartListProducts(
+                productCartList = cartWithData.productCartWithData,
+                modifier = modifier,
+                onProductCartEditClicked = onEditProduct,
+                onProductCartDelete = onDeleteProduct,
+                formatValue = formatValue
             )
         }
         FloatingActionButton(
-            onClick = {
-                cartViewModel.goToProductCartScreen(
-                    navController = navController,
-                    cartId = initialCartId,
-                    productCartId = 0
-                )
-            },
+            onClick = onAddNewProduct,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(30.dp)
@@ -154,6 +185,7 @@ fun CartScreen(
             Icon(Icons.Filled.Add, "New Product")
         }
     }
+
 }
 
 @Composable

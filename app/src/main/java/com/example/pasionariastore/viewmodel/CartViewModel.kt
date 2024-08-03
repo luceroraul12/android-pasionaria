@@ -37,7 +37,7 @@ class CartViewModel @Inject constructor(
 
             result.collect { cart ->
                 if (cart != null) state.update {
-                    it.copy(cartWithData = mutableStateOf(cart))
+                    it.copy(cartWithData = MutableStateFlow(cart))
                 }
             }
         }

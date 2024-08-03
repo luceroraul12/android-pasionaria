@@ -2,18 +2,15 @@ package com.example.pasionariastore.viewmodel
 
 import com.example.pasionariastore.repository.CartRepository
 import com.example.pasionariastore.repository.CartRepositoryFake
-import com.example.pasionariastore.repository.ProductRepository
-import com.example.pasionariastore.repository.ProductRepositoryFake
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class CartViewModelTest {
     val cartRepository: CartRepository = CartRepositoryFake()
-    val productRepository: ProductRepository = ProductRepositoryFake()
     val viewModel: CartViewModel =
-        CartViewModel(cartRepository = cartRepository,
-            productRepository = productRepository,
-            checkDatabaseViewModel = CheckDatabaseViewModel(ProductRepositoryFake()))
+        CartViewModel(
+            cartRepository = cartRepository,
+        )
 
     @Test
     fun format_text_rounded_success() {

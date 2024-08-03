@@ -9,6 +9,7 @@ import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.ProductWithUnit
+import kotlinx.coroutines.flow.MutableStateFlow
 
 data class CartUIState(
     val currentProductCart: ProductCartWithData = ProductCartWithData(
@@ -16,7 +17,7 @@ data class CartUIState(
             product = Product(), unit = com.example.pasionariastore.model.Unit()
         )
     ),
-    val cartWithData: MutableState<CartWithData> = mutableStateOf(
+    val cartWithData: MutableStateFlow<CartWithData> = MutableStateFlow(
         CartWithData(
             cart = Cart(),
             productCartWithData = mutableStateListOf()
