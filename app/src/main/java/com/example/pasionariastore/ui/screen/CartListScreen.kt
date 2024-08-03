@@ -95,7 +95,7 @@ fun CartItemPreview(modifier: Modifier = Modifier) {
 @Composable
 @Preview(showBackground = true)
 fun ScreenPreivew(modifier: Modifier = Modifier) {
-    PasionariaStoreTheme(darkTheme = true) {
+    PasionariaStoreTheme(darkTheme = false) {
         val state = CartListUIState(cartsWithData = Datasource.cartWithData.toMutableList())
         Box(modifier = modifier) {
             Column(modifier = modifier.fillMaxSize()) {
@@ -168,7 +168,7 @@ fun CartForm(
     onUpdateChip: (CartStatus) -> Unit
 ) {
     Card(
-        shape = RoundedCornerShape(bottomStart = 15.dp, bottomEnd = 15.dp)
+        shape = RoundedCornerShape(0.dp)
     ) {
         Column(
             modifier = modifier.fillMaxWidth(),
@@ -203,7 +203,7 @@ fun CartFormFilterStates(
                         textAlign = TextAlign.Center
                     )
                 },
-                shape = CutCornerShape(0.dp),
+                shape = RoundedCornerShape(0.dp),
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = colorResource(id = it.backgroundColorActive),
                     selectedLabelColor = Color.White,
