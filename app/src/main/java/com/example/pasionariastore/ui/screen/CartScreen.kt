@@ -24,6 +24,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,12 +43,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.CartWithData
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.calculateTotalPriceLabel
 import com.example.pasionariastore.model.format
+import com.example.pasionariastore.ui.preview.CartRepositoryFake
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.CartViewModel
 
@@ -83,26 +86,24 @@ fun CartListPreview() {
     }
 }
 
-//@Preview
-//@Composable
-//fun CartPreview() {
-//    PasionariaStoreTheme(
-//        darkTheme = true
-//    ) {
-//        Scaffold(
-//            modifier = Modifier.fillMaxSize()
-//        ) { innerPadding ->
-//            CartScreen(
-//                modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-//                onCardProductButtonClicked = {},
-//                goToNewProduct = {},
-//                cartViewModel = viewModel(),
-//                navController = rememberNavController(),
-//                initialCartId = 1
-//            )
-//        }
-//    }
-//}
+@Preview
+@Composable
+fun CartPreview() {
+    PasionariaStoreTheme(
+        darkTheme = true
+    ) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize()
+        ) { innerPadding ->
+            CartScreen(
+                modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
+                cartViewModel = CartViewModel(CartRepositoryFake()),
+                navController = rememberNavController(),
+                initialCartId = 1
+            )
+        }
+    }
+}
 
 @Composable
 fun CartScreen(
