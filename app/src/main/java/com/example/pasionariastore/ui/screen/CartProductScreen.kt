@@ -1,6 +1,5 @@
 package com.example.pasionariastore.ui.screen
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,12 +24,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -50,13 +47,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductWithUnit
+import com.example.pasionariastore.ui.preview.CartRepositoryFake
+import com.example.pasionariastore.ui.preview.ProductRepositoryFake
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.CartProductViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -70,7 +68,10 @@ fun ProductScreenPreview() {
             CartProductScreen(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
                 navController = rememberNavController(),
-                cartProductViewModel = viewModel(),
+                cartProductViewModel = CartProductViewModel(
+                    CartRepositoryFake(),
+                    ProductRepositoryFake()
+                ),
                 cartId = 0L,
                 productCartId = 0L
             )

@@ -10,12 +10,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class CartRepositoryFake : CartRepository {
-    override fun getCartWithData(cartId: Long): Flow<CartWithData> {
-        TODO("Not yet implemented")
-    }
+    override fun getCartWithData(cartId: Long): Flow<CartWithData> =
+        flow { Datasource.cartWithData }
 
     override fun getProducts(): Flow<List<ProductCartWithData>> = flow { Datasource.cartProducts }
-    override fun getCartsWithStatus(status: List<String>): Flow<List<CartWithData>> = flow { Datasource.cartWithData }
+    override fun getCartsWithStatus(status: List<String>): Flow<List<CartWithData>> =
+        flow { Datasource.cartWithData }
+
     override suspend fun updateProductCart(productCart: ProductCart) {
         TODO("Not yet implemented")
     }

@@ -17,8 +17,8 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class CartListViewModel @Inject constructor(
-    private val cartRepository: CartRepository
+open class CartListViewModel @Inject constructor(
+    protected val cartRepository: CartRepository
 
 ) : ViewModel() {
     var state = MutableStateFlow(CartListUIState())

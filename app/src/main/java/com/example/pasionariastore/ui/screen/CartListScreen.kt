@@ -96,11 +96,32 @@ fun CartItemPreview(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 fun ScreenPreivew(modifier: Modifier = Modifier) {
     PasionariaStoreTheme(darkTheme = true) {
-        CartListScreen(
-            modifier = modifier,
-            cartListViewModel = CartListViewModel(cartRepository = CartRepositoryFake()),
-            navController = rememberNavController()
-        )
+        val state = CartListUIState(cartsWithData = Datasource.cartWithData.toMutableList())
+        Box(modifier = modifier) {
+            Column(modifier = modifier.fillMaxSize()) {
+                CartForm(
+                    modifier = modifier,
+                    stateButtons = state.stateFilters,
+                    onUpdateChip = { }
+                )
+                CartList(
+                    modifier = modifier,
+                    carts = state.cartsWithData,
+                    onDeleteCartClicked = {},
+                    onCartClicked = {
+
+                    }
+                )
+            }
+            FloatingActionButton(
+                onClick = {},
+                modifier = modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(25.dp)
+            ) {
+                Icon(Icons.Filled.Add, "New Cart")
+            }
+        }
     }
 }
 
