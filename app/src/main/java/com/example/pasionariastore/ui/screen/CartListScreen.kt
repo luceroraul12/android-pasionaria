@@ -94,7 +94,6 @@ fun CartItemPreview(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 fun ScreenPreivew(modifier: Modifier = Modifier) {
     PasionariaStoreTheme(darkTheme = false) {
-        val state = CartListUIState(cartsWithData = Datasource.cartWithData.toMutableList())
         CartListScreen(
             navController = rememberNavController(),
             cartListViewModel = CartListViewModelFake()
