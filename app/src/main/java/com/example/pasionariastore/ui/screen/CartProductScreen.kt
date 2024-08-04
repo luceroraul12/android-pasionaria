@@ -183,7 +183,7 @@ fun ProductDescription(
             description = product.description
             price = formatValue(product.priceList * it.unit.value)
         }
-        unit = it.unit.nameType
+        unit = it.unit.name
     }
     Card(modifier = modifier) {
         Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceEvenly) {

@@ -2,6 +2,7 @@ package com.example.pasionariastore.usecase
 
 import com.example.pasionariastore.model.BackendLookup
 import com.example.pasionariastore.model.BackendProduct
+import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.Unit
 import com.example.pasionariastore.repository.BackendRepository
 import com.example.pasionariastore.repository.ProductRepository
@@ -25,10 +26,25 @@ class ProductSynchronizer @Inject constructor(
         val backendProducts = backendRepository.getCustomerProducts()
 
         if (!backendProducts.isNullOrEmpty()) {
-            val backendUnits = backendProducts.map(BackendProduct::unitType).distinct()
-            syncUnits(backendUnits = backendUnits)
+            backendProducts.let {
+                val backendUnits  = it.map(BackendProduct::unitType).distinct()
+                syncUnits(backendUnits = backendUnits)
+                syncProducts(it)
+            }
+
         }
 
+    }
+
+    private suspend fun syncProducts(backendProducts: List<BackendProduct>) {
+        val products = backendProducts.map { Product(
+            name = it.name,
+            productId = it.id,
+            description = it.description ?: "SIN DESCRIPCION",
+            unitId = it.unitType.id,
+            priceList = it.price.toDouble()
+        ) }
+        productRepository.saveProducts(products)
     }
 
     private suspend fun syncUnits(backendUnits: List<BackendLookup>) {

@@ -43,4 +43,8 @@ class ProductRepositoryImpl @Inject constructor(private val productDatabaseDao: 
         productDatabaseDao.insertUnits(units)
     }
 
+    override suspend fun saveProducts(products: List<Product>) {
+        productDatabaseDao.insertProducts(products)
+    }
+
 }

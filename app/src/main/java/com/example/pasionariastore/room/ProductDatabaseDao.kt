@@ -48,6 +48,6 @@ interface ProductDatabaseDao {
     @Upsert
     suspend fun insertUnits(units: List<Unit>)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertProducts(products: List<Product>)
 }

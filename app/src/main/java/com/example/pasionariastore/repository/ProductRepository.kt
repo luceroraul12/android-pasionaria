@@ -14,4 +14,5 @@ interface ProductRepository {
     suspend fun saveFirstUnits()
     suspend fun saveFirstProducts()
     suspend fun saveUnits(units: List<Unit>)
+    suspend fun saveProducts(products: List<Product>)
 }
