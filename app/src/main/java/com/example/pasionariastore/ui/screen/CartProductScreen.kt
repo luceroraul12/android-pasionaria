@@ -48,6 +48,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -67,28 +68,19 @@ import com.example.pasionariastore.viewmodel.CartProductViewModel
 import kotlinx.coroutines.launch
 
 
-@Preview
+@Preview(device = Devices.PIXEL_3A_XL)
 @Composable
 fun ProductScreenPreview() {
     PasionariaStoreTheme {
         CartProductScreen(
-            cartId = 3,
-            productCartId = 4,
             navController = rememberNavController(),
-            cartProductViewModel = CartProductViewModelFake()
+            cartProductViewModel = CartProductViewModel(
+                CartRepositoryFake(),
+                ProductRepositoryFake()
+            ),
+            cartId = 2L,
+            productCartId = 5L
         )
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            CartProductScreen(
-                modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-                navController = rememberNavController(),
-                cartProductViewModel = CartProductViewModel(
-                    CartRepositoryFake(),
-                    ProductRepositoryFake()
-                ),
-                cartId = 0L,
-                productCartId = 0L
-            )
-        }
     }
 }
 
@@ -160,22 +152,27 @@ fun CartProductBody(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = dimensionResource(id = R.dimen.screen_horizontal)),
+            .padding(
+                horizontal = dimensionResource(id = R.dimen.screen_horizontal),
+                vertical = dimensionResource(
+                    id = R.dimen.screen_vertical
+                )
+            ),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        if (state.canSearchProducts) {
-            ProductSearcher(
-                Modifier.fillMaxWidth(),
-                onSearchProducts = { cartProductViewModel.searchProducts(context) },
-                currentSearch = state.currentSearch,
-                updateCurrentSearch = { cartProductViewModel.updateCurrentSearch(it) },
-                focusRequester = focusRequester,
-                data = state.productsFound,
-                onProductSearchClicked = { cartProductViewModel.selectProductSearched(it) },
-                onCancelSearchClicked = cartProductViewModel::cancelCurrentSearch
-            )
-            Spacer(modifier = Modifier.padding(10.dp))
-        }
+        ProductSearcher(
+            Modifier.fillMaxWidth(),
+            onSearchProducts = { cartProductViewModel.searchProducts(context) },
+            currentSearch = state.currentSearch,
+            updateCurrentSearch = { cartProductViewModel.updateCurrentSearch(it) },
+            focusRequester = focusRequester,
+            data = state.productsFound,
+            onProductSearchClicked = { cartProductViewModel.selectProductSearched(it) },
+            onCancelSearchClicked = cartProductViewModel::cancelCurrentSearch,
+            enabled = state.canSearchProducts
+        )
+
+        Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.default_value)))
         Card(modifier = Modifier.weight(1f)) {
             ProductDescription(
                 Modifier.fillMaxWidth(),
@@ -183,7 +180,7 @@ fun CartProductBody(
                 formatValue = cartProductViewModel::formatPriceNumber
             )
         }
-        Spacer(modifier = Modifier.padding(10.dp))
+        Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.default_value)))
         Card {
             ProductFormCalculator(
                 modifier = Modifier,
@@ -308,16 +305,18 @@ fun DescriptionItem(title: String, description: String, modifier: Modifier) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductSearcher(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     updateCurrentSearch: (String) -> Unit,
     onSearchProducts: () -> Unit,
     currentSearch: String,
     focusRequester: FocusRequester,
     data: List<ProductWithUnit>,
     onProductSearchClicked: (ProductWithUnit) -> Unit,
-    onCancelSearchClicked: () -> Unit
+    onCancelSearchClicked: () -> Unit,
+    enabled: Boolean
 ) {
     SearchBar(
+        enabled = enabled,
         placeholder = { Text(text = "Buscador de productos...") },
         query = currentSearch,
         onQueryChange = { updateCurrentSearch(it) },
@@ -333,9 +332,8 @@ fun ProductSearcher(
                 contentDescription = "cancelSearch",
                 modifier = Modifier.clickable { onCancelSearchClicked() })
         },
-        modifier = Modifier
-            .focusRequester(focusRequester)
-            .fillMaxWidth(),
+        modifier = modifier
+            .focusRequester(focusRequester),
         shape = RoundedCornerShape(dimensionResource(id = R.dimen.rounded))
     ) {
         LazyColumn {

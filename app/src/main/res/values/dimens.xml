@@ -4,4 +4,6 @@
     <dimen name="card_vertical">5.dp</dimen>
     <dimen name="screen_horizontal">10.dp</dimen>
     <dimen name="rounded">15.dp</dimen>
+    <dimen name="screen_vertical">5.dp</dimen>
+    <dimen name="default_value">5.dp</dimen>
 </resources>
