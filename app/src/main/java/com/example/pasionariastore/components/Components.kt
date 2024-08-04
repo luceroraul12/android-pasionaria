@@ -2,6 +2,7 @@ package com.example.pasionariastore.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -18,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.pasionariastore.R
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 
@@ -25,7 +27,7 @@ import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 @Composable
 private fun MainTopBarFinalizeOnPreview() {
     PasionariaStoreTheme {
-        MainTopBar(title = "Titulo ejemplo", onBackClicked = {}, showBackIcon = true, actions = {
+        MainTopBar(title = "Homitowen (っ◔◡◔)っ", onBackClicked = {}, showBackIcon = true, actions = {
             FinalizeButton(onFinalize = {}, canFinalize = true)
         })
     }
@@ -35,7 +37,7 @@ private fun MainTopBarFinalizeOnPreview() {
 @Composable
 private fun MainTopBarFinalizeOffPreview() {
     PasionariaStoreTheme {
-        MainTopBar(title = "Titulo ejemplo", onBackClicked = {}, showBackIcon = true, actions = {
+        MainTopBar(title = "Hamilton ( ͡❛ ͜ʖ ͡❛)", onBackClicked = {}, showBackIcon = true, actions = {
             FinalizeButton(onFinalize = {})
         })
     }
@@ -50,7 +52,7 @@ fun MainTopBar(
     actions: @Composable() (RowScope.() -> Unit)
 ) {
     TopAppBar(
-        title = { Text(text = "Texto", fontWeight = FontWeight.Bold, color = Color.White) },
+        title = { Text(text = title, fontWeight = FontWeight.Bold, color = Color.White) },
         colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary),
         navigationIcon = {
             if (showBackIcon) {
@@ -68,6 +70,7 @@ fun MainTopBar(
 fun FinalizeButton(onFinalize: () -> Unit, canFinalize: Boolean = false) {
     Button(
         onClick = onFinalize,
+        shape = RoundedCornerShape(5.dp),
         colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = if (canFinalize) R.color.finalized_active else R.color.finalized_inactive)),
     ) {
         Text(text = "Finalizar")
