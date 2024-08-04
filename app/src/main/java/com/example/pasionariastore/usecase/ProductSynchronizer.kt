@@ -6,6 +6,7 @@ import com.example.pasionariastore.model.Unit
 import com.example.pasionariastore.repository.BackendRepository
 import com.example.pasionariastore.repository.ProductRepository
 import javax.inject.Inject
+import javax.inject.Singleton
 
 enum class UnitTypes(val value: String) {
     GR(value = "Gramos"),
@@ -14,6 +15,7 @@ enum class UnitTypes(val value: String) {
     U(value = "Unidades"),
 }
 
+@Singleton
 class ProductSynchronizer @Inject constructor(
     private val backendRepository: BackendRepository,
     private val productRepository: ProductRepository
@@ -23,13 +25,13 @@ class ProductSynchronizer @Inject constructor(
         val backendProducts = backendRepository.getCustomerProducts()
 
         if (!backendProducts.isNullOrEmpty()) {
-            val backendUnits = backendProducts.map(BackendProduct::unitType)
+            val backendUnits = backendProducts.map(BackendProduct::unitType).distinct()
             syncUnits(backendUnits = backendUnits)
         }
 
     }
 
-    private fun syncUnits(backendUnits: List<BackendLookup>) {
+    private suspend fun syncUnits(backendUnits: List<BackendLookup>) {
         val units = backendUnits.map {
             Unit(
                 unitId = it.id,
@@ -38,11 +40,16 @@ class ProductSynchronizer @Inject constructor(
                 nameType = getNameType(it)
             )
         }
-//        productRepository.saveUnits()
+        productRepository.saveUnits(units)
     }
 
     fun getNameType(backendUnit: BackendLookup): String {
-        return UnitTypes.entries.firstOrNull { it.value.contains(backendUnit.description) }?.value
+        return UnitTypes.entries.firstOrNull {
+            backendUnit.description.contains(
+                it.name,
+                ignoreCase = true
+            )
+        }?.value
             ?: "Gramos"
     }
 

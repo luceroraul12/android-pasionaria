@@ -23,6 +23,17 @@ class ProductSynchronizerTest {
     }
 
     @Test
+    fun unitType_1K_success() {
+        val unit = BackendLookup(
+            code = "MEDIDAS_VENTAS_1000G",
+            description = "x1kg"
+        )
+        val result = syncronizer.getNameType(unit)
+
+        Assert.assertEquals("Kilogramos", result)
+    }
+
+    @Test
     fun unitType_50G_success() {
         val unit = BackendLookup(
             code = "MEDIDAS_VENTAS_50G",

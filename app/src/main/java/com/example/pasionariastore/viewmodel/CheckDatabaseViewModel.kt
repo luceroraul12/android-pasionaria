@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pasionariastore.repository.BackendRepositoryImpl
 import com.example.pasionariastore.repository.ProductRepository
+import com.example.pasionariastore.usecase.ProductSynchronizer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,11 +15,20 @@ import javax.inject.Inject
 @HiltViewModel
 class CheckDatabaseViewModel @Inject constructor(
     private val productRepository: ProductRepository,
-    private val backendRepositoryImpl: BackendRepositoryImpl
+    private val backendRepositoryImpl: BackendRepositoryImpl,
+    private val productSynchronizer: ProductSynchronizer
 ) : ViewModel() {
     init {
-        checkData()
         checkBackendStates()
+        syncData()
+    }
+
+    private fun syncData() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO){
+                productSynchronizer.syncSystem()
+            }
+        }
     }
 
     private fun checkBackendStates() {

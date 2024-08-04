@@ -3,6 +3,7 @@ package com.example.pasionariastore.repository
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.ProductWithUnit
+import com.example.pasionariastore.model.Unit
 import com.example.pasionariastore.room.ProductDatabaseDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -36,6 +37,10 @@ class ProductRepositoryImpl @Inject constructor(private val productDatabaseDao: 
 
     override suspend fun saveFirstProducts() {
         productDatabaseDao.insertProducts(Datasource.products)
+    }
+
+    override suspend fun saveUnits(units: List<Unit>) {
+        productDatabaseDao.insertUnits(units)
     }
 
 }

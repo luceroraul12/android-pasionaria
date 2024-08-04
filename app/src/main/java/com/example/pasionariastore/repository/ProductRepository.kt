@@ -13,4 +13,5 @@ interface ProductRepository {
     fun getUnits(): Flow<List<Unit>>
     suspend fun saveFirstUnits()
     suspend fun saveFirstProducts()
+    suspend fun saveUnits(units: List<Unit>)
 }

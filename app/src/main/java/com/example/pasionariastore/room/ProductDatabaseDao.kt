@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Upsert
 import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.model.Unit
@@ -44,7 +45,7 @@ interface ProductDatabaseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUnit(unit: Unit)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertUnits(units: List<Unit>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
