@@ -2,6 +2,8 @@ package com.example.pasionariastore.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.pasionariastore.data.api.ApiBackend
+import com.example.pasionariastore.repository.BackendRepository
 import com.example.pasionariastore.repository.CartRepository
 import com.example.pasionariastore.repository.CartRepositoryImpl
 import com.example.pasionariastore.repository.ProductRepository
@@ -9,12 +11,14 @@ import com.example.pasionariastore.repository.ProductRepositoryImpl
 import com.example.pasionariastore.room.CartDatabaseDao
 import com.example.pasionariastore.room.PasionariaDatabase
 import com.example.pasionariastore.room.ProductDatabaseDao
-import com.example.pasionariastore.viewmodel.CheckDatabaseViewModel
+import com.example.pasionariastore.util.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
@@ -51,5 +55,22 @@ object AppModule {
         return Room.databaseBuilder(
             context = context, klass = PasionariaDatabase::class.java, name = "pasionaria_db"
         ).fallbackToDestructiveMigration().build()
+    }
+
+    @Singleton
+    @Provides
+    fun providesRetrofit(): Retrofit =
+        Retrofit.Builder().baseUrl(Constants.API_BASE).addConverterFactory(
+            GsonConverterFactory.create()
+        ).build()
+
+    @Singleton
+    @Provides
+    fun providesApiBackend(retrofit: Retrofit): ApiBackend = retrofit.create(ApiBackend::class.java)
+
+    @Provides
+    @Singleton
+    fun providesBackendRepository(apiBackend: ApiBackend): BackendRepository {
+        return BackendRepository(apiBackend)
     }
 }

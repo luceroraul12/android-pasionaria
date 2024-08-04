@@ -19,8 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.pasionariastore.data.CustomDataStore
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
+import com.example.pasionariastore.viewmodel.CheckDatabaseViewModel
 import kotlinx.coroutines.launch
 
 @Preview(showBackground = true)
@@ -44,6 +46,7 @@ fun ResumeScreen(
     onCartButtonClicked: () -> Unit,
     dataStore: CustomDataStore,
     onCartListButtonClicked: () -> Unit,
+    checkDatabase: CheckDatabaseViewModel = hiltViewModel(),
 ) {
     val darkMode = dataStore.getDarkMode.collectAsState(initial = false)
     val scope = rememberCoroutineScope();
