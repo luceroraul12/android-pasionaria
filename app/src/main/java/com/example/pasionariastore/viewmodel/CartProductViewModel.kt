@@ -16,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -31,11 +32,13 @@ class CartProductViewModel @Inject constructor(
     var state = MutableStateFlow(CartProductUIState())
         private set
 
+    private val _operationCompleted = MutableStateFlow(false)
+    val operationCompleted = _operationCompleted.asStateFlow()
+
     private var searchJob: Job? = null
     private var focusJob: Job? = null
     private var initJob: Job? = null
     private var createUpdateJob: Job? = null
-
 
     fun emitFocus(value: Boolean, delayTime: Long = 500): Unit {
         focusJob = viewModelScope.launch {
@@ -206,6 +209,7 @@ class CartProductViewModel @Inject constructor(
                     showMessage(context = context, message = message)
                     emitFocus(false, 0)
                     cleanState()
+                    _operationCompleted.value = true
                 }
             }
         }
@@ -219,4 +223,6 @@ class CartProductViewModel @Inject constructor(
             )
         }
     }
+
+
 }

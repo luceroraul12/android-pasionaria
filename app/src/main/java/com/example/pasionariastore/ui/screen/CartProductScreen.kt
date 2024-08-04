@@ -59,7 +59,7 @@ import com.example.pasionariastore.ui.preview.CartRepositoryFake
 import com.example.pasionariastore.ui.preview.ProductRepositoryFake
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.CartProductViewModel
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
 @Preview
@@ -94,14 +94,27 @@ fun CartProductScreen(
     val state by cartProductViewModel.state.collectAsState()
     val context = LocalContext.current
 
-    LaunchedEffect(key1 = state.currentProductCart.productCartId) {
-        cartProductViewModel.initScreen(cartId, productCartId)
-        state.lastSearch.collect {
-            if (it) {
-                focusRequester.requestFocus()
-                focusManager.moveFocus(FocusDirection.Down)
-            } else {
-                focusManager.clearFocus(true)
+    LaunchedEffect(Unit) {
+        launch {
+            cartProductViewModel.initScreen(cartId, productCartId)
+        }
+        launch {
+            state.lastSearch.collect {
+                if (it) {
+                    focusRequester.requestFocus()
+                    focusManager.moveFocus(FocusDirection.Down)
+                } else {
+                    focusManager.clearFocus(true)
+                }
+            }
+        }
+    }
+
+    // Para volver atras cuando haya finalizado la limpieza de estados
+    LaunchedEffect(key1 = cartProductViewModel.operationCompleted) {
+        cartProductViewModel.operationCompleted.collect { completed ->
+            if (completed) {
+                navController.popBackStack()
             }
         }
     }
@@ -156,7 +169,6 @@ fun CartProductScreen(
                     cartProductViewModel.createOrUpdateProductCart(
                         context,
                     )
-                    navController.popBackStack()
                 },
                 canEditQuantity = state.canUpdateQuantity
             )
@@ -167,7 +179,6 @@ fun CartProductScreen(
                     cartProductViewModel.createOrUpdateProductCart(
                         context = context,
                     )
-                    navController.popBackStack()
                 },
                 productCart = state.currentProductCart,
                 isNew = state.isNew
