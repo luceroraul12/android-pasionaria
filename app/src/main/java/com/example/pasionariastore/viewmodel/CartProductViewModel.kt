@@ -25,7 +25,7 @@ import java.util.Currency
 import javax.inject.Inject
 
 @HiltViewModel
-class CartProductViewModel @Inject constructor(
+open class CartProductViewModel @Inject constructor(
     private val cartRepository: CartRepository,
     private val productRepository: ProductRepository,
 ) : ViewModel() {

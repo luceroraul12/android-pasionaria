@@ -19,6 +19,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -37,6 +38,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -51,10 +53,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
+import com.example.pasionariastore.components.MainTopBar
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.model.format
+import com.example.pasionariastore.ui.preview.CartProductViewModelFake
 import com.example.pasionariastore.ui.preview.CartRepositoryFake
 import com.example.pasionariastore.ui.preview.ProductRepositoryFake
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
@@ -66,6 +70,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun ProductScreenPreview() {
     PasionariaStoreTheme {
+        CartProductScreen(
+            cartId = 3,
+            productCartId = 4,
+            navController = rememberNavController(),
+            cartProductViewModel = CartProductViewModelFake()
+        )
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             CartProductScreen(
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
@@ -89,24 +99,10 @@ fun CartProductScreen(
     cartId: Long,
     productCartId: Long
 ) {
-    val focusManager = LocalFocusManager.current
-    val focusRequester = remember { FocusRequester() }
-    val state by cartProductViewModel.state.collectAsState()
-    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         launch {
             cartProductViewModel.initScreen(cartId, productCartId)
-        }
-        launch {
-            state.lastSearch.collect {
-                if (it) {
-                    focusRequester.requestFocus()
-                    focusManager.moveFocus(FocusDirection.Down)
-                } else {
-                    focusManager.clearFocus(true)
-                }
-            }
         }
     }
 
@@ -119,6 +115,47 @@ fun CartProductScreen(
         }
     }
 
+    Scaffold(
+        topBar = {
+            MainTopBar(
+                title = "Calculadora de producto",
+                onBackClicked = { navController.popBackStack() },
+                showBackIcon = true
+            ) {
+
+            }
+        }
+    ) {
+        CartProductBody(
+            cartProductViewModel = cartProductViewModel,
+            navController = navController,
+            modifier = modifier.padding(it)
+        )
+    }
+}
+
+@Composable
+fun CartProductBody(
+    cartProductViewModel: CartProductViewModel,
+    modifier: Modifier = Modifier,
+    navController: NavHostController
+) {
+    val focusManager = LocalFocusManager.current
+    val focusRequester = remember { FocusRequester() }
+    val state by cartProductViewModel.state.collectAsState()
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        launch {
+            state.lastSearch.collect {
+                if (it) {
+                    focusRequester.requestFocus()
+                    focusManager.moveFocus(FocusDirection.Down)
+                } else {
+                    focusManager.clearFocus(true)
+                }
+            }
+        }
+    }
     if (state.productsFound.isNotEmpty()) {
         // Antes de abrir el modal tengo que ver si existen coincidencias
         ModalSearchProduct(
@@ -127,20 +164,20 @@ fun CartProductScreen(
                 cartProductViewModel.selectProductSearched(it)
             },
             search = state.currentSearch,
-            modifier = modifier,
+            modifier = Modifier,
             onCancelSearch = { cartProductViewModel.cleanProductsFound() }
         )
     }
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(10.dp),
+            .padding(horizontal = dimensionResource(id = R.dimen.screen_horizontal)),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         if (state.canSearchProducts) {
             Card {
                 ProductSearcher(
-                    modifier.fillMaxWidth(),
+                    Modifier.fillMaxWidth(),
                     canSearchProducts = true,
                     onSearchProducts = { cartProductViewModel.searchProducts(context) },
                     currentSearch = state.currentSearch,
@@ -148,19 +185,19 @@ fun CartProductScreen(
                     focusRequester = focusRequester
                 )
             }
-            Spacer(modifier = modifier.padding(10.dp))
+            Spacer(modifier = Modifier.padding(10.dp))
         }
-        Card(modifier = modifier.weight(1f)) {
+        Card(modifier = Modifier.weight(1f)) {
             ProductDescription(
-                modifier.fillMaxWidth(),
+                Modifier.fillMaxWidth(),
                 state.currentProductWithUnit,
                 formatValue = cartProductViewModel::formatPriceNumber
             )
         }
-        Spacer(modifier = modifier.padding(10.dp))
+        Spacer(modifier = Modifier.padding(10.dp))
         Card {
             ProductFormCalculator(
-                modifier = modifier,
+                modifier = Modifier,
                 quantity = state.currentProductCart.quantity,
                 updateQuantity = { cartProductViewModel.updateCurrentQuantity(it) },
                 priceCalculated = state.currentProductCart.totalPrice.toString(),
@@ -173,7 +210,7 @@ fun CartProductScreen(
                 canEditQuantity = state.canUpdateQuantity
             )
             CartProductActionButtons(
-                modifier = modifier,
+                modifier = Modifier,
                 onCancelButtonClicked = navController::popBackStack,
                 onAddButtonClicked = {
                     cartProductViewModel.createOrUpdateProductCart(
@@ -185,7 +222,6 @@ fun CartProductScreen(
             )
         }
     }
-
 }
 
 @Composable
@@ -280,6 +316,7 @@ fun DescriptionItem(title: String, description: String, modifier: Modifier) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductSearcher(
     modifier: Modifier,
@@ -289,6 +326,19 @@ fun ProductSearcher(
     currentSearch: String,
     focusRequester: FocusRequester
 ) {
+//    SearchBar(
+//        query = currentSearch,
+//        onQueryChange = { updateCurrentSearch(it) },
+//        onSearch = { onSearchProducts() },
+//        active = false,
+//        onActiveChange = {},
+//        leadingIcon = {
+//            Icon(painter = painterResource(id = R.drawable.search), contentDescription = "search")
+//        },
+//        modifier = modifier.focusRequester(focusRequester)
+//    ) {
+//
+//    }
     TextField(
         enabled = canSearchProducts,
         value = currentSearch,
