@@ -32,11 +32,15 @@ class CartProductViewModel @Inject constructor(
         private set
 
     private var searchJob: Job? = null
+    private var focusJob: Job? = null
+    private var initJob: Job? = null
+    private var createUpdateJob: Job? = null
 
-    fun emitFocus(): Unit {
-        viewModelScope.launch {
-            delay(500)
-            state.value.lastSearch.emit(value = Unit)
+
+    fun emitFocus(value: Boolean, delayTime: Long = 500): Unit {
+        focusJob = viewModelScope.launch {
+            delay(delayTime)
+            state.value.lastSearch.emit(value = value)
         }
     }
 
@@ -58,6 +62,12 @@ class CartProductViewModel @Inject constructor(
         Log.d("CartProductViewModel", "Me fijo el job de busqueda ${searchJob?.isActive}")
         Log.d("CartProductViewModel", "intento cancelarlo ${searchJob?.cancel()}")
         searchJob = null
+        focusJob?.cancel()
+        focusJob = null
+        initJob?.cancel()
+        initJob = null
+        createUpdateJob?.cancel()
+        createUpdateJob = null
 
         updateState(CartProductUIState())
     }
@@ -80,7 +90,7 @@ class CartProductViewModel @Inject constructor(
     fun initScreen(cartId: Long, productCartId: Long): Unit {
         // Si cuenta con ProductCartId, significa que previamente se habia guardado el producto y no necesita volver a buscar productos
         // Busco el producto
-        viewModelScope.launch(Dispatchers.IO) {
+        initJob = viewModelScope.launch(Dispatchers.IO) {
             if (productCartId > 0) {
                 cartRepository.getCartProductWithDataById(productCartId)
                     .collect { productCartWithData ->
@@ -107,7 +117,7 @@ class CartProductViewModel @Inject constructor(
                     )
                 )
             }
-            emitFocus()
+            emitFocus(true, 0)
         }
     }
 
@@ -157,7 +167,7 @@ class CartProductViewModel @Inject constructor(
                 canUpdateQuantity = true
             )
         )
-        emitFocus()
+        emitFocus(true)
     }
 
     fun calculatePriceProductCart(): String {
@@ -182,7 +192,7 @@ class CartProductViewModel @Inject constructor(
     }
 
     fun createOrUpdateProductCart(context: Context): Unit {
-        viewModelScope.launch(Dispatchers.IO) {
+        createUpdateJob = viewModelScope.launch(Dispatchers.IO) {
             state.value.let {
                 var message = "El producto fue agregado al pedido"
                 if (it.isNew) {
@@ -194,6 +204,7 @@ class CartProductViewModel @Inject constructor(
                 // Asegúrate de que la operación de inserción se complete antes de continuar
                 withContext(Dispatchers.Main) {
                     showMessage(context = context, message = message)
+                    emitFocus(false, 0)
                     cleanState()
                 }
             }

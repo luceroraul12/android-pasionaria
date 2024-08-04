@@ -96,9 +96,13 @@ fun CartProductScreen(
 
     LaunchedEffect(key1 = state.currentProductCart.productCartId) {
         cartProductViewModel.initScreen(cartId, productCartId)
-        state.lastSearch.collectLatest {
-            focusRequester.requestFocus()
-            focusManager.moveFocus(FocusDirection.Down)
+        state.lastSearch.collect {
+            if (it) {
+                focusRequester.requestFocus()
+                focusManager.moveFocus(FocusDirection.Down)
+            } else {
+                focusManager.clearFocus(true)
+            }
         }
     }
 
@@ -149,7 +153,9 @@ fun CartProductScreen(
                 priceCalculated = state.currentProductCart.totalPrice.toString(),
                 focusRequester = focusRequester,
                 onAddButtonClicked = {
-                    cartProductViewModel.createOrUpdateProductCart(context)
+                    cartProductViewModel.createOrUpdateProductCart(
+                        context,
+                    )
                     navController.popBackStack()
                 },
                 canEditQuantity = state.canUpdateQuantity
@@ -158,7 +164,9 @@ fun CartProductScreen(
                 modifier = modifier,
                 onCancelButtonClicked = navController::popBackStack,
                 onAddButtonClicked = {
-                    cartProductViewModel.createOrUpdateProductCart(context = context)
+                    cartProductViewModel.createOrUpdateProductCart(
+                        context = context,
+                    )
                     navController.popBackStack()
                 },
                 productCart = state.currentProductCart,
@@ -192,9 +200,11 @@ fun ProductDescription(
     Card(modifier = modifier) {
         Box {
             Text(
-                text = "Actualizado por ultima vez $lastUpdate", modifier = Modifier.align(
-                    Alignment.TopCenter
-                ).padding(vertical = 2.dp)
+                text = "Actualizado por ultima vez $lastUpdate", modifier = Modifier
+                    .align(
+                        Alignment.TopCenter
+                    )
+                    .padding(vertical = 2.dp)
             )
             Column(
                 modifier = modifier.fillMaxSize(),
