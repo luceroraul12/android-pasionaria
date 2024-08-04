@@ -35,4 +35,8 @@ class ProductRepositoryFake : ProductRepository {
         TODO("Not yet implemented")
     }
 
+    override suspend fun saveProducts(products: List<Product>) {
+        TODO("Not yet implemented")
+    }
+
 }
