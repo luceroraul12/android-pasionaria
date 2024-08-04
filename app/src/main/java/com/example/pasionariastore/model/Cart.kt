@@ -3,8 +3,6 @@ package com.example.pasionariastore.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.text.DateFormat
-import java.text.SimpleDateFormat
 import java.util.Date
 
 @Entity(tableName = "cart")
@@ -23,8 +21,3 @@ data class Cart(
     @ColumnInfo(name = "total_price")
     val totalPrice: Double = 0.0
 )
-
-fun Date.format(): String {
-    val df: DateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm")
-    return df.format(this)
-}

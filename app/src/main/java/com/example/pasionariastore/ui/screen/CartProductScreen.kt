@@ -2,6 +2,7 @@ package com.example.pasionariastore.ui.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -53,6 +54,7 @@ import com.example.pasionariastore.R
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductWithUnit
+import com.example.pasionariastore.model.format
 import com.example.pasionariastore.ui.preview.CartRepositoryFake
 import com.example.pasionariastore.ui.preview.ProductRepositoryFake
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
@@ -177,47 +179,59 @@ fun ProductDescription(
     var description: String
     var price: String
     var unit: String
+    var lastUpdate: String
     relation.let {
         it.product.let { product ->
             name = product.name
             description = product.description
             price = formatValue(product.priceList * it.unit.value)
+            lastUpdate = product.lastUpdate?.format() ?: "NUNCA"
         }
         unit = it.unit.name
     }
     Card(modifier = modifier) {
-        Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceEvenly) {
-            DescriptionItem(
-                title = "Producto",
-                description = name,
-                modifier = modifier
+        Box {
+            Text(
+                text = "Actualizado por ultima vez $lastUpdate", modifier = Modifier.align(
+                    Alignment.TopCenter
+                ).padding(vertical = 2.dp)
             )
-            DescriptionItem(
-                title = "Descripcion", description = description, modifier = modifier
-            )
-            DescriptionItem(
-                title = "Precio Lista",
-                description = formatValue(relation.product.priceList),
-                modifier = modifier
-            )
-            Row(horizontalArrangement = Arrangement.SpaceBetween) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                    modifier = modifier.weight(1f)
-                ) {
-                    DescriptionItem(
-                        title = "Precio",
-                        description = price,
-                        modifier = modifier
-                    )
-                }
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                    modifier = modifier.weight(1f)
-                ) {
-                    DescriptionItem(title = "Unidad", description = unit, modifier = modifier)
+            Column(
+                modifier = modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.SpaceEvenly
+            ) {
+                DescriptionItem(
+                    title = "Producto",
+                    description = name,
+                    modifier = modifier
+                )
+                DescriptionItem(
+                    title = "Descripcion", description = description, modifier = modifier
+                )
+                DescriptionItem(
+                    title = "Precio Lista",
+                    description = formatValue(relation.product.priceList),
+                    modifier = modifier
+                )
+                Row(horizontalArrangement = Arrangement.SpaceBetween) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = modifier.weight(1f)
+                    ) {
+                        DescriptionItem(
+                            title = "Precio",
+                            description = price,
+                            modifier = modifier
+                        )
+                    }
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = modifier.weight(1f)
+                    ) {
+                        DescriptionItem(title = "Unidad", description = unit, modifier = modifier)
+                    }
                 }
             }
         }

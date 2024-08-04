@@ -5,6 +5,9 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Date
 
 @Entity(
     tableName = "product",
@@ -24,6 +27,12 @@ data class Product(
     @ColumnInfo(name = "price_list")
     val priceList: Double = 0.0,
     @ColumnInfo(name = "unit_id")
-    val unitId: Long = 0
+    val unitId: Long = 0,
+    @ColumnInfo(name = "last_update")
+    val lastUpdate: Date? = null
 )
 
+fun Date.format(): String {
+    val df: DateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm")
+    return df.format(this)
+}

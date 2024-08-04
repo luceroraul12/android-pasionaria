@@ -1,5 +1,8 @@
 package com.example.pasionariastore.model
 
+import com.google.gson.annotations.SerializedName
+import java.util.Date
+
 data class BackendProduct(
     val id: Long = 0,
     val stock: Boolean = true,
@@ -8,7 +11,8 @@ data class BackendProduct(
     val description: String? = null,
     val price: Int = 26587,
     val category: BackendLookup = BackendLookup(),
-    val unitType: BackendLookup
+    val unitType: BackendLookup,
+    val lastUpdate: Date? = null
 )
 
 data class BackendLookup(

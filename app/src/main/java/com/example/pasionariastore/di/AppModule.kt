@@ -2,6 +2,7 @@ package com.example.pasionariastore.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.pasionariastore.converter.LongToDateAdapter
 import com.example.pasionariastore.data.api.ApiBackend
 import com.example.pasionariastore.repository.BackendRepository
 import com.example.pasionariastore.repository.BackendRepositoryImpl
@@ -13,6 +14,7 @@ import com.example.pasionariastore.room.CartDatabaseDao
 import com.example.pasionariastore.room.PasionariaDatabase
 import com.example.pasionariastore.room.ProductDatabaseDao
 import com.example.pasionariastore.util.Constants
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,7 +22,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.Date
 import javax.inject.Singleton
+
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -60,10 +64,14 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun providesRetrofit(): Retrofit =
-        Retrofit.Builder().baseUrl(Constants.API_BASE).addConverterFactory(
-            GsonConverterFactory.create()
+    fun providesRetrofit(): Retrofit {
+        val gson = GsonBuilder()
+            .registerTypeAdapter(Date::class.java, LongToDateAdapter())
+            .create()
+        return Retrofit.Builder().baseUrl(Constants.API_BASE).addConverterFactory(
+            GsonConverterFactory.create(gson)
         ).build()
+    }
 
     @Singleton
     @Provides

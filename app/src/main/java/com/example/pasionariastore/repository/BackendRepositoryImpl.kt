@@ -16,7 +16,7 @@ class BackendRepositoryImpl @Inject constructor(
                 return response.body() else
                 return null
         } catch (e: Exception){
-            Log.i("backend", e.message!!)
+            Log.i("backendError", e.stackTraceToString())
             return null
         }
 

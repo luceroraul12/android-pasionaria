@@ -32,25 +32,10 @@ class CheckDatabaseViewModel @Inject constructor(
     }
 
     private fun checkBackendStates() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.IO) {
                 val response = backendRepositoryImpl.getCustomerProducts()
                 Log.i("backend", response.toString())
-            }
-        }
-    }
-
-    fun checkData() {
-        viewModelScope.launch(Dispatchers.IO) {
-            productRepository.getUnits().collect {
-                if (it.isNullOrEmpty())
-                    productRepository.saveFirstUnits()
-            }
-        }
-        viewModelScope.launch(Dispatchers.IO) {
-            productRepository.getProducts().collect {
-                if (it.isNullOrEmpty())
-                    productRepository.saveFirstProducts()
             }
         }
     }

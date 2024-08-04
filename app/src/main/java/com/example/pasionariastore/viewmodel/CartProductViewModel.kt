@@ -60,7 +60,6 @@ class CartProductViewModel @Inject constructor(
         searchJob = null
 
         updateState(CartProductUIState())
-        Log.d("CartProductViewModel", "Clean completo ${state.value.productsFound.size.toString()}")
     }
 
     private fun updateState(newState: CartProductUIState) {
@@ -122,10 +121,6 @@ class CartProductViewModel @Inject constructor(
         if (state.value.currentSearch.isEmpty()) {
             Toast.makeText(context, "Debe escribir algo para buscar", Toast.LENGTH_SHORT).show()
         } else {
-            Log.d(
-                "CartProductViewModel",
-                "Antes de buscar productos: ${state.value.productsFound.size}"
-            )
             searchJob = viewModelScope.launch(Dispatchers.IO) {
                 productRepository.getProductsWithUnitBySearch(
                     search = state.value.currentSearch,
@@ -142,10 +137,7 @@ class CartProductViewModel @Inject constructor(
                                 )
                             )
                         }
-                        Log.d(
-                            "CartProductViewModel",
-                            "Despues de buscar productos: ${state.value.productsFound.size}"
-                        )
+
                     }
             }
         }
@@ -213,9 +205,5 @@ class CartProductViewModel @Inject constructor(
                 productsFound = emptyList()
             )
         }
-        Log.d(
-            "CartProductViewModel",
-            "Limpieza de productos encontrados: ${state.value.productsFound.size}"
-        )
     }
 }

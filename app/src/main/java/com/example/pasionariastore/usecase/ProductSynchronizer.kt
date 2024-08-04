@@ -6,6 +6,8 @@ import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.Unit
 import com.example.pasionariastore.repository.BackendRepository
 import com.example.pasionariastore.repository.ProductRepository
+import com.google.gson.GsonBuilder
+import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,7 +29,7 @@ class ProductSynchronizer @Inject constructor(
 
         if (!backendProducts.isNullOrEmpty()) {
             backendProducts.let {
-                val backendUnits  = it.map(BackendProduct::unitType).distinct()
+                val backendUnits = it.map(BackendProduct::unitType).distinct()
                 syncUnits(backendUnits = backendUnits)
                 syncProducts(it)
             }
@@ -37,13 +39,17 @@ class ProductSynchronizer @Inject constructor(
     }
 
     private suspend fun syncProducts(backendProducts: List<BackendProduct>) {
-        val products = backendProducts.map { Product(
-            name = it.name,
-            productId = it.id,
-            description = it.description ?: "SIN DESCRIPCION",
-            unitId = it.unitType.id,
-            priceList = it.price.toDouble()
-        ) }
+        val products = backendProducts.map {
+
+            Product(
+                name = it.name,
+                productId = it.id,
+                description = it.description ?: "SIN DESCRIPCION",
+                unitId = it.unitType.id,
+                priceList = it.price.toDouble(),
+                lastUpdate = it.lastUpdate
+            )
+        }
         productRepository.saveProducts(products)
     }
 
