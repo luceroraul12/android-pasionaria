@@ -27,7 +27,6 @@ open class CartViewModel @Inject constructor(
     var state = MutableStateFlow(CartUIState())
         private set
 
-
     fun initScreenByCart(cartId: Long) {
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO) {
@@ -36,7 +35,7 @@ open class CartViewModel @Inject constructor(
 
             result.collect { cart ->
                 if (cart != null) state.update {
-                    it.copy(cartWithData = MutableStateFlow(cart))
+                    it.copy(cartWithData = MutableStateFlow(cart), canFinalize = hasPriceFromProducts())
                 }
             }
         }
@@ -46,7 +45,6 @@ open class CartViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             cartRepository.deleteProductCart(productCart = data.productCart)
             showMessage(context = context, message = "El producto fue removido del pedido")
-
         }
     }
 
@@ -55,9 +53,7 @@ open class CartViewModel @Inject constructor(
         cartId: Long,
         productCartId: Long
     ) {
-        state.value.currentProductCart.productCart.let {
-            navController.navigate("${MyScreens.CartProduct.name}/${cartId}?productCartId=${productCartId}")
-        }
+        navController.navigate("${MyScreens.CartProduct.name}/${cartId}?productCartId=${productCartId}")
     }
 
     fun showMessage(message: String, context: Context) {
@@ -72,5 +68,9 @@ open class CartViewModel @Inject constructor(
         format.currency = Currency.getInstance("ARS")
 
         return format.format(value)
+    }
+
+    fun hasPriceFromProducts(): Boolean {
+        return state.value.cartWithData.value.productCartWithData.any{p -> p.productCart.totalPrice > 0.0}
     }
 }

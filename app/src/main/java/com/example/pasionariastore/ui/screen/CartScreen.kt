@@ -142,7 +142,7 @@ fun CartScreen(
                 onBackClicked = { navController.popBackStack() },
                 showBackIcon = true,
                 actions = {
-                    FinalizeButton(onFinalize = { /*TODO*/ })
+                    FinalizeButton(onFinalize = { /*TODO*/ }, canFinalize = state.canFinalize)
                 }
             )
         },
