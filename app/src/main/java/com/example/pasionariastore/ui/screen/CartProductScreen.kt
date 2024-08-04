@@ -60,7 +60,6 @@ import com.example.pasionariastore.components.MainTopBar
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.model.format
-import com.example.pasionariastore.ui.preview.CartProductViewModelFake
 import com.example.pasionariastore.ui.preview.CartRepositoryFake
 import com.example.pasionariastore.ui.preview.ProductRepositoryFake
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
@@ -92,18 +91,32 @@ fun CartProductScreen(
     cartId: Long,
     productCartId: Long
 ) {
-
+    val focusManager = LocalFocusManager.current
+    val focusRequester = remember { FocusRequester() }
     LaunchedEffect(Unit) {
         launch {
             cartProductViewModel.initScreen(cartId, productCartId)
         }
     }
 
-    // Para volver atras cuando haya finalizado la limpieza de estados
+
     LaunchedEffect(key1 = cartProductViewModel.operationCompleted) {
         cartProductViewModel.operationCompleted.collect { completed ->
             if (completed) {
                 navController.popBackStack()
+            }
+        }
+    }
+
+     LaunchedEffect(Unit) {
+        launch {
+            cartProductViewModel.state.value.lastSearch.collect {
+                if (it) {
+                    focusRequester.requestFocus()
+                    focusManager.moveFocus(FocusDirection.Down)
+                } else {
+                    focusManager.clearFocus(true)
+                }
             }
         }
     }
@@ -121,8 +134,9 @@ fun CartProductScreen(
     ) {
         CartProductBody(
             cartProductViewModel = cartProductViewModel,
+            modifier = modifier.padding(it),
             navController = navController,
-            modifier = modifier.padding(it)
+            focusRequester = focusRequester
         )
     }
 }
@@ -131,24 +145,13 @@ fun CartProductScreen(
 fun CartProductBody(
     cartProductViewModel: CartProductViewModel,
     modifier: Modifier = Modifier,
-    navController: NavHostController
+    navController: NavHostController,
+    focusRequester: FocusRequester
 ) {
-    val focusManager = LocalFocusManager.current
-    val focusRequester = remember { FocusRequester() }
+
     val state by cartProductViewModel.state.collectAsState()
     val context = LocalContext.current
-    LaunchedEffect(Unit) {
-        launch {
-            state.lastSearch.collect {
-                if (it) {
-                    focusRequester.requestFocus()
-                    focusManager.moveFocus(FocusDirection.Down)
-                } else {
-                    focusManager.clearFocus(true)
-                }
-            }
-        }
-    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -161,7 +164,6 @@ fun CartProductBody(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         ProductSearcher(
-            Modifier.fillMaxWidth(),
             onSearchProducts = { cartProductViewModel.searchProducts(context) },
             currentSearch = state.currentSearch,
             updateCurrentSearch = { cartProductViewModel.updateCurrentSearch(it) },
@@ -171,7 +173,6 @@ fun CartProductBody(
             onCancelSearchClicked = cartProductViewModel::cancelCurrentSearch,
             enabled = state.canSearchProducts
         )
-
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.default_value)))
         Card(modifier = Modifier.weight(1f)) {
             ProductDescription(
@@ -305,7 +306,6 @@ fun DescriptionItem(title: String, description: String, modifier: Modifier) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductSearcher(
-    modifier: Modifier = Modifier,
     updateCurrentSearch: (String) -> Unit,
     onSearchProducts: () -> Unit,
     currentSearch: String,
@@ -315,6 +315,7 @@ fun ProductSearcher(
     onCancelSearchClicked: () -> Unit,
     enabled: Boolean
 ) {
+    val modifier = Modifier
     SearchBar(
         enabled = enabled,
         placeholder = { Text(text = "Buscador de productos...") },
@@ -333,6 +334,7 @@ fun ProductSearcher(
                 modifier = Modifier.clickable { onCancelSearchClicked() })
         },
         modifier = modifier
+            .fillMaxWidth()
             .focusRequester(focusRequester),
         shape = RoundedCornerShape(dimensionResource(id = R.dimen.rounded))
     ) {
@@ -441,13 +443,11 @@ fun ModalSearchProductItem(
             text = productWithUnit.product.name,
             fontWeight = FontWeight.Bold,
             fontSize = 15.sp,
-            modifier = modifier.fillMaxWidth()
         )
         Text(
             text = productWithUnit.product.description,
             fontStyle = FontStyle.Italic,
             fontSize = 12.sp,
-            modifier = modifier.fillMaxWidth()
         )
         HorizontalDivider(modifier = modifier.padding(5.dp))
     }
