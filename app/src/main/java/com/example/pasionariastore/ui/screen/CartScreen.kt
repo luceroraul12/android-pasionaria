@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -181,7 +182,7 @@ fun CartScreenBody(
             onClick = onAddNewProduct,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(30.dp)
+                .padding(dimensionResource(id = R.dimen.floating_button))
         ) {
             Icon(Icons.Filled.Add, "New Product")
         }
