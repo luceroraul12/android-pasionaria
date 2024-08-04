@@ -16,6 +16,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -23,6 +25,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -48,13 +51,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
 import com.example.pasionariastore.components.MainTopBar
-import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.model.format
@@ -156,18 +157,6 @@ fun CartProductBody(
             }
         }
     }
-    if (state.productsFound.isNotEmpty()) {
-        // Antes de abrir el modal tengo que ver si existen coincidencias
-        ModalSearchProduct(
-            productList = state.productsFound,
-            onProductSearchClicked = {
-                cartProductViewModel.selectProductSearched(it)
-            },
-            search = state.currentSearch,
-            modifier = Modifier,
-            onCancelSearch = { cartProductViewModel.cleanProductsFound() }
-        )
-    }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -175,16 +164,16 @@ fun CartProductBody(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         if (state.canSearchProducts) {
-            Card {
-                ProductSearcher(
-                    Modifier.fillMaxWidth(),
-                    canSearchProducts = true,
-                    onSearchProducts = { cartProductViewModel.searchProducts(context) },
-                    currentSearch = state.currentSearch,
-                    updateCurrentSearch = { cartProductViewModel.updateCurrentSearch(it) },
-                    focusRequester = focusRequester
-                )
-            }
+            ProductSearcher(
+                Modifier.fillMaxWidth(),
+                onSearchProducts = { cartProductViewModel.searchProducts(context) },
+                currentSearch = state.currentSearch,
+                updateCurrentSearch = { cartProductViewModel.updateCurrentSearch(it) },
+                focusRequester = focusRequester,
+                data = state.productsFound,
+                onProductSearchClicked = { cartProductViewModel.selectProductSearched(it) },
+                onCancelSearchClicked = cartProductViewModel::cancelCurrentSearch
+            )
             Spacer(modifier = Modifier.padding(10.dp))
         }
         Card(modifier = Modifier.weight(1f)) {
@@ -322,37 +311,39 @@ fun ProductSearcher(
     modifier: Modifier,
     updateCurrentSearch: (String) -> Unit,
     onSearchProducts: () -> Unit,
-    canSearchProducts: Boolean,
     currentSearch: String,
-    focusRequester: FocusRequester
+    focusRequester: FocusRequester,
+    data: List<ProductWithUnit>,
+    onProductSearchClicked: (ProductWithUnit) -> Unit,
+    onCancelSearchClicked: () -> Unit
 ) {
-//    SearchBar(
-//        query = currentSearch,
-//        onQueryChange = { updateCurrentSearch(it) },
-//        onSearch = { onSearchProducts() },
-//        active = false,
-//        onActiveChange = {},
-//        leadingIcon = {
-//            Icon(painter = painterResource(id = R.drawable.search), contentDescription = "search")
-//        },
-//        modifier = modifier.focusRequester(focusRequester)
-//    ) {
-//
-//    }
-    TextField(
-        enabled = canSearchProducts,
-        value = currentSearch,
-        onValueChange = { updateCurrentSearch(it) },
-        singleLine = true,
-        label = { Text(text = "Buscador de productos") },
-        keyboardActions = KeyboardActions(onSearch = { onSearchProducts() }),
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+    SearchBar(
+        placeholder = { Text(text = "Buscador de productos...") },
+        query = currentSearch,
+        onQueryChange = { updateCurrentSearch(it) },
+        onSearch = { onSearchProducts() },
+        active = data.isNotEmpty(),
+        onActiveChange = {},
         leadingIcon = {
             Icon(painter = painterResource(id = R.drawable.search), contentDescription = "search")
         },
-
-        modifier = modifier.focusRequester(focusRequester)
-    )
+        trailingIcon = {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "cancelSearch",
+                modifier = Modifier.clickable { onCancelSearchClicked() })
+        },
+        modifier = Modifier
+            .focusRequester(focusRequester)
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(dimensionResource(id = R.dimen.rounded))
+    ) {
+        LazyColumn {
+            items(data) {
+                ModalSearchProductItem(it, onProductSearchClicked, modifier)
+            }
+        }
+    }
 }
 
 @Composable
@@ -430,46 +421,6 @@ fun ProductFormCalculator(
                 enabled = canEditQuantity,
                 label = { Text(text = "Cantidad del producto") },
             )
-        }
-    }
-}
-
-@Preview
-@Composable
-fun ModalSearchProductPreview(modifier: Modifier = Modifier) {
-    ModalSearchProduct(
-        productList = Datasource.productsWithUnit,
-        "prueba",
-        onProductSearchClicked = { },
-        onCancelSearch = {})
-}
-
-@Composable
-fun ModalSearchProduct(
-    productList: List<ProductWithUnit>,
-    search: String,
-    onProductSearchClicked: (ProductWithUnit) -> Unit,
-    onCancelSearch: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Dialog(onDismissRequest = onCancelSearch) {
-        Card {
-            Column {
-                Text(text = "Buscando ... $search ...")
-                LazyColumn(modifier = modifier.height(400.dp)) {
-                    items(productList) {
-                        ModalSearchProductItem(it, onProductSearchClicked, modifier)
-                    }
-                }
-                Button(
-                    onClick = onCancelSearch, modifier = modifier
-                        .fillMaxWidth()
-                        .padding(10.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.delete_active))
-                ) {
-                    Text(text = "Cancelar")
-                }
-            }
         }
     }
 }

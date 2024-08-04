@@ -3,4 +3,5 @@
     <dimen name="floating_button">25.dp</dimen>
     <dimen name="card_vertical">5.dp</dimen>
     <dimen name="screen_horizontal">10.dp</dimen>
+    <dimen name="rounded">15.dp</dimen>
 </resources>

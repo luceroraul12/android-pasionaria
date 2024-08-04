@@ -215,7 +215,7 @@ open class CartProductViewModel @Inject constructor(
         }
     }
 
-    fun cleanProductsFound() {
+    fun cancelCurrentSearch() {
         state.update {
             it.copy(
                 currentSearch = "",
@@ -223,6 +223,5 @@ open class CartProductViewModel @Inject constructor(
             )
         }
     }
-
 
 }

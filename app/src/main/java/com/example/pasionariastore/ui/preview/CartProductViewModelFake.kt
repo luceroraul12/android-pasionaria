@@ -1,5 +1,6 @@
 package com.example.pasionariastore.ui.preview
 
+import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.state.CartProductUIState
 import com.example.pasionariastore.viewmodel.CartProductViewModel
 import kotlinx.coroutines.flow.update
@@ -10,7 +11,7 @@ class CartProductViewModelFake : CartProductViewModel(
 ) {
     init {
         state.update { CartProductUIState(
-
+            productsFound = Datasource.productsWithUnit
         ) }
     }
 }
