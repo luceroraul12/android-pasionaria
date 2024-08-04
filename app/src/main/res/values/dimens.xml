@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="floating_button">25.dp</dimen>
+    <dimen name="card_vertical">5.dp</dimen>
+    <dimen name="screen_horizontal">10.dp</dimen>
 </resources>

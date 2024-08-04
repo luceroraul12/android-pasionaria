@@ -229,7 +229,7 @@ fun CartList(
     onDeleteCartClicked: (Cart) -> Unit,
     onCartClicked: (Cart) -> Unit
 ) {
-    LazyColumn(modifier.padding(horizontal = 10.dp)) {
+    LazyColumn(modifier.padding(horizontal = dimensionResource(id = R.dimen.screen_horizontal))) {
         items(carts) {
             CartItem(
                 modifier,
@@ -250,7 +250,7 @@ fun CartItem(
 ) {
     Card(
         modifier = modifier
-            .padding(5.dp)
+            .padding(vertical = dimensionResource(id = R.dimen.card_vertical))
             .alpha(0.9f),
         elevation = CardDefaults.cardElevation(3.dp),
         border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondary)

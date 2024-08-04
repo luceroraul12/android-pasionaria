@@ -101,25 +101,6 @@ fun CartPreview() {
             initialCartId = 3,
             cartViewModel = CartViewModelFake()
         )
-
-//        Scaffold(
-//            modifier = Modifier.fillMaxSize()
-//        ) { innerPadding ->
-//            val mockData = MutableStateFlow(
-//                Datasource.cartWithData[0],
-//            )
-//            val state = CartUIState(
-//                cartWithData = mockData
-//            )
-//            CartScreenBody(
-//                modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
-//                state = state,
-//                onAddNewProduct = { /*TODO*/ },
-//                formatValue = { "ARS24,435.23" },
-//                onDeleteProduct = {},
-//                onEditProduct = { cartId, productCartId -> },
-//            )
-//        }
     }
 }
 
@@ -197,7 +178,7 @@ fun CartScreenBody(
             CartHeader(
                 cartWithData = cartWithData
             )
-            Column(modifier = Modifier.padding(horizontal = 15.dp)) {
+            Column(modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.screen_horizontal))) {
                 CartListProducts(
                     productCartList = cartWithData.productCartWithData,
                     modifier = Modifier,
@@ -258,11 +239,12 @@ fun CartListProducts(
             modifier = modifier
                 .fillMaxWidth()
                 .height(100.dp)
-                .padding(5.dp),
-            elevation = CardDefaults.cardElevation(8.dp)
+                .padding(vertical = dimensionResource(id = R.dimen.card_vertical)),
+            border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondary)
         ) {
             Column(
-                modifier = modifier.fillMaxSize(),
+                modifier = modifier
+                    .fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -307,7 +289,7 @@ fun CartProductItem(
 ) {
     Card(
         modifier = modifier
-            .padding(vertical = 5.dp)
+            .padding(vertical = dimensionResource(id = R.dimen.card_vertical))
             .alpha(0.9f),
         elevation = CardDefaults.cardElevation(3.dp),
         border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondary)
