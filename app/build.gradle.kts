@@ -79,6 +79,9 @@ dependencies {
     // To use Kotlin annotation processing tool (kapt)
     kapt(libs.room.compiler)
 
+    // Retrofit
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
 
     androidTestImplementation(libs.ui.test.junit4)
     testImplementation(libs.junit)
