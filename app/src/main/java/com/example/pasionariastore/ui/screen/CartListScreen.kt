@@ -119,7 +119,16 @@ fun CartListScreen(
             onBackClicked = { navController.popBackStack() },
             actions = {}
         )
-    }) {
+    },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = cartListViewModel::createNewCart,
+                modifier = Modifier
+                    .padding(dimensionResource(id = R.dimen.floating_button))
+            ) {
+                Icon(Icons.Filled.Add, "New Cart")
+            }
+        }) {
         CartListBody(
             state = state,
             modifier = modifier.padding(it),
@@ -128,7 +137,6 @@ fun CartListScreen(
             onGoToCartClicked = {
                 navController.navigate("${MyScreens.Cart.name}/${it.id}")
             },
-            onCreateNewCart = cartListViewModel::createNewCart
         )
 
     }
@@ -141,7 +149,6 @@ fun CartListBody(
     onUpdateChip: (CartStatus) -> Unit,
     onDeleteCart: (Cart) -> Unit,
     onGoToCartClicked: (Cart) -> Unit,
-    onCreateNewCart: () -> Unit
 ) {
     Box(modifier = modifier) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -157,16 +164,7 @@ fun CartListBody(
                 onCartClicked = onGoToCartClicked
             )
         }
-        FloatingActionButton(
-            onClick = onCreateNewCart,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(dimensionResource(id = R.dimen.floating_button))
-        ) {
-            Icon(Icons.Filled.Add, "New Cart")
-        }
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

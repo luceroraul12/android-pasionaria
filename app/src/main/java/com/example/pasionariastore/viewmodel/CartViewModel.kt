@@ -21,7 +21,7 @@ import java.util.Currency
 import javax.inject.Inject
 
 @HiltViewModel
-class CartViewModel @Inject constructor(
+open class CartViewModel @Inject constructor(
     private val cartRepository: CartRepository,
 ) : ViewModel() {
     var state = MutableStateFlow(CartUIState())
@@ -40,14 +40,6 @@ class CartViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    /**
-     * Indica si es posible utilizar el buscador y restablece valores
-     */
-
-    fun goToAddNewProductCartScreen(goToNewProductCart: (Long) -> Unit) {
-        goToNewProductCart(state.value.cartWithData.value.cart.id)
     }
 
     fun removeProductFromCart(data: ProductCartWithData, context: Context) {
