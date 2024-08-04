@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.collectAsState
 import com.example.pasionariastore.data.CustomDataStore
+import com.example.pasionariastore.navigation.NavManager
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -19,7 +20,7 @@ class MainActivity : ComponentActivity() {
             PasionariaStoreTheme(
                 darkTheme = dataStore.getDarkMode.collectAsState(initial = false).value
             ) {
-                PasionariaStore(dataStore = dataStore)
+                NavManager(dataStore = dataStore)
             }
         }
     }

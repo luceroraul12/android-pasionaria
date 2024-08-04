@@ -2,11 +2,10 @@ package com.example.pasionariastore.viewmodel
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.example.pasionariastore.MyScreens
+import com.example.pasionariastore.navigation.MyScreens
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.state.CartUIState
 import com.example.pasionariastore.repository.CartRepository

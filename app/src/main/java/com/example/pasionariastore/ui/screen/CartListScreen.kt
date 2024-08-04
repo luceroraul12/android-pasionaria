@@ -24,6 +24,7 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -38,7 +39,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.pasionariastore.MyScreens
+import com.example.pasionariastore.components.MainTopBar
+import com.example.pasionariastore.navigation.MyScreens
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.Cart
 import com.example.pasionariastore.model.CartWithData
@@ -110,16 +112,19 @@ fun CartListScreen(
     navController: NavHostController
 ) {
     val state by cartListViewModel.state.collectAsState()
-    CartListBody(
-        state = state,
-        modifier = modifier,
-        onUpdateChip = { cartListViewModel.updateChipStatus(it) },
-        onDeleteCart = { cartListViewModel.deleteCart(it) },
-        onGoToCartClicked = {
-            navController.navigate("${MyScreens.Cart.name}/${it.id}")
-        },
-        onCreateNewCart = cartListViewModel::createNewCart
-    )
+    Scaffold(topBar = { MainTopBar()} ) {
+        CartListBody(
+            state = state,
+            modifier = modifier,
+            onUpdateChip = { cartListViewModel.updateChipStatus(it) },
+            onDeleteCart = { cartListViewModel.deleteCart(it) },
+            onGoToCartClicked = {
+                navController.navigate("${MyScreens.Cart.name}/${it.id}")
+            },
+            onCreateNewCart = cartListViewModel::createNewCart
+        )
+
+    }
 }
 
 @Composable
