@@ -39,8 +39,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.components.MainTopBar
-import com.example.pasionariastore.navigation.MyScreens
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.Cart
 import com.example.pasionariastore.model.CartWithData
@@ -48,6 +48,8 @@ import com.example.pasionariastore.model.calculateTotalPriceLabel
 import com.example.pasionariastore.model.format
 import com.example.pasionariastore.model.state.CartListUIState
 import com.example.pasionariastore.model.state.CartStatus
+import com.example.pasionariastore.navigation.MyScreens
+import com.example.pasionariastore.ui.preview.CartListViewModelFake
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.CartListViewModel
 
@@ -93,13 +95,9 @@ fun CartItemPreview(modifier: Modifier = Modifier) {
 fun ScreenPreivew(modifier: Modifier = Modifier) {
     PasionariaStoreTheme(darkTheme = false) {
         val state = CartListUIState(cartsWithData = Datasource.cartWithData.toMutableList())
-        CartListBody(
-            state = state,
-            onUpdateChip = {},
-            onDeleteCart = {},
-            onGoToCartClicked = {},
-            onCreateNewCart = {},
-            modifier = modifier
+        CartListScreen(
+            navController = rememberNavController(),
+            cartListViewModel = CartListViewModelFake()
         )
     }
 }
@@ -112,10 +110,17 @@ fun CartListScreen(
     navController: NavHostController
 ) {
     val state by cartListViewModel.state.collectAsState()
-    Scaffold(topBar = { MainTopBar()} ) {
+    Scaffold(topBar = {
+        MainTopBar(
+            title = "Pedidos",
+            showBackIcon = true,
+            onBackClicked = { navController.popBackStack() },
+            actions = {}
+        )
+    }) {
         CartListBody(
             state = state,
-            modifier = modifier,
+            modifier = modifier.padding(it),
             onUpdateChip = { cartListViewModel.updateChipStatus(it) },
             onDeleteCart = { cartListViewModel.deleteCart(it) },
             onGoToCartClicked = {
@@ -137,14 +142,14 @@ fun CartListBody(
     onCreateNewCart: () -> Unit
 ) {
     Box(modifier = modifier) {
-        Column(modifier = modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
             CartForm(
-                modifier = modifier,
+                modifier = Modifier,
                 stateButtons = state.stateFilters,
                 onUpdateChip = onUpdateChip
             )
             CartList(
-                modifier = modifier,
+                modifier = Modifier,
                 carts = state.cartsWithData,
                 onDeleteCartClicked = onDeleteCart,
                 onCartClicked = onGoToCartClicked
@@ -152,7 +157,7 @@ fun CartListBody(
         }
         FloatingActionButton(
             onClick = onCreateNewCart,
-            modifier = modifier
+            modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(25.dp)
         ) {
