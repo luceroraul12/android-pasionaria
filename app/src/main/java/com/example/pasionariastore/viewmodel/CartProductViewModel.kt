@@ -144,6 +144,8 @@ class CartProductViewModel @Inject constructor(
     }
 
     fun selectProductSearched(productWithUnit: ProductWithUnit): Unit {
+        // Finalizo el job de busqueda
+        searchJob?.cancel()
         // Actualizo el productCart que se esta generando y seteo lo que se tiene que mostrar y dejo de mostrar el modal
         updateState(
             state.value.copy(
