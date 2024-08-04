@@ -3,7 +3,7 @@ package com.example.pasionariastore.di
 import android.content.Context
 import androidx.room.Room
 import com.example.pasionariastore.data.api.ApiBackend
-import com.example.pasionariastore.repository.BackendRepository
+import com.example.pasionariastore.repository.BackendRepositoryImpl
 import com.example.pasionariastore.repository.CartRepository
 import com.example.pasionariastore.repository.CartRepositoryImpl
 import com.example.pasionariastore.repository.ProductRepository
@@ -70,7 +70,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesBackendRepository(apiBackend: ApiBackend): BackendRepository {
-        return BackendRepository(apiBackend)
+    fun providesBackendRepository(apiBackend: ApiBackend): BackendRepositoryImpl {
+        return BackendRepositoryImpl(apiBackend)
     }
 }

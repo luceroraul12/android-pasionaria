@@ -1,0 +1,57 @@
+package com.example.pasionariastore.usecase
+
+import com.example.pasionariastore.model.BackendLookup
+import com.example.pasionariastore.repository.BackendRepositoryFake
+import com.example.pasionariastore.repository.ProductRepositoryFake
+import org.junit.Assert
+import org.junit.Test
+
+class ProductSynchronizerTest {
+
+    val syncronizer: ProductSynchronizer =
+        ProductSynchronizer(BackendRepositoryFake(), ProductRepositoryFake())
+
+    @Test
+    fun unitType_1U_success() {
+        val unit = BackendLookup(
+            code = "MEDIDAS_VENTAS_1U",
+            description = "Unidades"
+        )
+        val result = syncronizer.getNameType(unit)
+
+        Assert.assertEquals("Unidades", result)
+    }
+
+    @Test
+    fun unitType_50G_success() {
+        val unit = BackendLookup(
+            code = "MEDIDAS_VENTAS_50G",
+            description = "x50gr"
+        )
+        val result = syncronizer.getNameType(unit)
+
+        Assert.assertEquals("Gramos", result)
+    }
+
+    @Test
+    fun unitType_100G_success() {
+        val unit = BackendLookup(
+            code = "MEDIDAS_VENTAS_100G",
+            description = "x100gr"
+        )
+        val result = syncronizer.getNameType(unit)
+
+        Assert.assertEquals("Gramos", result)
+    }
+
+    @Test
+    fun unitType_100G_fail() {
+        val unit = BackendLookup(
+            code = "MEDIDAS_VENTAS_1U",
+            description = "Unidades"
+        )
+        val result = syncronizer.getNameType(unit)
+
+        Assert.assertNotEquals("Gramos", result)
+    }
+}
