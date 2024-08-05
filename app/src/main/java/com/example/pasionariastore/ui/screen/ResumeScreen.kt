@@ -4,9 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -24,14 +22,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -71,7 +71,7 @@ private fun MenuItemPreview() {
 @Composable
 private fun ResumeMonthlyPreview() {
     PasionariaStoreTheme {
-        ResumeMonthly()
+        ResumeMonthly("Agosto - 2024")
     }
 }
 
@@ -127,10 +127,15 @@ fun ResumeScreenBody(
     navController: NavHostController
 ) {
     val darkMode = dataStore.getDarkMode.collectAsState(initial = false)
-
     val scope = rememberCoroutineScope();
     val resumeViewModel: ResumeViewModel = hiltViewModel()
+    val state by resumeViewModel.state.collectAsState()
     val menuItems = resumeViewModel.menuItems
+
+    LaunchedEffect(Unit) {
+        resumeViewModel.initScreen()
+    }
+
     Column(
         modifier = modifier.padding(
             horizontal = dimensionResource(id = R.dimen.screen_horizontal),
@@ -147,7 +152,7 @@ fun ResumeScreenBody(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier.fillMaxSize()
         ) {
-            ResumeMonthly()
+            ResumeMonthly(label = state.label)
             ResumeActionButtons(
                 menuItems = menuItems,
                 navController = navController
@@ -200,18 +205,18 @@ fun MenuButton(
 }
 
 @Composable
-fun ResumeMonthly() {
+fun ResumeMonthly(label: String) {
     Card {
         Column(
             modifier = Modifier.padding(15.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(text = "Resumen mensual", style = MaterialTheme.typography.titleLarge)
-            Row {
-                Text(text = "Agosto")
-                Spacer(modifier = Modifier.padding(15.dp))
-                Text(text = "2024")
-            }
+            Text(
+                text = label,
+                color = MaterialTheme.colorScheme.tertiary,
+                fontWeight = FontWeight.Bold
+            )
             HorizontalDivider()
             CartHeaderRow(
                 firstLabel = "Cantidad de pedidos",
