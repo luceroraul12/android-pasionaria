@@ -121,24 +121,24 @@ fun CartProductScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            MainTopBar(
-                title = "Calculadora de producto",
-                onBackClicked = { navController.popBackStack() },
-                showBackIcon = true
-            ) {
+//    Scaffold(
+//        topBar = {
+//            MainTopBar(
+//                title = "Calculadora de producto",
+//                onBackClicked = { navController.popBackStack() },
+//                showBackIcon = true
+//            ) {
+//
+//            }
+//        }
+//    ) {
+//    }
+    CartProductBody(
+        cartProductViewModel = cartProductViewModel,
+        navController = navController,
+        focusRequester = focusRequester
+    )
 
-            }
-        }
-    ) {
-        CartProductBody(
-            cartProductViewModel = cartProductViewModel,
-            modifier = modifier.padding(it),
-            navController = navController,
-            focusRequester = focusRequester
-        )
-    }
 }
 
 @Composable
