@@ -49,8 +49,7 @@ fun NavManager(
             // TODO: Hay que quitar el boton que accede a un pedido sin ID
             ResumeScreen(
                 modifier = modifier,
-                onCartButtonClicked = { },
-                onCartListButtonClicked = { navController.navigate(MyScreens.CartList.name) },
+                onCartButtonClicked = {navController.navigate(MyScreens.CartList.name) },
                 dataStore = dataStore,
             )
         }

@@ -24,6 +24,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
@@ -38,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
@@ -288,7 +290,12 @@ fun ProductDescription(
 }
 
 @Composable
-fun DescriptionItem(title: String, description: String, modifier: Modifier) {
+fun DescriptionItem(
+    title: String,
+    description: String,
+    modifier: Modifier,
+    focusDescription: Boolean = false
+) {
     Column {
         Text(
             text = title,
@@ -299,8 +306,10 @@ fun DescriptionItem(title: String, description: String, modifier: Modifier) {
         )
         Text(
             text = description,
-            fontStyle = FontStyle.Italic,
+            fontStyle = if (focusDescription) null else FontStyle.Italic,
             textAlign = TextAlign.Center,
+            color = if (focusDescription) MaterialTheme.colorScheme.tertiary else Color.Unspecified,
+            fontWeight = if (focusDescription) FontWeight.ExtraBold else null,
             modifier = modifier.fillMaxWidth()
         )
 
@@ -318,7 +327,7 @@ fun ProductSearcher(
     onProductSearchClicked: (ProductWithUnit) -> Unit,
     onCancelSearchClicked: () -> Unit,
     enabled: Boolean,
-    modifier: Modifier= Modifier
+    modifier: Modifier = Modifier
 ) {
     SearchBar(
         enabled = enabled,
@@ -406,7 +415,8 @@ fun ProductFormCalculator(
             DescriptionItem(
                 title = "Calculadora",
                 description = priceCalculated,
-                modifier = modifier
+                modifier = modifier,
+                focusDescription = true
             )
             TextField(
                 keyboardOptions = KeyboardOptions(
