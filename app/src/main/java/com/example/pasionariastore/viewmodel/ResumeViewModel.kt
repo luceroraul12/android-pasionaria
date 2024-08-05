@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.example.pasionariastore.model.MenuItem
 import com.example.pasionariastore.model.state.ResumeUIState
 import com.example.pasionariastore.navigation.MyScreens
+import com.example.pasionariastore.repository.CartRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -16,7 +17,9 @@ import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
-class ResumeViewModel @Inject constructor() : ViewModel() {
+class ResumeViewModel @Inject constructor(
+    private val cartRepository: CartRepository
+) : ViewModel() {
 
     var state: MutableStateFlow<ResumeUIState> = MutableStateFlow(ResumeUIState())
         private set
