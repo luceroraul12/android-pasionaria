@@ -41,7 +41,10 @@ import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
 import com.example.pasionariastore.components.MainTopBar
 import com.example.pasionariastore.data.CustomDataStore
+import com.example.pasionariastore.model.CartWithData
 import com.example.pasionariastore.model.MenuItem
+import com.example.pasionariastore.model.state.CartStatus
+import com.example.pasionariastore.ui.preview.ResumeViewModelFake
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.ResumeViewModel
 import kotlinx.coroutines.launch
@@ -71,7 +74,10 @@ private fun MenuItemPreview() {
 @Composable
 private fun ResumeMonthlyPreview() {
     PasionariaStoreTheme {
-        ResumeMonthly("Agosto - 2024")
+        ResumeMonthly(
+            "Agosto - 2024",
+            emptyList(),
+            { cartWithData: List<CartWithData>, optionalString: String? -> Pair(2, 12324) })
     }
 }
 
@@ -83,6 +89,7 @@ fun PreviewResumeScreen() {
             modifier = Modifier,
             dataStore = CustomDataStore(LocalContext.current),
             navController = rememberNavController(),
+            resumeViewModel = ResumeViewModelFake()
         )
     }
 }
@@ -106,6 +113,7 @@ fun ResumeScreen(
     modifier: Modifier = Modifier,
     dataStore: CustomDataStore,
     navController: NavHostController,
+    resumeViewModel: ResumeViewModel = hiltViewModel()
 ) {
     Scaffold(topBar = {
         MainTopBar(title = "Pasionaria", onBackClicked = { /*TODO*/ }) {
@@ -115,7 +123,8 @@ fun ResumeScreen(
         ResumeScreenBody(
             modifier = modifier.padding(it),
             dataStore = dataStore,
-            navController = navController
+            navController = navController,
+            resumeViewModel = resumeViewModel
         )
     }
 }
@@ -124,11 +133,11 @@ fun ResumeScreen(
 fun ResumeScreenBody(
     modifier: Modifier,
     dataStore: CustomDataStore,
-    navController: NavHostController
+    navController: NavHostController,
+    resumeViewModel: ResumeViewModel
 ) {
     val darkMode = dataStore.getDarkMode.collectAsState(initial = false)
     val scope = rememberCoroutineScope();
-    val resumeViewModel: ResumeViewModel = hiltViewModel()
     val state by resumeViewModel.state.collectAsState()
     val menuItems = resumeViewModel.menuItems
 
@@ -152,7 +161,11 @@ fun ResumeScreenBody(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier.fillMaxSize()
         ) {
-            ResumeMonthly(label = state.label)
+            ResumeMonthly(
+                label = state.label,
+                state.cartsWithData,
+                calculate = resumeViewModel::calculatePairResume
+            )
             ResumeActionButtons(
                 menuItems = menuItems,
                 navController = navController
@@ -205,7 +218,14 @@ fun MenuButton(
 }
 
 @Composable
-fun ResumeMonthly(label: String) {
+fun ResumeMonthly(
+    label: String,
+    cartsWithData: List<CartWithData>,
+    calculate: (List<CartWithData>, status: String?) -> Pair<Int, Int>
+) {
+    val pairAll: Pair<Int, Int> = calculate(cartsWithData, null)
+    val pairPending: Pair<Int, Int> = calculate(cartsWithData, CartStatus.PENDING.name)
+    val pairFinalize: Pair<Int, Int> = calculate(cartsWithData, CartStatus.FINALIZED.name)
     Card {
         Column(
             modifier = Modifier.padding(15.dp),
@@ -220,25 +240,25 @@ fun ResumeMonthly(label: String) {
             HorizontalDivider()
             CartHeaderRow(
                 firstLabel = "Cantidad de pedidos",
-                secondLabel = "15",
+                secondLabel = pairAll.first.toString(),
                 modifier = Modifier,
                 resultFocus = true
             )
             CartHeaderRow(
                 firstLabel = "Precio total",
-                secondLabel = "ARS 15,200.25",
+                secondLabel = "ARS ${pairAll.second}",
                 modifier = Modifier,
                 resultFocus = true
             )
             CartHeaderRow(
                 firstLabel = "Pedidos Pendientes",
-                secondLabel = "3",
+                secondLabel = pairPending.first.toString(),
                 modifier = Modifier,
                 resultFocus = true
             )
             CartHeaderRow(
                 firstLabel = "Pedidos Finalizados",
-                secondLabel = "5",
+                secondLabel = pairFinalize.first.toString(),
                 modifier = Modifier,
                 resultFocus = true
             )
