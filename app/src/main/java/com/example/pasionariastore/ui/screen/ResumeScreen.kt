@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -27,22 +28,42 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
 import com.example.pasionariastore.components.MainTopBar
 import com.example.pasionariastore.data.CustomDataStore
+import com.example.pasionariastore.model.MenuItem
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
+import com.example.pasionariastore.viewmodel.ResumeViewModel
 import kotlinx.coroutines.launch
 
 @Preview
 @Composable
 private fun MenuItemPreview() {
     PasionariaStoreTheme {
-        MenuButton()
+        Column {
+            MenuButton(
+                imageVector = Icons.Default.ShoppingCart,
+                name = "Pedidos",
+                onNavigate = {},
+                enable = true
+            )
+            MenuButton(
+                imageVector = Icons.Default.ShoppingCart,
+                name = "Pedidos",
+                onNavigate = {},
+                enable = false
+            )
+        }
     }
 }
 
@@ -60,24 +81,31 @@ fun PreviewResumeScreen() {
     PasionariaStoreTheme {
         ResumeScreen(
             modifier = Modifier,
-            onCartButtonClicked = { },
             dataStore = CustomDataStore(LocalContext.current),
-
-            )
+            navController = rememberNavController(),
+        )
     }
 }
 
 @Preview
 @Composable
 private fun ResumeActionButtonsPreview() {
-    ResumeActionButtons()
+    ResumeActionButtons(
+        navController = rememberNavController(), menuItems = listOf(
+            MenuItem(
+                imageVector = Icons.Default.ShoppingCart,
+                name = "Pedidos",
+                onNavigatePath = ""
+            )
+        )
+    )
 }
 
 @Composable
 fun ResumeScreen(
     modifier: Modifier = Modifier,
-    onCartButtonClicked: () -> Unit,
     dataStore: CustomDataStore,
+    navController: NavHostController,
 ) {
     Scaffold(topBar = {
         MainTopBar(title = "Pasionaria", onBackClicked = { /*TODO*/ }) {
@@ -87,7 +115,7 @@ fun ResumeScreen(
         ResumeScreenBody(
             modifier = modifier.padding(it),
             dataStore = dataStore,
-            onCartButtonClicked
+            navController = navController
         )
     }
 }
@@ -96,11 +124,13 @@ fun ResumeScreen(
 fun ResumeScreenBody(
     modifier: Modifier,
     dataStore: CustomDataStore,
-    onCartListButtonClicked: () -> Unit
+    navController: NavHostController
 ) {
     val darkMode = dataStore.getDarkMode.collectAsState(initial = false)
 
     val scope = rememberCoroutineScope();
+    val resumeViewModel: ResumeViewModel = hiltViewModel()
+    val menuItems = resumeViewModel.menuItems
     Column(
         modifier = modifier.padding(
             horizontal = dimensionResource(id = R.dimen.screen_horizontal),
@@ -111,26 +141,17 @@ fun ResumeScreenBody(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ResumeMonthly()
-        Text(
-            text = "Component: Ultimos pedidos realizados",
-            modifier = modifier,
-            textAlign = TextAlign.Center
-        )
-        ResumeActionButtons()
-        Text(
-            text = "Component: Acciones disponibles",
-            modifier = modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
+
         Column(
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier.fillMaxSize()
         ) {
-            Button(onClick = onCartListButtonClicked) {
-                Text(text = "Historial de pedidos")
-            }
+            ResumeMonthly()
+            ResumeActionButtons(
+                menuItems = menuItems,
+                navController = navController
+            )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
@@ -148,22 +169,29 @@ fun ResumeScreenBody(
 }
 
 @Composable
-fun MenuButton(modifier: Modifier = Modifier) {
+fun MenuButton(
+    modifier: Modifier = Modifier,
+    imageVector: ImageVector,
+    name: String,
+    onNavigate: () -> Unit,
+    enable: Boolean
+) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Button(
-            onClick = { /*TODO*/ },
-            shape = RoundedCornerShape(dimensionResource(id = R.dimen.rounded))
+            onClick = onNavigate,
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.rounded)),
+            enabled = enable
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
                 Icon(
-                    imageVector = Icons.Default.ShoppingCart,
+                    imageVector = imageVector,
                     contentDescription = "",
                     modifier = Modifier.size(100.dp),
                 )
-                Text(text = "Pedidos", style = MaterialTheme.typography.headlineMedium)
+                Text(text = name, style = MaterialTheme.typography.headlineMedium)
             }
 
         }
@@ -214,14 +242,24 @@ fun ResumeMonthly() {
 }
 
 @Composable
-fun ResumeActionButtons(modifier: Modifier = Modifier) {
+fun ResumeActionButtons(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    menuItems: List<MenuItem>
+) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = modifier,
         horizontalArrangement = Arrangement.Center, verticalArrangement = Arrangement.Center
     ) {
-        items(10) {
-            MenuButton(modifier = modifier.padding(5.dp))
+        items(menuItems) {
+            MenuButton(
+                modifier = modifier.padding(5.dp),
+                name = it.name,
+                imageVector = it.imageVector,
+                onNavigate = { navController.navigate(it.onNavigatePath) },
+                enable = it.enable
+            )
         }
 
     }

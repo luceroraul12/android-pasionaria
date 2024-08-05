@@ -1,21 +1,14 @@
 package com.example.pasionariastore.navigation
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavType
@@ -23,7 +16,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.pasionariastore.R
 import com.example.pasionariastore.data.CustomDataStore
 import com.example.pasionariastore.ui.screen.CartListScreen
 import com.example.pasionariastore.ui.screen.CartProductScreen
@@ -49,8 +41,8 @@ fun NavManager(
             // TODO: Hay que quitar el boton que accede a un pedido sin ID
             ResumeScreen(
                 modifier = modifier,
-                onCartButtonClicked = {navController.navigate(MyScreens.CartList.name) },
                 dataStore = dataStore,
+                navController = navController
             )
         }
         composable(
