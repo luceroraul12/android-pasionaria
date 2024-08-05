@@ -56,7 +56,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
-import com.example.pasionariastore.components.MainTopBar
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.model.format
@@ -93,6 +92,8 @@ fun CartProductScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
+    val state by cartProductViewModel.state.collectAsState()
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
         launch {
             cartProductViewModel.initScreen(cartId, productCartId)
@@ -108,7 +109,7 @@ fun CartProductScreen(
         }
     }
 
-     LaunchedEffect(Unit) {
+    LaunchedEffect(Unit) {
         launch {
             cartProductViewModel.state.value.lastSearch.collect {
                 if (it) {
@@ -121,8 +122,8 @@ fun CartProductScreen(
         }
     }
 
-//    Scaffold(
-//        topBar = {
+    Scaffold(
+        topBar = {
 //            MainTopBar(
 //                title = "Calculadora de producto",
 //                onBackClicked = { navController.popBackStack() },
@@ -130,14 +131,27 @@ fun CartProductScreen(
 //            ) {
 //
 //            }
-//        }
-//    ) {
-//    }
-    CartProductBody(
-        cartProductViewModel = cartProductViewModel,
-        navController = navController,
-        focusRequester = focusRequester
-    )
+            ProductSearcher(
+                onSearchProducts = { cartProductViewModel.searchProducts(context) },
+                currentSearch = state.currentSearch,
+                updateCurrentSearch = { cartProductViewModel.updateCurrentSearch(it) },
+                focusRequester = focusRequester,
+                data = state.productsFound,
+                onProductSearchClicked = { cartProductViewModel.selectProductSearched(it) },
+                onCancelSearchClicked = cartProductViewModel::cancelCurrentSearch,
+                enabled = state.canSearchProducts,
+                modifier = modifier.padding(horizontal = dimensionResource(id = R.dimen.screen_horizontal))
+            )
+        }
+    ) {
+        CartProductBody(
+            cartProductViewModel = cartProductViewModel,
+            navController = navController,
+            focusRequester = focusRequester,
+            modifier = modifier.padding(it)
+        )
+    }
+
 
 }
 
@@ -163,16 +177,6 @@ fun CartProductBody(
             ),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        ProductSearcher(
-            onSearchProducts = { cartProductViewModel.searchProducts(context) },
-            currentSearch = state.currentSearch,
-            updateCurrentSearch = { cartProductViewModel.updateCurrentSearch(it) },
-            focusRequester = focusRequester,
-            data = state.productsFound,
-            onProductSearchClicked = { cartProductViewModel.selectProductSearched(it) },
-            onCancelSearchClicked = cartProductViewModel::cancelCurrentSearch,
-            enabled = state.canSearchProducts
-        )
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.default_value)))
         Card(modifier = Modifier.weight(1f)) {
             ProductDescription(
@@ -313,9 +317,9 @@ fun ProductSearcher(
     data: List<ProductWithUnit>,
     onProductSearchClicked: (ProductWithUnit) -> Unit,
     onCancelSearchClicked: () -> Unit,
-    enabled: Boolean
+    enabled: Boolean,
+    modifier: Modifier= Modifier
 ) {
-    val modifier = Modifier
     SearchBar(
         enabled = enabled,
         placeholder = { Text(text = "Buscador de productos...") },
