@@ -210,18 +210,32 @@ fun CartHeader(modifier: Modifier = Modifier, cartWithData: CartWithData) {
         Column(modifier = modifier.padding(10.dp)) {
             CartHeaderRow("Identificador de producto", cartWithData.cart.id.toString(), modifier)
             CartHeaderRow("Fecha de creación", cartWithData.cart.dateCreated.format(), modifier)
-            CartHeaderRow("Precio total", cartWithData.calculateTotalPriceLabel(), modifier)
+            CartHeaderRow(
+                "Precio total",
+                cartWithData.calculateTotalPriceLabel(),
+                modifier,
+                resultFocus = true
+            )
         }
     }
 }
 
 @Composable
-fun CartHeaderRow(firstLabel: String, secondLabel: String, modifier: Modifier) {
+fun CartHeaderRow(
+    firstLabel: String,
+    secondLabel: String,
+    modifier: Modifier,
+    resultFocus: Boolean = false
+) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween, modifier = modifier.fillMaxWidth()
     ) {
         Text(text = firstLabel, fontStyle = FontStyle.Italic)
-        Text(text = secondLabel, fontWeight = FontWeight.Bold)
+        Text(
+            text = secondLabel,
+            fontWeight = FontWeight.Bold,
+            color = if (resultFocus) MaterialTheme.colorScheme.tertiary else Color.Unspecified
+        )
     }
 }
 
@@ -313,7 +327,8 @@ fun CartProductItem(
                     Spacer(modifier = modifier.weight(1f))
                     Text(
                         text = formatValue(data.productCart.totalPrice),
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.tertiary
                     )
                 }
                 Text(

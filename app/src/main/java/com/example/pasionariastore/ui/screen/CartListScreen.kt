@@ -273,7 +273,7 @@ fun CartItem(
                         text = cartWithData.calculateTotalPriceLabel(),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = MaterialTheme.colorScheme.tertiary
                     )
                 }
                 Row(
@@ -285,7 +285,7 @@ fun CartItem(
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Text(
-                        text = cartWithData.cart.usernameSeller,
+                        text = "${cartWithData.productCartWithData.size} Productos",
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
