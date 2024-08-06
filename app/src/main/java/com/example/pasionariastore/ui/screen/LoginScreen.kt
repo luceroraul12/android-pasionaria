@@ -105,7 +105,10 @@ fun LoginBody(
             imageId = R.drawable.password
         )
         Button(
-            onClick = { navController.navigate(MyScreens.Resume.name) },
+            onClick = {
+                viewModel.login()
+                navController.navigate(MyScreens.Resume.name)
+            },
             shape = RoundedCornerShape(dimensionResource(id = R.dimen.rounded)),
             modifier = Modifier
                 .fillMaxWidth()
@@ -134,7 +137,7 @@ fun LoginField(
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         visualTransformation = visualTransformation,
-        leadingIcon = { Icon(painter = painterResource(id = imageId), contentDescription = "")}
+        leadingIcon = { Icon(painter = painterResource(id = imageId), contentDescription = "") }
     )
     Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.default_value)))
 }
