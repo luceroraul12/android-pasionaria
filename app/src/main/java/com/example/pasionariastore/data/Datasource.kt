@@ -66,10 +66,10 @@ object Datasource {
     )
 
     val carts: List<Cart> = listOf(
-        Cart(id = 1, status = "INACTIVE"),
+        Cart(id = 1, status = "PENDING"),
         Cart(status = "PENDING"),
         Cart(status = "FINALIZED"),
-        Cart(),
+        Cart(status = "SYNCRONIZED"),
         Cart(dateCreated = Date(15624)),
         Cart(status = "FINALIZED", dateCreated = Date(1562624)),
         Cart(status = "PENDING", dateCreated = Date(155959624)),
@@ -83,6 +83,6 @@ object Datasource {
         ),
         CartWithData(cart = carts[1], productCartWithData = listOf(cartProducts[1])),
         CartWithData(cart = carts[2], productCartWithData = listOf(cartProducts[1])),
-        CartWithData(cart = carts[2], productCartWithData = listOf(cartProducts[1]))
+        CartWithData(cart = carts[3], productCartWithData = listOf(cartProducts[1]))
     )
 }

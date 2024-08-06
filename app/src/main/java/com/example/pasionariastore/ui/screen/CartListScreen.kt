@@ -89,6 +89,11 @@ fun CartItemPreview(modifier: Modifier = Modifier) {
                 cartWithData = Datasource.cartWithData.get(2),
                 onDeleteCartClicked = {},
                 onCartClicked = {})
+            CartItem(
+                modifier = modifier,
+                cartWithData = Datasource.cartWithData.get(3),
+                onDeleteCartClicked = {},
+                onCartClicked = {})
         }
     }
 }
