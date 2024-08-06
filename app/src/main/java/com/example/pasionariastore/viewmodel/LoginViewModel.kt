@@ -30,15 +30,15 @@ class LoginViewModel @Inject constructor(
     }
 
     fun login() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                state.value.run {
-                    val response =
-                        apiBackend.login(BackendLogin(username = username, password = password))
-                    Log.i("login", response.toString())
-                }
-            }
-        }
+//        viewModelScope.launch {
+//            withContext(Dispatchers.IO) {
+//                state.value.run {
+//                    val response =
+//                        apiBackend.login(BackendLogin(username = username, password = password))
+//                    Log.i("login", response.toString())
+//                }
+//            }
+//        }
     }
 
 }
