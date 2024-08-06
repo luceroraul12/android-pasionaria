@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.example.pasionariastore.converter.LongToDateAdapter
 import com.example.pasionariastore.data.api.ApiBackend
+import com.example.pasionariastore.interceptor.BackendInterceptor
 import com.example.pasionariastore.repository.BackendRepository
 import com.example.pasionariastore.repository.BackendRepositoryImpl
 import com.example.pasionariastore.repository.CartRepository
@@ -20,6 +21,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Date
@@ -65,12 +67,15 @@ object AppModule {
     @Singleton
     @Provides
     fun providesRetrofit(): Retrofit {
+        // Para interceptors
+        val client = OkHttpClient.Builder().addInterceptor(BackendInterceptor()).build()
+        // Para converter
         val gson = GsonBuilder()
             .registerTypeAdapter(Date::class.java, LongToDateAdapter())
             .create()
-        return Retrofit.Builder().baseUrl(Constants.API_BASE).addConverterFactory(
-            GsonConverterFactory.create(gson)
-        ).build()
+        return Retrofit.Builder().baseUrl(Constants.API_BASE)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(client).build()
     }
 
     @Singleton

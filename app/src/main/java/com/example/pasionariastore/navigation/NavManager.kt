@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,6 +22,7 @@ import com.example.pasionariastore.ui.screen.CartListScreen
 import com.example.pasionariastore.ui.screen.CartProductScreen
 import com.example.pasionariastore.ui.screen.CartScreen
 import com.example.pasionariastore.ui.screen.ResumeScreen
+import com.example.pasionariastore.viewmodel.CheckDatabaseViewModel
 
 enum class MyScreens {
     Resume, CartList, Cart, CartProduct
@@ -29,6 +31,7 @@ enum class MyScreens {
 @Preview(showBackground = true)
 @Composable
 fun NavManager(
+    checkDatabaseViewModel: CheckDatabaseViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
     dataStore: CustomDataStore = CustomDataStore(LocalContext.current)
 ) {
