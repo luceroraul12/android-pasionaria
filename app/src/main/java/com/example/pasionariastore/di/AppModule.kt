@@ -3,6 +3,7 @@ package com.example.pasionariastore.di
 import android.content.Context
 import androidx.room.Room
 import com.example.pasionariastore.converter.LongToDateAdapter
+import com.example.pasionariastore.data.CustomDataStore
 import com.example.pasionariastore.data.api.ApiBackend
 import com.example.pasionariastore.interceptor.BackendInterceptor
 import com.example.pasionariastore.repository.BackendRepository
@@ -66,9 +67,21 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun providesRetrofit(): Retrofit {
+    fun providesCustomDatastore(@ApplicationContext context: Context): CustomDataStore {
+        return CustomDataStore(context)
+    }
+
+    @Singleton
+    @Provides
+    fun providesBackendInterceptor(customDataStore: CustomDataStore): BackendInterceptor {
+        return BackendInterceptor(customDataStore)
+    }
+
+    @Singleton
+    @Provides
+    fun providesRetrofit(customDataStore: CustomDataStore): Retrofit {
         // Para interceptors
-        val client = OkHttpClient.Builder().addInterceptor(BackendInterceptor()).build()
+        val client = OkHttpClient.Builder().addInterceptor(BackendInterceptor(customDataStore)).build()
         // Para converter
         val gson = GsonBuilder()
             .registerTypeAdapter(Date::class.java, LongToDateAdapter())
