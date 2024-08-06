@@ -21,11 +21,12 @@ import com.example.pasionariastore.data.CustomDataStore
 import com.example.pasionariastore.ui.screen.CartListScreen
 import com.example.pasionariastore.ui.screen.CartProductScreen
 import com.example.pasionariastore.ui.screen.CartScreen
+import com.example.pasionariastore.ui.screen.LoginScreen
 import com.example.pasionariastore.ui.screen.ResumeScreen
 import com.example.pasionariastore.viewmodel.CheckDatabaseViewModel
 
 enum class MyScreens {
-    Resume, CartList, Cart, CartProduct
+    Login, Resume, CartList, Cart, CartProduct
 }
 
 @Preview(showBackground = true)
@@ -38,10 +39,12 @@ fun NavManager(
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = MyScreens.Resume.name
+        startDestination = MyScreens.Login.name
     ) {
+        composable(route = MyScreens.Login.name) {
+            LoginScreen(navController = navController)
+        }
         composable(route = MyScreens.Resume.name) {
-            // TODO: Hay que quitar el boton que accede a un pedido sin ID
             ResumeScreen(
                 modifier = modifier,
                 dataStore = dataStore,

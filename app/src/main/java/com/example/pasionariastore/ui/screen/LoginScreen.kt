@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -31,7 +29,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
+import com.example.pasionariastore.navigation.MyScreens
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.LoginViewModel
 
@@ -39,21 +40,23 @@ import com.example.pasionariastore.viewmodel.LoginViewModel
 @Composable
 private fun LoginScreenPreview() {
     PasionariaStoreTheme(darkTheme = false) {
-        LoginScreen()
+        LoginScreen(navController = rememberNavController())
     }
 }
 
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    viewModel: LoginViewModel = hiltViewModel()
+    viewModel: LoginViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     Scaffold {
         LoginBody(
             modifier = modifier
                 .fillMaxSize()
                 .padding(it),
-            viewModel = viewModel
+            viewModel = viewModel,
+            navController = navController
         )
     }
 }
@@ -61,7 +64,8 @@ fun LoginScreen(
 @Composable
 fun LoginBody(
     modifier: Modifier = Modifier,
-    viewModel: LoginViewModel
+    viewModel: LoginViewModel,
+    navController: NavController
 ) {
     val state by viewModel.state.collectAsState()
     Column(
@@ -101,7 +105,7 @@ fun LoginBody(
             imageId = R.drawable.password
         )
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { navController.navigate(MyScreens.Resume.name) },
             shape = RoundedCornerShape(dimensionResource(id = R.dimen.rounded)),
             modifier = Modifier
                 .fillMaxWidth()
