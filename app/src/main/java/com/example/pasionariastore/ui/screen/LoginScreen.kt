@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -68,6 +69,7 @@ fun LoginBody(
     navController: NavController
 ) {
     val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -106,12 +108,13 @@ fun LoginBody(
         )
         Button(
             onClick = {
-                viewModel.login()
+                viewModel.login(context = context)
                 navController.navigate(MyScreens.Resume.name)
             },
             shape = RoundedCornerShape(dimensionResource(id = R.dimen.rounded)),
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            enabled = state.enableLoginButton
         ) {
             Text(text = "Ingresar")
         }

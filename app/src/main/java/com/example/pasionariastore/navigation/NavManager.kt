@@ -6,6 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -24,6 +25,7 @@ import com.example.pasionariastore.ui.screen.CartScreen
 import com.example.pasionariastore.ui.screen.LoginScreen
 import com.example.pasionariastore.ui.screen.ResumeScreen
 import com.example.pasionariastore.viewmodel.CheckDatabaseViewModel
+import com.example.pasionariastore.viewmodel.LoginViewModel
 
 enum class MyScreens {
     Login, Resume, CartList, Cart, CartProduct
@@ -33,10 +35,21 @@ enum class MyScreens {
 @Composable
 fun NavManager(
     checkDatabaseViewModel: CheckDatabaseViewModel = hiltViewModel(),
+    loginViewModel: LoginViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
     dataStore: CustomDataStore = CustomDataStore(LocalContext.current)
 ) {
     val navController = rememberNavController()
+    val loginErrorFlow = loginViewModel.loginErrorFlow
+    LaunchedEffect(key1 = Unit) {
+        loginErrorFlow.collect {
+            loginViewModel.resolveException(
+                code = it.first,
+                message = it.second,
+                navController = navController
+            )
+        }
+    }
     NavHost(
         navController = navController,
         startDestination = MyScreens.Login.name

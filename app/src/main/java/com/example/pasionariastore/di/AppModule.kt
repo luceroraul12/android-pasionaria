@@ -73,15 +73,23 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun providesBackendInterceptor(customDataStore: CustomDataStore): BackendInterceptor {
-        return BackendInterceptor(customDataStore)
+    fun providesBackendInterceptor(
+        customDataStore: CustomDataStore,
+    ): BackendInterceptor {
+        return BackendInterceptor(
+            customDataStore = customDataStore,
+        )
     }
 
     @Singleton
     @Provides
-    fun providesRetrofit(customDataStore: CustomDataStore): Retrofit {
+    fun providesRetrofit(
+        interceptor: BackendInterceptor
+    ): Retrofit {
         // Para interceptors
-        val client = OkHttpClient.Builder().addInterceptor(BackendInterceptor(customDataStore)).build()
+        val client =
+            OkHttpClient.Builder()
+                .addInterceptor(interceptor).build()
         // Para converter
         val gson = GsonBuilder()
             .registerTypeAdapter(Date::class.java, LongToDateAdapter())
