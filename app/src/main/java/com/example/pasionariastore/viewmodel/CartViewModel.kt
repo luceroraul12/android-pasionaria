@@ -6,12 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.pasionariastore.model.CartWithData
-import com.example.pasionariastore.navigation.MyScreens
 import com.example.pasionariastore.model.ProductCartWithData
+import com.example.pasionariastore.model.state.CartStatus
 import com.example.pasionariastore.model.state.CartUIState
+import com.example.pasionariastore.navigation.MyScreens
 import com.example.pasionariastore.repository.CartRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -36,7 +36,10 @@ open class CartViewModel @Inject constructor(
 
             result.collect { cart ->
                 if (cart != null) state.update {
-                    it.copy(cartWithData = MutableStateFlow(cart), canFinalize = hasPriceFromProducts(cart))
+                    it.copy(
+                        cartWithData = MutableStateFlow(cart),
+                        canFinalize = hasPriceFromProducts(cart)
+                    )
                 }
             }
         }
@@ -58,9 +61,7 @@ open class CartViewModel @Inject constructor(
     }
 
     fun showMessage(message: String, context: Context) {
-        CoroutineScope(Dispatchers.Main).launch {
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-        }
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
     fun formatPriceNumber(value: Double): String {
@@ -72,6 +73,18 @@ open class CartViewModel @Inject constructor(
     }
 
     fun hasPriceFromProducts(cart: CartWithData): Boolean {
-        return cart.productCartWithData.any{p -> p.productCart.totalPrice > 0.0}
+        return cart.productCartWithData.any { p -> p.productCart.totalPrice > 0.0 }
+    }
+
+    fun finalizeCart(navController: NavController, context: Context) {
+        viewModelScope.launch(Dispatchers.IO) {
+            // Actualizo el estado a FINALIZEd
+            val cart = state.value.cartWithData.value.cart.copy(status = CartStatus.FINALIZED.name)
+            cartRepository.updateCart(cart)
+            withContext(Dispatchers.Main) {
+                Toast.makeText(context, "Pedido finalizado", Toast.LENGTH_SHORT).show()
+                navController.popBackStack()
+            }
+        }
     }
 }

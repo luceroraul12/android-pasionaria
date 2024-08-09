@@ -28,5 +28,9 @@ class CartRepositoryFake : CartRepository {
     override suspend fun insertProductCart(productCart: ProductCart) {}
     override suspend fun deleteProductCart(productCart: ProductCart) {}
     override suspend fun insertCart(cart: Cart) {}
+    override suspend fun updateCart(cart: Cart) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun deleteCart(cart: Cart) {}
 }
