@@ -4,12 +4,11 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pasionariastore.data.CustomDataStore
-import com.example.pasionariastore.data.api.ApiBackend
 import com.example.pasionariastore.model.BackendLogin
 import com.example.pasionariastore.model.state.LoginUIState
 import com.example.pasionariastore.navigation.MyScreens
+import com.example.pasionariastore.repository.BackendRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,14 +18,14 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(
-    private val apiBackend: ApiBackend,
+open class LoginViewModel @Inject constructor(
+    private val backendRepository: BackendRepository,
     private val customDataStore: CustomDataStore
 ) : ViewModel() {
     var state = MutableStateFlow(LoginUIState())
         private set
 
-    fun cleanState(){
+    fun cleanState() {
         // Dejo el mismo usuario por las dudas
         state.update { LoginUIState(username = state.value.username) }
     }
@@ -47,7 +46,6 @@ class LoginViewModel @Inject constructor(
                     val response = login(
                         username = username,
                         password = password,
-                        context = context
                     )
                     if (response) {
                         navigationFlow.emit(MyScreens.Resume.name)
@@ -57,14 +55,14 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    suspend fun login(username: String, password: String, context: Context): Boolean {
-        val response = apiBackend.login(BackendLogin(username = username, password = password))
-        val result = response.isSuccessful
-        if (result) {
+    suspend fun login(username: String, password: String): Boolean {
+        val response =
+            backendRepository.login(BackendLogin(username = username, password = password))
+        return if (response != null) {
             // Guardo el token
-            customDataStore.saveToken(response.body()?.jwt ?: "VOID")
-        }
-        return result
+            customDataStore.saveToken(response.jwt)
+            true
+        } else false
     }
 
     private fun checkEnableLoginButton(): Boolean {

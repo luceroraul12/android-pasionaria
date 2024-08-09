@@ -18,7 +18,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class SharedViewModel @Inject constructor(
+open class SharedViewModel @Inject constructor(
     private val interceptor: BackendInterceptor,
     @ApplicationContext private val context: Context
 ) : ViewModel() {

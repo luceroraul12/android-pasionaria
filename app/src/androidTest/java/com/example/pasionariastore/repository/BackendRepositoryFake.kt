@@ -1,5 +1,7 @@
 package com.example.pasionariastore.repository
 
+import com.example.pasionariastore.model.BackendLogin
+import com.example.pasionariastore.model.BackendLoginResponse
 import com.example.pasionariastore.model.BackendLookup
 import com.example.pasionariastore.model.BackendProduct
 
@@ -26,5 +28,9 @@ class BackendRepositoryFake : BackendRepository {
                 )
             )
         )
+    }
+
+    override suspend fun login(data: BackendLogin): BackendLoginResponse? {
+        TODO("Not yet implemented")
     }
 }

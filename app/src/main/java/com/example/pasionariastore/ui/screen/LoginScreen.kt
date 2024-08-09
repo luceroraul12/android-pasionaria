@@ -35,16 +35,23 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
+import com.example.pasionariastore.ui.preview.LoginViewModelFake
+import com.example.pasionariastore.ui.preview.SharedViewModelFake
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.LoginViewModel
 import com.example.pasionariastore.viewmodel.SharedViewModel
-import kotlinx.coroutines.flow.asSharedFlow
 
 @Preview(showBackground = true)
 @Composable
 private fun LoginScreenPreview() {
     PasionariaStoreTheme(darkTheme = false) {
-        LoginScreen(navController = rememberNavController())
+        LoginScreen(
+            navController = rememberNavController(),
+            loginViewModel = LoginViewModelFake(
+                context = LocalContext.current
+            ),
+            sharedViewModel = SharedViewModelFake(LocalContext.current)
+        )
     }
 }
 
