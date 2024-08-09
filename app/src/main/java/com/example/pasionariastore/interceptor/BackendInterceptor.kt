@@ -13,7 +13,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
+import okhttp3.Protocol
 import okhttp3.Response
+import okhttp3.ResponseBody
 import javax.inject.Inject
 
 class BackendInterceptor @Inject constructor(
@@ -31,7 +33,17 @@ class BackendInterceptor @Inject constructor(
                 val request = chain.request().newBuilder()
                     .addHeader("Authorization", "Bearer $token")
                     .build()
-                chain.proceed(request)
+                try {
+                    chain.proceed(request)
+                }catch (e: Exception){
+                    Response.Builder()
+                        .request(request)
+                        .protocol(Protocol.HTTP_1_1)
+                        .code(504) // Gateway Timeout
+                        .message("SIN INTERNET")
+                        .body(ResponseBody.create(null, "SIN INTERNET"))
+                        .build()
+                }
             }.await()
         }
         // En caso de que no sea OK, tengo que emitir valor
