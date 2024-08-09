@@ -26,6 +26,11 @@ class LoginViewModel @Inject constructor(
     var state = MutableStateFlow(LoginUIState())
         private set
 
+    fun cleanState(){
+        // Dejo el mismo usuario por las dudas
+        state.update { LoginUIState(username = state.value.username) }
+    }
+
     fun updateUsername(value: String) {
         state.update { it.copy(username = value, enableLoginButton = checkEnableLoginButton()) }
     }
