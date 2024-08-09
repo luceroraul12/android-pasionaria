@@ -27,9 +27,12 @@ import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 @Composable
 private fun MainTopBarFinalizeOnPreview() {
     PasionariaStoreTheme {
-        MainTopBar(title = "Homitowen (っ◔◡◔)っ", onBackClicked = {}, showBackIcon = true, actions = {
-            FinalizeButton(onFinalize = {}, canFinalize = true)
-        })
+        MainTopBar(title = "Homitowen (っ◔◡◔)っ",
+            onBackClicked = {},
+            showBackIcon = true,
+            actions = {
+                FinalizeButton(onFinalize = {}, canFinalize = true)
+            })
     }
 }
 
@@ -37,9 +40,12 @@ private fun MainTopBarFinalizeOnPreview() {
 @Composable
 private fun MainTopBarFinalizeOffPreview() {
     PasionariaStoreTheme {
-        MainTopBar(title = "Hamilton ( ͡❛ ͜ʖ ͡❛)", onBackClicked = {}, showBackIcon = true, actions = {
-            FinalizeButton(onFinalize = {})
-        })
+        MainTopBar(title = "Hamilton ( ͡❛ ͜ʖ ͡❛)",
+            onBackClicked = {},
+            showBackIcon = true,
+            actions = {
+                FinalizeButton(onFinalize = {})
+            })
     }
 }
 
@@ -71,7 +77,8 @@ fun FinalizeButton(onFinalize: () -> Unit, canFinalize: Boolean = false) {
     Button(
         onClick = onFinalize,
         shape = RoundedCornerShape(5.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = if (canFinalize) R.color.finalized_active else R.color.finalized_inactive)),
+        enabled = canFinalize,
+        colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.finalized_active)),
     ) {
         Text(text = "Finalizar")
     }
