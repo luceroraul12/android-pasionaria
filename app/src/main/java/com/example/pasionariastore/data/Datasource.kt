@@ -66,7 +66,7 @@ object Datasource {
     )
 
     val carts: List<Cart> = listOf(
-        Cart(id = 1, status = "PENDING"),
+        Cart(id = 1, status = "FINALIZED"),
         Cart(status = "PENDING"),
         Cart(status = "FINALIZED"),
         Cart(status = "SYNCRONIZED"),

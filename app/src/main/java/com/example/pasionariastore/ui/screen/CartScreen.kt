@@ -53,6 +53,7 @@ import com.example.pasionariastore.model.CartWithData
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.calculateTotalPriceLabel
 import com.example.pasionariastore.model.format
+import com.example.pasionariastore.model.state.CartStatus
 import com.example.pasionariastore.model.state.CartUIState
 import com.example.pasionariastore.ui.preview.CartViewModelFake
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
@@ -69,7 +70,9 @@ fun CartItemPreview() {
             onDeleteProductClicked = { /*TODO*/ },
             modifier = Modifier,
             data = Datasource.cartProducts[0],
-            formatValue = { "ARS1,500" }
+            formatValue = { "ARS1,500" },
+            canDelete = false,
+            canNext = false
         )
     }
 }
@@ -83,9 +86,11 @@ fun CartListPreview() {
         CartListProducts(
             productCartList = Datasource.cartProducts,
             modifier = Modifier,
+            onProductCartEditClicked = { cartId, productCartId -> },
             onProductCartDelete = {},
             formatValue = { "2.3" },
-            onProductCartEditClicked = { cartId, productCartId -> }
+            canDelete = true,
+            canNext = true
         )
     }
 }
@@ -112,6 +117,7 @@ fun CartScreen(
     initialCartId: Long
 ) {
     val state by cartViewModel.state.collectAsState()
+    val cartStatus = CartStatus.valueOf(state.cartWithData.collectAsState().value.cart.status)
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         cartViewModel.initScreenByCart(initialCartId)
@@ -123,33 +129,36 @@ fun CartScreen(
                 onBackClicked = { navController.popBackStack() },
                 showBackIcon = true,
                 actions = {
-                    FinalizeButton(
-                        onFinalize = {
-                            cartViewModel.finalizeCart(
-                                navController = navController,
-                                context = context
-                            )
-                        },
-                        canFinalize = state.canFinalize
-                    )
+                    if (cartStatus.canEditProducts) {
+                        FinalizeButton(
+                            onFinalize = {
+                                cartViewModel.finalizeCart(
+                                    navController = navController,
+                                    context = context
+                                )
+                            },
+                            canFinalize = state.canFinalize
+                        )
+                    }
                 }
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    cartViewModel.goToProductCartScreen(
-                        navController = navController,
-                        cartId = initialCartId,
-                        productCartId = 0
-                    )
-                },
-                modifier = Modifier
-                    .padding(dimensionResource(id = R.dimen.floating_button))
-            ) {
-                Icon(Icons.Filled.Add, "New Product")
+            if(cartStatus.canEditProducts){
+                FloatingActionButton(
+                    onClick = {
+                        cartViewModel.goToProductCartScreen(
+                            navController = navController,
+                            cartId = initialCartId,
+                            productCartId = 0
+                        )
+                    },
+                    modifier = Modifier
+                        .padding(dimensionResource(id = R.dimen.floating_button))
+                ) {
+                    Icon(Icons.Filled.Add, "New Product")
+                }
             }
-
         }
     ) {
         CartScreenBody(
@@ -181,6 +190,7 @@ fun CartScreenBody(
     onEditProduct: (cartId: Long, productCartId: Long) -> Unit
 ) {
     val cartWithData by state.cartWithData.collectAsState()
+    val cartStatus = CartStatus.valueOf(cartWithData.cart.status)
     Box(modifier = modifier.fillMaxSize()) {
         Column(modifier = Modifier) {
             CartHeader(
@@ -192,7 +202,9 @@ fun CartScreenBody(
                     modifier = Modifier,
                     onProductCartEditClicked = onEditProduct,
                     onProductCartDelete = onDeleteProduct,
-                    formatValue = formatValue
+                    formatValue = formatValue,
+                    canDelete = cartStatus.canDeleteProducts,
+                    canNext = cartStatus.canEditProducts
                 )
             }
         }
@@ -254,7 +266,9 @@ fun CartListProducts(
     modifier: Modifier,
     onProductCartEditClicked: (cartId: Long, productCartId: Long) -> Unit,
     onProductCartDelete: (ProductCartWithData) -> Unit,
-    formatValue: (Double) -> String
+    formatValue: (Double) -> String,
+    canDelete: Boolean,
+    canNext: Boolean
 ) {
     if (productCartList.isEmpty()) {
         Card(
@@ -294,7 +308,9 @@ fun CartListProducts(
                     onDeleteProductClicked = { onProductCartDelete(it) },
                     modifier = modifier,
                     data = it,
-                    formatValue = formatValue
+                    formatValue = formatValue,
+                    canDelete = canDelete,
+                    canNext = canNext
                 )
             }
         }
@@ -307,7 +323,9 @@ fun CartProductItem(
     onDeleteProductClicked: () -> Unit,
     modifier: Modifier,
     data: ProductCartWithData,
-    formatValue: (Double) -> String
+    formatValue: (Double) -> String,
+    canDelete: Boolean,
+    canNext: Boolean
 ) {
     Card(
         modifier = modifier
@@ -349,7 +367,9 @@ fun CartProductItem(
                 onDeleteProductClicked = onDeleteProductClicked,
                 modifier = modifier,
                 labelEdit = "Editar",
-                labelDelete = "Eliminar"
+                labelDelete = "Eliminar",
+                canDelete = canDelete,
+                canNext = canNext
             )
         }
     }
@@ -361,41 +381,48 @@ fun CardActionButtons(
     onDeleteProductClicked: () -> Unit,
     modifier: Modifier = Modifier,
     labelEdit: String,
-    labelDelete: String
+    labelDelete: String,
+    canDelete: Boolean,
+    canNext: Boolean
 ) {
     Row() {
-        Button(
-            onClick = onDeleteProductClicked, colors = ButtonColors(
-                containerColor = colorResource(id = R.color.delete_active),
-                contentColor = Color.White,
-                disabledContentColor = Color.Black,
-                disabledContainerColor = Color.Gray
-            ),
-            shape = RoundedCornerShape(
-                0.dp
-            ),
-            modifier = modifier
-                .weight(1f)
-                .height(IntrinsicSize.Max)
-        ) {
-            Text(text = labelDelete, modifier = modifier)
+        if (canDelete) {
+            Button(
+                onClick = onDeleteProductClicked, colors = ButtonColors(
+                    containerColor = colorResource(id = R.color.delete_active),
+                    contentColor = Color.White,
+                    disabledContentColor = Color.Black,
+                    disabledContainerColor = Color.Gray
+                ),
+                shape = RoundedCornerShape(
+                    0.dp
+                ),
+                modifier = modifier
+                    .weight(1f)
+                    .height(IntrinsicSize.Max)
+            ) {
+                Text(text = labelDelete, modifier = modifier)
+            }
         }
-        Button(
-            onClick = onCartProductClicked,
-            colors = ButtonColors(
-                containerColor = colorResource(id = R.color.update_active),
-                contentColor = Color.White,
-                disabledContentColor = Color.Black,
-                disabledContainerColor = Color.Gray
-            ),
-            shape = RoundedCornerShape(
-                0.dp
-            ),
-            modifier = modifier
-                .weight(1f)
-                .height(IntrinsicSize.Max),
-        ) {
-            Text(text = labelEdit)
+        if (canNext) {
+            Button(
+                onClick = onCartProductClicked,
+                colors = ButtonColors(
+                    containerColor = colorResource(id = R.color.update_active),
+                    contentColor = Color.White,
+                    disabledContentColor = Color.Black,
+                    disabledContainerColor = Color.Gray
+                ),
+                shape = RoundedCornerShape(
+                    0.dp
+                ),
+                modifier = modifier
+                    .weight(1f)
+                    .height(IntrinsicSize.Max),
+            ) {
+                Text(text = labelEdit)
+            }
+
         }
     }
 }

@@ -295,13 +295,15 @@ fun CartItem(
                     )
                 }
             }
-            if (cartWithData.cart.status.equals(CartStatus.PENDING.name))
-                CardActionButtons(
-                    onCartProductClicked = { onCartClicked(cartWithData.cart) },
-                    onDeleteProductClicked = { onDeleteCartClicked(cartWithData.cart) },
-                    labelDelete = "Eliminar",
-                    labelEdit = "Editar productos"
-                )
+            val cartStatus = CartStatus.valueOf(cartWithData.cart.status)
+            CardActionButtons(
+                onCartProductClicked = { onCartClicked(cartWithData.cart) },
+                onDeleteProductClicked = { onDeleteCartClicked(cartWithData.cart) },
+                labelDelete = "Eliminar",
+                labelEdit = if (cartStatus.canEditProducts) "Editar" else "Ver",
+                canDelete = cartStatus.canDeleteCart,
+                canNext = true
+            )
         }
     }
 }

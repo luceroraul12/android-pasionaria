@@ -13,31 +13,31 @@ data class CartListUIState(
 enum class CartStatus(
     val label: String,
     var enabled: Boolean = true,
+    val canDeleteCart: Boolean = false,
+    val canDeleteProducts: Boolean = false,
+    val canEditProducts: Boolean = false,
     @ColorRes val backgroundColorActive: Int,
     @ColorRes val backgroundColorInactive: Int
 ) {
-//    INACTIVE(
-//        label = "Inactivo",
-//        enabled = true,
-//        backgroundColorActive = R.color.delete_active,
-//        backgroundColorInactive = R.color.delete_inactive
-//    ),
     PENDING(
         label = "Pendiente",
         enabled = true,
         backgroundColorActive = R.color.update_active,
-        backgroundColorInactive = R.color.update_inactive
+        backgroundColorInactive = R.color.update_inactive,
+        canDeleteCart = true,
+        canDeleteProducts = true,
+        canEditProducts = true
     ),
     FINALIZED(
         label = "Finalizado",
         enabled = true,
         backgroundColorActive = R.color.finalized_active,
-        backgroundColorInactive = R.color.finalized_inactive
+        backgroundColorInactive = R.color.finalized_inactive,
     ),
     SYNCRONIZED(
         label = "Sincronizado",
         enabled = true,
         backgroundColorActive = R.color.syncronized_active,
-        backgroundColorInactive = R.color.syncronized_inactive
+        backgroundColorInactive = R.color.syncronized_inactive,
     ),
 }
