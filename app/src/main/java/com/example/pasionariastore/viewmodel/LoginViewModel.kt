@@ -4,7 +4,7 @@ import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
+import androidx.navigation.NavDestination
 import com.example.pasionariastore.data.CustomDataStore
 import com.example.pasionariastore.data.api.ApiBackend
 import com.example.pasionariastore.interceptor.BackendInterceptor
@@ -16,7 +16,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -34,6 +33,7 @@ class LoginViewModel @Inject constructor(
         private set
 
     val loginErrorFlow = MutableSharedFlow<Pair<Int, String>>()
+    val navigationFlow = MutableSharedFlow<String>()
 
     init {
         viewModelScope.launch {
@@ -55,34 +55,44 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 state.value.run {
-                    login(
+                    val response = login(
                         username = username,
                         password = password,
                         context = context
                     )
+                    if (response) {
+                        navigationFlow.emit(MyScreens.Resume.name)
+                    }
                 }
             }
         }
     }
 
-    suspend fun login(username: String, password: String, context: Context) {
+    suspend fun login(username: String, password: String, context: Context): Boolean {
         val response = apiBackend.login(BackendLogin(username = username, password = password))
-        if (response.isSuccessful) {
+        val result = response.isSuccessful
+        if (result) {
             // Guardo el token
             customDataStore.saveToken(response.body()?.jwt ?: "VOID")
         }
+        return result
     }
 
-    fun resolveException(code: Int, message: String, navController: NavHostController) {
-        when (code) {
-            401 -> {
-                Toast.makeText(context, "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
-                navController.navigate(MyScreens.Login.name)
+    fun resolveException(code: Int, message: String, currentDestination: NavDestination?) {
+        viewModelScope.launch {
+            var toastMessage = message
+            withContext(Dispatchers.IO) {
+                val isOnLoginScreen = currentDestination?.route.equals(MyScreens.Login.name)
+                when (code) {
+                    401 -> {
+                       toastMessage = "Credenciales incorrectas"
+                        if (!isOnLoginScreen)
+                            navigationFlow.emit(MyScreens.Login.name)
+                    }
+                }
             }
-
-            else -> {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-            }
+            Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT)
+                .show()
         }
     }
 

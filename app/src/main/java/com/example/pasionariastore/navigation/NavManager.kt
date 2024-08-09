@@ -26,6 +26,8 @@ import com.example.pasionariastore.ui.screen.LoginScreen
 import com.example.pasionariastore.ui.screen.ResumeScreen
 import com.example.pasionariastore.viewmodel.CheckDatabaseViewModel
 import com.example.pasionariastore.viewmodel.LoginViewModel
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 
 enum class MyScreens {
     Login, Resume, CartList, Cart, CartProduct
@@ -40,14 +42,16 @@ fun NavManager(
     dataStore: CustomDataStore = CustomDataStore(LocalContext.current)
 ) {
     val navController = rememberNavController()
-    val loginErrorFlow = loginViewModel.loginErrorFlow
+    val loginErrorFlow = loginViewModel.loginErrorFlow.asSharedFlow()
     LaunchedEffect(key1 = Unit) {
-        loginErrorFlow.collect {
-            loginViewModel.resolveException(
-                code = it.first,
-                message = it.second,
-                navController = navController
-            )
+        launch {
+            loginErrorFlow.collect {
+                loginViewModel.resolveException(
+                    code = it.first,
+                    message = it.second,
+                    currentDestination = navController.currentDestination
+                )
+            }
         }
     }
     NavHost(

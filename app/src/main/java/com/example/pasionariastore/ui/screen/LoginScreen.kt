@@ -16,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -33,9 +34,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
-import com.example.pasionariastore.navigation.MyScreens
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.LoginViewModel
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 
 @Preview(showBackground = true)
 @Composable
@@ -51,6 +53,24 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
     navController: NavController
 ) {
+    val navigateFlow = viewModel.navigationFlow.asSharedFlow()
+    val errorFlow = viewModel.loginErrorFlow.asSharedFlow()
+    LaunchedEffect(key1 = Unit) {
+        launch {
+        navigateFlow.collect {
+            navController.navigate(it)
+        }
+        }
+        launch {
+            errorFlow.collect {
+                viewModel.resolveException(
+                    code = it.first,
+                    message = it.second,
+                    currentDestination = navController.currentDestination,
+                )
+            }
+        }
+    }
     Scaffold {
         LoginBody(
             modifier = modifier
@@ -109,7 +129,6 @@ fun LoginBody(
         Button(
             onClick = {
                 viewModel.login(context = context)
-                navController.navigate(MyScreens.Resume.name)
             },
             shape = RoundedCornerShape(dimensionResource(id = R.dimen.rounded)),
             modifier = Modifier
