@@ -25,7 +25,7 @@ import com.example.pasionariastore.ui.screen.CartScreen
 import com.example.pasionariastore.ui.screen.LoginScreen
 import com.example.pasionariastore.ui.screen.ResumeScreen
 import com.example.pasionariastore.viewmodel.CheckDatabaseViewModel
-import com.example.pasionariastore.viewmodel.LoginViewModel
+import com.example.pasionariastore.viewmodel.SharedViewModel
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
@@ -37,22 +37,17 @@ enum class MyScreens {
 @Composable
 fun NavManager(
     checkDatabaseViewModel: CheckDatabaseViewModel = hiltViewModel(),
-    loginViewModel: LoginViewModel = hiltViewModel(),
+    sharedViewModel: SharedViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
     dataStore: CustomDataStore = CustomDataStore(LocalContext.current)
 ) {
     val navController = rememberNavController()
-    val loginErrorFlow = loginViewModel.loginErrorFlow.asSharedFlow()
+    val loginErrorFlow = sharedViewModel.loginErrorFlow.asSharedFlow()
     LaunchedEffect(key1 = Unit) {
-        launch {
-            loginErrorFlow.collect {
-                loginViewModel.resolveException(
-                    code = it.first,
-                    message = it.second,
-                    currentDestination = navController.currentDestination
-                )
-            }
-        }
+        sharedViewModel.initSubscriptionScreens(
+            navController = navController,
+            coroutineScope = this
+        )
     }
     NavHost(
         navController = navController,

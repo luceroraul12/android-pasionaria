@@ -36,8 +36,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.LoginViewModel
+import com.example.pasionariastore.viewmodel.SharedViewModel
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.launch
 
 @Preview(showBackground = true)
 @Composable
@@ -50,34 +50,23 @@ private fun LoginScreenPreview() {
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    viewModel: LoginViewModel = hiltViewModel(),
+    loginViewModel: LoginViewModel = hiltViewModel(),
+    sharedViewModel: SharedViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    val navigateFlow = viewModel.navigationFlow.asSharedFlow()
-    val errorFlow = viewModel.loginErrorFlow.asSharedFlow()
     LaunchedEffect(key1 = Unit) {
-        launch {
-        navigateFlow.collect {
-            navController.navigate(it)
-        }
-        }
-        launch {
-            errorFlow.collect {
-                viewModel.resolveException(
-                    code = it.first,
-                    message = it.second,
-                    currentDestination = navController.currentDestination,
-                )
-            }
-        }
+        sharedViewModel.initSubscriptionScreens(
+            coroutineScope = this,
+            navController = navController
+        )
     }
     Scaffold {
         LoginBody(
             modifier = modifier
                 .fillMaxSize()
                 .padding(it),
-            viewModel = viewModel,
-            navController = navController
+            loginViewModel = loginViewModel,
+            sharedViewModel = sharedViewModel
         )
     }
 }
@@ -85,10 +74,10 @@ fun LoginScreen(
 @Composable
 fun LoginBody(
     modifier: Modifier = Modifier,
-    viewModel: LoginViewModel,
-    navController: NavController
+    loginViewModel: LoginViewModel,
+    sharedViewModel: SharedViewModel,
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by loginViewModel.state.collectAsState()
     val context = LocalContext.current
     Column(
         verticalArrangement = Arrangement.Center,
@@ -113,14 +102,14 @@ fun LoginBody(
         )
         LoginField(
             value = state.username,
-            onChange = { viewModel.updateUsername(it) },
+            onChange = { loginViewModel.updateUsername(it) },
             label = "Usuario",
             keyboardType = KeyboardType.Text,
             imageId = R.drawable.username
         )
         LoginField(
             value = state.password,
-            onChange = { viewModel.updatePassword(it) },
+            onChange = { loginViewModel.updatePassword(it) },
             label = "Contraseña",
             keyboardType = KeyboardType.Password,
             visualTransformation = PasswordVisualTransformation(),
@@ -128,7 +117,7 @@ fun LoginBody(
         )
         Button(
             onClick = {
-                viewModel.login(context = context)
+                loginViewModel.login(context = context, sharedViewModel.navigationFlow)
             },
             shape = RoundedCornerShape(dimensionResource(id = R.dimen.rounded)),
             modifier = Modifier
