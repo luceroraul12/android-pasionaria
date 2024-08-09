@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.example.pasionariastore.model.CartWithData
 import com.example.pasionariastore.navigation.MyScreens
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.state.CartUIState
@@ -35,7 +36,7 @@ open class CartViewModel @Inject constructor(
 
             result.collect { cart ->
                 if (cart != null) state.update {
-                    it.copy(cartWithData = MutableStateFlow(cart), canFinalize = hasPriceFromProducts())
+                    it.copy(cartWithData = MutableStateFlow(cart), canFinalize = hasPriceFromProducts(cart))
                 }
             }
         }
@@ -70,7 +71,7 @@ open class CartViewModel @Inject constructor(
         return format.format(value)
     }
 
-    fun hasPriceFromProducts(): Boolean {
-        return state.value.cartWithData.value.productCartWithData.any{p -> p.productCart.totalPrice > 0.0}
+    fun hasPriceFromProducts(cart: CartWithData): Boolean {
+        return cart.productCartWithData.any{p -> p.productCart.totalPrice > 0.0}
     }
 }

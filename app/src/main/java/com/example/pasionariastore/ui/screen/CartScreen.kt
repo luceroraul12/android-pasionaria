@@ -113,7 +113,7 @@ fun CartScreen(
 ) {
     val state by cartViewModel.state.collectAsState()
     val context = LocalContext.current
-    LaunchedEffect(key1 = initialCartId) {
+    LaunchedEffect(Unit) {
         cartViewModel.initScreenByCart(initialCartId)
     }
     Scaffold(
