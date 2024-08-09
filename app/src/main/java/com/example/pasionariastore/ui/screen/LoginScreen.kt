@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -26,6 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -116,7 +118,8 @@ fun LoginBody(
             onChange = { loginViewModel.updateUsername(it) },
             label = "Usuario",
             keyboardType = KeyboardType.Text,
-            imageId = R.drawable.username
+            imageId = R.drawable.username,
+            imeAction = ImeAction.Next,
         )
         LoginField(
             value = state.password,
@@ -124,7 +127,8 @@ fun LoginBody(
             label = "Contraseña",
             keyboardType = KeyboardType.Password,
             visualTransformation = PasswordVisualTransformation(),
-            imageId = R.drawable.password
+            imageId = R.drawable.password,
+            imeAction = ImeAction.Done,
         )
         Button(
             onClick = {
@@ -149,6 +153,7 @@ fun LoginField(
     keyboardType: KeyboardType,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     @DrawableRes imageId: Int,
+    imeAction: ImeAction,
 ) {
     TextField(
         value = value,
@@ -157,7 +162,7 @@ fun LoginField(
         shape = RoundedCornerShape(dimensionResource(id = R.dimen.rounded)),
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
         visualTransformation = visualTransformation,
         leadingIcon = { Icon(painter = painterResource(id = imageId), contentDescription = "") }
     )
