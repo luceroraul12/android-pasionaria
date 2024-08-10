@@ -39,7 +39,6 @@ open class LoginViewModel @Inject constructor(
     }
 
     fun login(context: Context, navigationFlow: MutableSharedFlow<String>) {
-        var result = false
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 state.value.run {

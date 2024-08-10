@@ -21,7 +21,6 @@ import javax.inject.Inject
 class BackendInterceptor @Inject constructor(
     private val customDataStore: CustomDataStore,
 ) : Interceptor {
-    val errorFlow = MutableSharedFlow<Pair<Int, String>>()
 
     override fun intercept(chain: Interceptor.Chain): Response {
         // Creo corrutina
@@ -33,28 +32,9 @@ class BackendInterceptor @Inject constructor(
                 val request = chain.request().newBuilder()
                     .addHeader("Authorization", "Bearer $token")
                     .build()
-                try {
-                    chain.proceed(request)
-                }catch (e: Exception){
-                    Response.Builder()
-                        .request(request)
-                        .protocol(Protocol.HTTP_1_1)
-                        .code(504) // Gateway Timeout
-                        .message("SIN INTERNET")
-                        .body(ResponseBody.create(null, "SIN INTERNET"))
-                        .build()
-                }
+                chain.proceed(request)
             }.await()
         }
-        // En caso de que no sea OK, tengo que emitir valor
-        if (!response.isSuccessful) {
-            okHttpScope.launch {
-                if(response.body() != null){
-                    errorFlow.emit(Pair(response.code(), response.message()))
-                }
-            }
-        }
-
         return response
     }
 }

@@ -7,19 +7,21 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import com.example.pasionariastore.interceptor.BackendInterceptor
+import com.example.pasionariastore.interceptor.ErrorInterceptor
 import com.example.pasionariastore.navigation.MyScreens
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 open class SharedViewModel @Inject constructor(
-    private val interceptor: BackendInterceptor,
+    private val errorInterceptor: ErrorInterceptor,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -28,7 +30,7 @@ open class SharedViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            interceptor.errorFlow.collect {
+            errorInterceptor.errorFlow.collectLatest {
                 loginErrorFlow.emit(it)
             }
         }

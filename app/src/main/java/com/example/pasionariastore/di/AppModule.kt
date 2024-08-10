@@ -6,6 +6,7 @@ import com.example.pasionariastore.converter.LongToDateAdapter
 import com.example.pasionariastore.data.CustomDataStore
 import com.example.pasionariastore.data.api.ApiBackend
 import com.example.pasionariastore.interceptor.BackendInterceptor
+import com.example.pasionariastore.interceptor.ErrorInterceptor
 import com.example.pasionariastore.repository.BackendRepository
 import com.example.pasionariastore.repository.BackendRepositoryImpl
 import com.example.pasionariastore.repository.CartRepository
@@ -83,13 +84,20 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun providesErrorInterceptor(): ErrorInterceptor = ErrorInterceptor()
+
+    @Singleton
+    @Provides
     fun providesRetrofit(
-        interceptor: BackendInterceptor
+        backendInterceptor: BackendInterceptor,
+        errorInterceptor: ErrorInterceptor
     ): Retrofit {
         // Para interceptors
         val client =
             OkHttpClient.Builder()
-                .addInterceptor(interceptor).build()
+                .addInterceptor(backendInterceptor)
+                .addInterceptor(errorInterceptor)
+                .build()
         // Para converter
         val gson = GsonBuilder()
             .registerTypeAdapter(Date::class.java, LongToDateAdapter())
