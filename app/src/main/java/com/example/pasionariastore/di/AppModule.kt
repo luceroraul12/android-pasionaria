@@ -2,6 +2,7 @@ package com.example.pasionariastore.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.pasionariastore.BuildConfig
 import com.example.pasionariastore.converter.LongToDateAdapter
 import com.example.pasionariastore.data.CustomDataStore
 import com.example.pasionariastore.data.api.ApiBackend
@@ -102,7 +103,7 @@ object AppModule {
         val gson = GsonBuilder()
             .registerTypeAdapter(Date::class.java, LongToDateAdapter())
             .create()
-        return Retrofit.Builder().baseUrl(Constants.API_BASE)
+        return Retrofit.Builder().baseUrl(BuildConfig.API_BASE)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(client).build()
     }

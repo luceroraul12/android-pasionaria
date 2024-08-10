@@ -30,6 +30,10 @@ class CartRepositoryFake : CartRepository {
         TODO("Not yet implemented")
     }
 
+    override suspend fun updateCart(cart: Cart) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun deleteCart(cart: Cart) {
         TODO("Not yet implemented")
     }
