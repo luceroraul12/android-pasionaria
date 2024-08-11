@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
-import com.example.pasionariastore.interceptor.BackendInterceptor
 import com.example.pasionariastore.interceptor.ErrorInterceptor
 import com.example.pasionariastore.navigation.MyScreens
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -58,6 +58,7 @@ import com.example.pasionariastore.model.state.CartUIState
 import com.example.pasionariastore.ui.preview.CartViewModelFake
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.CartViewModel
+import com.example.pasionariastore.viewmodel.SharedViewModel
 
 @Preview(showBackground = true)
 @Composable
@@ -104,7 +105,7 @@ fun CartPreview() {
         CartScreen(
             navController = rememberNavController(),
             initialCartId = 3,
-            cartViewModel = CartViewModelFake()
+            cartViewModel = CartViewModelFake(LocalContext.current)
         )
     }
 }
@@ -113,6 +114,7 @@ fun CartPreview() {
 fun CartScreen(
     modifier: Modifier = Modifier,
     cartViewModel: CartViewModel = hiltViewModel(),
+    sharedViewModel: SharedViewModel = hiltViewModel(),
     navController: NavHostController,
     initialCartId: Long
 ) {
@@ -144,7 +146,7 @@ fun CartScreen(
             )
         },
         floatingActionButton = {
-            if(cartStatus.canEditProducts){
+            if (cartStatus.canEditProducts) {
                 FloatingActionButton(
                     onClick = {
                         cartViewModel.goToProductCartScreen(
@@ -167,7 +169,7 @@ fun CartScreen(
             formatValue = cartViewModel::formatPriceNumber,
             onDeleteProduct = {
                 cartViewModel.removeProductFromCart(
-                    data = it, context = context
+                    data = it
                 )
             },
             onEditProduct = { cartId, productCartId ->

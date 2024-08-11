@@ -12,6 +12,7 @@ import com.example.pasionariastore.model.state.CartUIState
 import com.example.pasionariastore.navigation.MyScreens
 import com.example.pasionariastore.repository.CartRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -24,6 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 open class CartViewModel @Inject constructor(
     private val cartRepository: CartRepository,
+    @ApplicationContext val context: Context,
 ) : ViewModel() {
     var state = MutableStateFlow(CartUIState())
         private set
@@ -45,10 +47,12 @@ open class CartViewModel @Inject constructor(
         }
     }
 
-    fun removeProductFromCart(data: ProductCartWithData, context: Context) {
+    fun removeProductFromCart(data: ProductCartWithData) {
         viewModelScope.launch(Dispatchers.IO) {
             cartRepository.deleteProductCart(productCart = data.productCart)
-            showMessage(context = context, message = "El producto fue removido del pedido")
+            withContext(Dispatchers.Main){
+                showMessage(message = "El producto fue removido del pedido")
+            }
         }
     }
 
@@ -60,7 +64,7 @@ open class CartViewModel @Inject constructor(
         navController.navigate("${MyScreens.CartProduct.name}/${cartId}?productCartId=${productCartId}")
     }
 
-    fun showMessage(message: String, context: Context) {
+    fun showMessage(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 

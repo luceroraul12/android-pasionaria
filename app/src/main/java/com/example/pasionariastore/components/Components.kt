@@ -2,13 +2,12 @@ package com.example.pasionariastore.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -17,9 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.example.pasionariastore.R
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 
@@ -74,12 +73,20 @@ fun MainTopBar(
 
 @Composable
 fun FinalizeButton(onFinalize: () -> Unit, canFinalize: Boolean = false) {
-    Button(
+    IconButton(
         onClick = onFinalize,
-        shape = RoundedCornerShape(5.dp),
         enabled = canFinalize,
-        colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.finalized_active)),
+        colors = IconButtonDefaults.iconButtonColors(
+            containerColor = colorResource(id = R.color.finalized_active),
+            disabledContainerColor = colorResource(
+                id = R.color.finalized_inactive
+            ),
+        )
     ) {
-        Text(text = "Finalizar")
+        Icon(
+            painter = painterResource(id = R.drawable.cart_finalize),
+            contentDescription = "cartFinalize",
+            tint = Color.White
+        )
     }
 }
