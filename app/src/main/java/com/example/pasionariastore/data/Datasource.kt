@@ -7,6 +7,7 @@ import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.model.ProductWithUnit
 import com.example.pasionariastore.model.Unit
+import com.example.pasionariastore.model.state.CartStatus
 import java.util.Date
 
 object Datasource {
@@ -66,13 +67,13 @@ object Datasource {
     )
 
     val carts: List<Cart> = listOf(
-        Cart(id = 1, status = "FINALIZED"),
-        Cart(status = "PENDING"),
-        Cart(status = "FINALIZED"),
-        Cart(status = "SYNCRONIZED"),
+        Cart(id = 1, status = CartStatus.FINALIZED.name),
+        Cart(status = CartStatus.PENDING.name),
+        Cart(status = CartStatus.FINALIZED.name),
+        Cart(status = CartStatus.SYNCHRONIZED.name),
         Cart(dateCreated = Date(15624)),
-        Cart(status = "FINALIZED", dateCreated = Date(1562624)),
-        Cart(status = "PENDING", dateCreated = Date(155959624)),
+        Cart(status = CartStatus.FINALIZED.name, dateCreated = Date(1562624)),
+        Cart(status = CartStatus.PENDING.name, dateCreated = Date(155959624)),
         Cart(status = "INACTIVE", dateCreated = Date(124)),
     )
 

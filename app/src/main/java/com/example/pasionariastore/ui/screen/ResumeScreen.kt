@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -32,6 +33,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -81,7 +83,7 @@ private fun ResumeMonthlyPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, device = Devices.PIXEL_XL)
 @Composable
 fun PreviewResumeScreen() {
     PasionariaStoreTheme {
@@ -146,42 +148,37 @@ fun ResumeScreenBody(
     }
 
     Column(
-        modifier = modifier.padding(
-            horizontal = dimensionResource(id = R.dimen.screen_horizontal),
-            vertical = dimensionResource(
-                id = R.dimen.screen_vertical
+        modifier = modifier
+            .padding(
+                horizontal = dimensionResource(id = R.dimen.screen_horizontal),
+                vertical = dimensionResource(id = R.dimen.screen_vertical),
             )
-        ),
-        verticalArrangement = Arrangement.Center,
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Column(
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = modifier.fillMaxSize()
+        ResumeMonthly(
+            label = state.label,
+            state.cartsWithData,
+            calculate = resumeViewModel::calculatePairResume
+        )
+        ResumeActionButtons(
+            menuItems = menuItems,
+            navController = navController
+        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
         ) {
-            ResumeMonthly(
-                label = state.label,
-                state.cartsWithData,
-                calculate = resumeViewModel::calculatePairResume
-            )
-            ResumeActionButtons(
-                menuItems = menuItems,
-                navController = navController
-            )
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(text = "Modo oscuro")
-                Switch(checked = darkMode.value, onCheckedChange = {
-                    scope.launch {
-                        dataStore.saveDarkMode(!darkMode.value)
-                    }
-                })
-            }
+            Text(text = "Modo oscuro")
+            Switch(checked = darkMode.value, onCheckedChange = {
+                scope.launch {
+                    dataStore.saveDarkMode(!darkMode.value)
+                }
+            })
         }
+
     }
 
 }
@@ -238,38 +235,46 @@ fun ResumeMonthly(
                 color = MaterialTheme.colorScheme.tertiary,
                 fontWeight = FontWeight.Bold
             )
-            HorizontalDivider()
-            CartHeaderRow(
-                firstLabel = "Cantidad de pedidos",
-                secondLabel = pairAll.first.toString(),
-                modifier = Modifier,
-                resultFocus = true
+            ResumeCartStatusItem(
+                status = "Pendiente",
+                count = pairPending.first,
+                price = pairPending.second
             )
-            CartHeaderRow(
-                firstLabel = "Precio total",
-                secondLabel = "ARS ${pairAll.second}",
-                modifier = Modifier,
-                resultFocus = true
+            ResumeCartStatusItem(
+                status = "Finalizado",
+                count = pairFinalize.first,
+                price = pairFinalize.second
             )
-            CartHeaderRow(
-                firstLabel = "Pedidos Pendientes",
-                secondLabel = pairPending.first.toString(),
-                modifier = Modifier,
-                resultFocus = true
+            ResumeCartStatusItem(
+                status = "Sincronizado",
+                count = pairSynchronized.first,
+                price = pairSynchronized.second
             )
-            CartHeaderRow(
-                firstLabel = "Pedidos Finalizados",
-                secondLabel = pairFinalize.first.toString(),
-                modifier = Modifier,
-                resultFocus = true
-            )
-            CartHeaderRow(
-                firstLabel = "Pedidos Sincronizados",
-                secondLabel = pairSynchronized.first.toString(),
-                modifier = Modifier,
-                resultFocus = true
-            )
+            ResumeCartStatusItem(status = "Total", count = pairAll.first, price = pairAll.second)
         }
+    }
+}
+
+@Preview
+@Composable
+private fun ResumeCartStatusItemPreview() {
+    ResumeCartStatusItem(status = "FINLIZADO", count = 2, price = 2324)
+}
+
+@Composable
+fun ResumeCartStatusItem(modifier: Modifier = Modifier, status: String, count: Int, price: Int) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        HorizontalDivider(modifier = Modifier.padding(dimensionResource(id = R.dimen.default_value)))
+        Text(text = "$status: $count", style = MaterialTheme.typography.titleMedium)
+        Text(
+            text = "ARS $price",
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
@@ -293,6 +298,5 @@ fun ResumeActionButtons(
                 enable = it.enable
             )
         }
-
     }
 }
