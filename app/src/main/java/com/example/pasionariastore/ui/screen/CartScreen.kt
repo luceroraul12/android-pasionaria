@@ -46,7 +46,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
-import com.example.pasionariastore.components.FinalizeButton
+import com.example.pasionariastore.components.CustomIconButton
 import com.example.pasionariastore.components.MainTopBar
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.CartWithData
@@ -129,14 +129,15 @@ fun CartScreen(
                 onBackClicked = { navController.popBackStack() },
                 showBackIcon = true,
                 actions = {
-                    FinalizeButton(
-                        onFinalize = {
+                    CustomIconButton(
+                        onClick = {
                             cartViewModel.finalizeCart(
                                 navController = navController,
                                 context = context
                             )
                         },
-                        canFinalize = state.hasProducts && cartStatus.canEditProducts
+                        enabled = state.hasProducts && cartStatus.canEditProducts,
+                        iconId = R.drawable.cart_finalize
                     )
                 }
             )

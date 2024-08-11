@@ -1,5 +1,7 @@
 package com.example.pasionariastore.components
 
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
@@ -30,7 +32,7 @@ private fun MainTopBarFinalizeOnPreview() {
             onBackClicked = {},
             showBackIcon = true,
             actions = {
-                FinalizeButton(onFinalize = {}, canFinalize = true)
+                CustomIconButton(onClick = {}, enabled = true, iconId = R.drawable.cart_finalize)
             })
     }
 }
@@ -43,7 +45,7 @@ private fun MainTopBarFinalizeOffPreview() {
             onBackClicked = {},
             showBackIcon = true,
             actions = {
-                FinalizeButton(onFinalize = {})
+                CustomIconButton(onClick = {}, iconId = R.drawable.cart_finalize)
             })
     }
 }
@@ -72,19 +74,23 @@ fun MainTopBar(
 }
 
 @Composable
-fun FinalizeButton(onFinalize: () -> Unit, canFinalize: Boolean = false) {
+fun CustomIconButton(
+    onClick: () -> Unit,
+    enabled: Boolean = false,
+    @DrawableRes iconId: Int,
+    @ColorRes containerColorEnableId: Int = R.color.finalized_active,
+    @ColorRes containerColorDisableId: Int = R.color.finalized_inactive
+) {
     IconButton(
-        onClick = onFinalize,
-        enabled = canFinalize,
+        onClick = onClick,
+        enabled = enabled,
         colors = IconButtonDefaults.iconButtonColors(
-            containerColor = colorResource(id = R.color.finalized_active),
-            disabledContainerColor = colorResource(
-                id = R.color.finalized_inactive
-            ),
+            containerColor = colorResource(id = containerColorEnableId),
+            disabledContainerColor = colorResource(id = containerColorDisableId),
         )
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.cart_finalize),
+            painter = painterResource(id = iconId),
             contentDescription = "cartFinalize",
             tint = Color.White
         )
