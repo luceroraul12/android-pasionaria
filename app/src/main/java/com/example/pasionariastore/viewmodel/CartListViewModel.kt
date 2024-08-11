@@ -72,4 +72,8 @@ open class CartListViewModel @Inject constructor(
             cartRepository.deleteCart(cart)
         }
     }
+
+    fun trySynchronize() {
+
+    }
 }

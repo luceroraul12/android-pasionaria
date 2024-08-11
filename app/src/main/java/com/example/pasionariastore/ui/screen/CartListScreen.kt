@@ -43,6 +43,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
+import com.example.pasionariastore.components.CustomIconButton
 import com.example.pasionariastore.components.MainTopBar
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.Cart
@@ -122,7 +123,9 @@ fun CartListScreen(
             title = "Pedidos",
             showBackIcon = true,
             onBackClicked = { navController.popBackStack() },
-            actions = {}
+            actions = {
+                CustomIconButton(onClick = cartListViewModel::trySynchronize, iconId = R.drawable.sync)
+            }
         )
     },
         floatingActionButton = {
