@@ -114,7 +114,6 @@ fun CartPreview() {
 fun CartScreen(
     modifier: Modifier = Modifier,
     cartViewModel: CartViewModel = hiltViewModel(),
-    sharedViewModel: SharedViewModel = hiltViewModel(),
     navController: NavHostController,
     initialCartId: Long
 ) {

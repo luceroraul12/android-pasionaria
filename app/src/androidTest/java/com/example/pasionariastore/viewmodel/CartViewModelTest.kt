@@ -1,5 +1,7 @@
 package com.example.pasionariastore.viewmodel
 
+import androidx.compose.ui.platform.LocalContext
+import androidx.test.platform.app.InstrumentationRegistry
 import com.example.pasionariastore.repository.CartRepository
 import com.example.pasionariastore.repository.CartRepositoryFake
 import org.junit.Assert.assertEquals
@@ -10,6 +12,7 @@ class CartViewModelTest {
     val viewModel: CartViewModel =
         CartViewModel(
             cartRepository = cartRepository,
+            context = InstrumentationRegistry.getInstrumentation().context
         )
 
     @Test
