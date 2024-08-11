@@ -226,6 +226,7 @@ fun ResumeMonthly(
     val pairAll: Pair<Int, Int> = calculate(cartsWithData, null)
     val pairPending: Pair<Int, Int> = calculate(cartsWithData, CartStatus.PENDING.name)
     val pairFinalize: Pair<Int, Int> = calculate(cartsWithData, CartStatus.FINALIZED.name)
+    val pairSynchronized: Pair<Int, Int> = calculate(cartsWithData, CartStatus.SYNCHRONIZED.name)
     Card {
         Column(
             modifier = Modifier.padding(15.dp),
@@ -259,6 +260,12 @@ fun ResumeMonthly(
             CartHeaderRow(
                 firstLabel = "Pedidos Finalizados",
                 secondLabel = pairFinalize.first.toString(),
+                modifier = Modifier,
+                resultFocus = true
+            )
+            CartHeaderRow(
+                firstLabel = "Pedidos Sincronizados",
+                secondLabel = pairSynchronized.first.toString(),
                 modifier = Modifier,
                 resultFocus = true
             )

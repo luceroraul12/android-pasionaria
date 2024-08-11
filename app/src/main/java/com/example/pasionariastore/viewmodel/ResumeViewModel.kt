@@ -53,7 +53,7 @@ open class ResumeViewModel @Inject constructor(
             withContext(Dispatchers.IO) {
                 cartRepository.getCartsWithStatus(
                     listOf(
-                        CartStatus.FINALIZED.name, CartStatus.PENDING.name
+                        CartStatus.FINALIZED.name, CartStatus.PENDING.name, CartStatus.SYNCHRONIZED .name
                     )
                 ).collect {
                     carts = it
