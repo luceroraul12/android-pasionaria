@@ -2,6 +2,7 @@ package com.example.pasionariastore.viewmodel
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -38,6 +39,12 @@ open class ResumeViewModel @Inject constructor(
         ), MenuItem(
             name = "Clientes",
             imageVector = Icons.Default.Person,
+            onNavigatePath = MyScreens.CartList.name,
+            enable = false
+        ),
+        MenuItem(
+            name = "Ajustes",
+            imageVector = Icons.Default.Settings,
             onNavigatePath = MyScreens.CartList.name,
             enable = false
         )
