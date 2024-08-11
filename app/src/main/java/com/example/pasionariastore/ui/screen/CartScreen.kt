@@ -58,7 +58,6 @@ import com.example.pasionariastore.model.state.CartUIState
 import com.example.pasionariastore.ui.preview.CartViewModelFake
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.CartViewModel
-import com.example.pasionariastore.viewmodel.SharedViewModel
 
 @Preview(showBackground = true)
 @Composable
@@ -130,17 +129,15 @@ fun CartScreen(
                 onBackClicked = { navController.popBackStack() },
                 showBackIcon = true,
                 actions = {
-                    if (cartStatus.canEditProducts) {
-                        FinalizeButton(
-                            onFinalize = {
-                                cartViewModel.finalizeCart(
-                                    navController = navController,
-                                    context = context
-                                )
-                            },
-                            canFinalize = state.canFinalize
-                        )
-                    }
+                    FinalizeButton(
+                        onFinalize = {
+                            cartViewModel.finalizeCart(
+                                navController = navController,
+                                context = context
+                            )
+                        },
+                        canFinalize = state.hasProducts && cartStatus.canEditProducts
+                    )
                 }
             )
         },

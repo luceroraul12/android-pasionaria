@@ -12,5 +12,5 @@ data class CartUIState(
             productCartWithData = mutableStateListOf()
         )
     ),
-    val canFinalize: Boolean = false
+    val hasProducts: Boolean = false
 )

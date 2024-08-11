@@ -40,7 +40,7 @@ open class CartViewModel @Inject constructor(
                 if (cart != null) state.update {
                     it.copy(
                         cartWithData = MutableStateFlow(cart),
-                        canFinalize = hasPriceFromProducts(cart)
+                        hasProducts = hasPriceFromProducts(cart)
                     )
                 }
             }
