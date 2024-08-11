@@ -332,7 +332,6 @@ fun CartProductItem(
         modifier = modifier
             .padding(vertical = dimensionResource(id = R.dimen.card_vertical))
             .alpha(0.9f),
-        elevation = CardDefaults.cardElevation(3.dp),
         border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondary)
     ) {
         Column(modifier = modifier) {
