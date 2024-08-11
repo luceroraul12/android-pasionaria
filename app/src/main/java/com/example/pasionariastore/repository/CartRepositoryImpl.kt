@@ -28,7 +28,8 @@ class CartRepositoryImpl @Inject constructor(private val cartDatabaseDao: CartDa
     }
 
     override fun getCartProductWithDataById(productCartId: Long): Flow<ProductCartWithData> {
-        return cartDatabaseDao.getProductCartWithDataById(productCartId).flowOn(Dispatchers.IO).conflate()
+        return cartDatabaseDao.getProductCartWithDataById(productCartId).flowOn(Dispatchers.IO)
+            .conflate()
     }
 
     override suspend fun insertProductCart(productCart: ProductCart) {
@@ -54,6 +55,21 @@ class CartRepositoryImpl @Inject constructor(private val cartDatabaseDao: CartDa
 
     override suspend fun deleteCart(cart: Cart) {
         cartDatabaseDao.deleteCart(cart)
+    }
+
+    override fun updateCartIdsAndStatus(cartId: Long, backendCartId: Long, status: String) {
+        cartDatabaseDao.updateCartIdsAndStatus(
+            cartId = cartId,
+            backendCartId = backendCartId,
+            status = status
+        )
+    }
+
+    override fun updateCartProductIds(cartProductId: Long, backendCartProductId: Long) {
+        cartDatabaseDao.updateCartProductIds(
+            cartProductId = cartProductId,
+            backendCartProductId = backendCartProductId
+        )
     }
 
 }

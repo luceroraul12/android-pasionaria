@@ -124,7 +124,7 @@ fun CartListScreen(
             showBackIcon = true,
             onBackClicked = { navController.popBackStack() },
             actions = {
-                CustomIconButton(onClick = cartListViewModel::trySynchronize, iconId = R.drawable.sync)
+                CustomIconButton(onClick = cartListViewModel::trySynchronize, iconId = R.drawable.sync, enabled = true)
             }
         )
     },

@@ -34,7 +34,7 @@ enum class CartStatus(
         backgroundColorActive = R.color.finalized_active,
         backgroundColorInactive = R.color.finalized_inactive,
     ),
-    SYNCRONIZED(
+    SYNCHRONIZED(
         label = "Sincronizado",
         enabled = true,
         backgroundColorActive = R.color.syncronized_active,

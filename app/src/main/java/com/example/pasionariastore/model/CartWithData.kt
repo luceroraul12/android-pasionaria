@@ -15,7 +15,7 @@ data class CartWithData(
     val productCartWithData: List<ProductCartWithData>
 )
 
-fun CartWithData.calculateTotalPriceLabel(): String{
+fun CartWithData.calculateTotalPriceLabel(): String {
     val products = this.productCartWithData ?: emptyList()
     var value = 0.0
     if (products.isNotEmpty()) {
@@ -28,4 +28,12 @@ fun CartWithData.calculateTotalPriceLabel(): String{
     format.currency = Currency.getInstance("ARS")
 
     return format.format(value)
+}
+
+fun CartWithData.toBackendData(): BackendCart {
+    return BackendCart(
+        cartId = this.cart.id,
+        dateCreated = this.cart.dateCreated,
+        products = this.productCartWithData.map(ProductCartWithData::toBackendData)
+    )
 }

@@ -13,6 +13,8 @@ data class ProductCart(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "product_cart_id")
     val productCartId: Long = 0,
+    @ColumnInfo(name = "backend_product_cart_id")
+    val backendProductCartId: Long? = null,
     @ColumnInfo(name = "quantity")
     val quantity: String = "",
     @ColumnInfo(name = "totalPrice")

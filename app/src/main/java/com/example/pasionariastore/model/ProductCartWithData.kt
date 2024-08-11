@@ -12,3 +12,16 @@ data class ProductCartWithData(
     )
     val productWithUnit: ProductWithUnit
 )
+
+fun ProductCartWithData.toBackendData(): BackendCartProduct {
+    return BackendCartProduct(
+        productId = this.productCart.productId,
+        price = this.productCart.totalPrice,
+        quantity = this.productCart.quantity.toDouble(),
+        cartProductId = this.productCart.productCartId
+    )
+}
+
+fun ProductCartWithData.getCopyWithBackendId(backendCartProduct: BackendCartProduct): ProductCartWithData {
+    return this.copy(productCart = productCart.copy(backendProductCartId = backendCartProduct.backendCartProductId))
+}

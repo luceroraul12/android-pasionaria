@@ -33,4 +33,11 @@ class CartRepositoryFake : CartRepository {
     }
 
     override suspend fun deleteCart(cart: Cart) {}
+    override fun updateCartIdsAndStatus(cartId: Long, backendCartId: Long, status: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateCartProductIds(cartProductId: Long, backendCartProductId: Long) {
+        TODO("Not yet implemented")
+    }
 }

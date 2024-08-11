@@ -10,6 +10,8 @@ data class Cart(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "cart_id")
     val id: Long = 0,
+    @ColumnInfo(name = "backend_cart_id")
+    val backendCartId: Long? = null,
     @ColumnInfo(name = "username_customer")
     val usernameCustomer: String = "CLIENTE",
     @ColumnInfo(name = "username_seller")

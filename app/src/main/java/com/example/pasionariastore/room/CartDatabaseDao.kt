@@ -50,4 +50,10 @@ interface CartDatabaseDao {
     @Delete
     suspend fun deleteCart(cart: Cart)
 
+    @Query("UPDATE cart SET backend_cart_id = :backendCartId, status = :status WHERE cart_id = :cartId ")
+    fun updateCartIdsAndStatus(cartId: Long, backendCartId: Long, status: String)
+
+    @Query("UPDATE productcart SET backend_product_cart_id = :backendCartProductId WHERE product_cart_id = :cartProductId ")
+    fun updateCartProductIds(cartProductId: Long, backendCartProductId: Long)
+
 }

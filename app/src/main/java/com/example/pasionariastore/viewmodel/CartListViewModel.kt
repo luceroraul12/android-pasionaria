@@ -7,10 +7,11 @@ import com.example.pasionariastore.model.Cart
 import com.example.pasionariastore.model.state.CartListUIState
 import com.example.pasionariastore.model.state.CartStatus
 import com.example.pasionariastore.repository.CartRepository
+import com.example.pasionariastore.usecase.CartSynchronize
+import com.example.pasionariastore.usecase.ProductSynchronizer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -18,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 open class CartListViewModel @Inject constructor(
-    protected val cartRepository: CartRepository
+    protected val cartRepository: CartRepository,
+    private val cartSynchronize: CartSynchronize
 
 ) : ViewModel() {
     var state = MutableStateFlow(CartListUIState())
@@ -74,6 +76,9 @@ open class CartListViewModel @Inject constructor(
     }
 
     fun trySynchronize() {
-
+        viewModelScope.launch(Dispatchers.IO) {
+            val carts = state.value.cartsWithData.filter { c -> c.cart.status.equals(CartStatus.FINALIZED.name) }
+            cartSynchronize.trySynchronizeCarts(carts);
+        }
     }
 }
