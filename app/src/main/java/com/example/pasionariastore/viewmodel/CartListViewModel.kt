@@ -1,5 +1,6 @@
 package com.example.pasionariastore.viewmodel
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -56,7 +57,8 @@ open class CartListViewModel @Inject constructor(
             cartRepository.getCartsWithStatus(status).collect { carts ->
                 state.update {
                     it.copy(
-                        cartsWithData = carts.toMutableStateList()
+                        cartsWithData = carts.toMutableStateList(),
+                        hasCartsToSynchronized = mutableStateOf(carts.any {c -> c.cart.status.equals(CartStatus.FINALIZED.name)})
                     )
                 }
             }

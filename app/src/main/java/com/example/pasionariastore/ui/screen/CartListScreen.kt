@@ -17,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -124,7 +123,11 @@ fun CartListScreen(
             showBackIcon = true,
             onBackClicked = { navController.popBackStack() },
             actions = {
-                CustomIconButton(onClick = cartListViewModel::trySynchronize, iconId = R.drawable.sync, enabled = true)
+                CustomIconButton(
+                    onClick = cartListViewModel::trySynchronize,
+                    iconId = R.drawable.sync,
+                    enabled = state.hasCartsToSynchronized.value
+                )
             }
         )
     },
