@@ -352,7 +352,7 @@ fun CartProductItem(
                 }
                 Row(modifier = modifier.padding(horizontal = 15.dp)) {
                     Text(text = "${data.productCart.quantity} ${data.productWithUnit.unit.nameType}")
-                    Spacer(modifier = modifier.weight(1f))
+                    Spacer(modifier = Modifier.weight(1f))
                     Text(
                         text = formatValue(data.productCart.totalPrice),
                         fontWeight = FontWeight.Bold,
