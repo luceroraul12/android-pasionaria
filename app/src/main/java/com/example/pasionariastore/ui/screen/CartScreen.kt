@@ -1,6 +1,7 @@
 package com.example.pasionariastore.ui.screen
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -260,6 +261,7 @@ fun CartHeaderRow(
 }
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CartListProducts(
     productCartList: List<ProductCartWithData>,
@@ -297,7 +299,8 @@ fun CartListProducts(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier,
         ) {
-            items(productCartList) {
+            item(key = 0) { Spacer(modifier = Modifier.padding(1.dp)) }
+            items(productCartList, key = {it.productCart.productCartId}) {
                 CartProductItem(
                     onCartProductClicked = {
                         onProductCartEditClicked(
@@ -306,7 +309,7 @@ fun CartListProducts(
                         )
                     },
                     onDeleteProductClicked = { onProductCartDelete(it) },
-                    modifier = modifier,
+                    modifier = modifier.animateItemPlacement(),
                     data = it,
                     formatValue = formatValue,
                     canDelete = canDelete,
@@ -364,7 +367,7 @@ fun CartProductItem(
             CardActionButtons(
                 onCartProductClicked = onCartProductClicked,
                 onDeleteProductClicked = onDeleteProductClicked,
-                modifier = modifier,
+                modifier = Modifier,
                 labelEdit = "Editar",
                 labelDelete = "Eliminar",
                 canDelete = canDelete,
