@@ -2,6 +2,7 @@ package com.example.pasionariastore.ui.screen
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +42,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -228,6 +230,7 @@ fun CartHeader(modifier: Modifier = Modifier, cartWithData: CartWithData) {
         elevation = CardDefaults.cardElevation(5.dp),
         modifier = modifier.fillMaxWidth(),
     ) {
+        CartStatusLabel(modifier = modifier, cart = CartStatus.valueOf(cartWithData.cart.status))
         Column(modifier = modifier.padding(10.dp)) {
             CartHeaderRow("Identificador de producto", cartWithData.cart.id.toString(), modifier)
             CartHeaderRow("Fecha de creación", cartWithData.cart.dateCreated.format(), modifier)
@@ -426,5 +429,25 @@ fun CardActionButtons(
             }
 
         }
+    }
+}
+
+@Composable
+fun CartStatusLabel(modifier: Modifier, cart: CartStatus) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(20.dp)
+            .background(colorResource(id = cart.backgroundColorActive))
+    ) {
+        Text(
+            text = cart.label,
+            textAlign = TextAlign.Center,
+            modifier = modifier,
+            color = Color.White,
+            style = MaterialTheme.typography.labelLarge
+        )
     }
 }
