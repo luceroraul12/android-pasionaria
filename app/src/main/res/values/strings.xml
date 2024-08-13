@@ -23,4 +23,10 @@
     <string name="title_cart_screen">Pedido</string>
     <string name="title_cart_product_screen_create">Adición de producto</string>
     <string name="title_cart_product_screen_update">Actualización de producto</string>
+
+
+    <string name="dark_mode">Modo oscuro</string>
+    <string name="dark_mode_description">Alternar entre modo claro y oscuro visualmente</string>
+    <string name="sync_products">Sincronizar productos</string>
+    <string name="sync_products_description">Fuerza la actualización de los productos de la tienda con el servidor. Para casos donde se ha actualizado los datos desde la WEB</string>
 </resources>

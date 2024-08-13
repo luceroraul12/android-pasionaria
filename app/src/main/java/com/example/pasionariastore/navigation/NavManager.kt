@@ -59,7 +59,6 @@ fun NavManager(
         composable(route = MyScreens.Resume.name) {
             ResumeScreen(
                 modifier = modifier,
-                dataStore = dataStore,
                 navController = navController
             )
         }

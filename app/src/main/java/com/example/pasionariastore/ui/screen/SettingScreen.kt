@@ -1,10 +1,11 @@
 package com.example.pasionariastore.ui.screen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -36,13 +38,24 @@ private fun SettingScreenPreview() {
 
 @Preview()
 @Composable
-private fun SettingScreenItemPreview() {
-    SettingItem(
+private fun SettingScreenItemSwitchPreview() {
+    SettingItemSwitch(
         title = "Configuración",
         description = stringResource(id = R.string.lorem_min),
         true,
         onCheckedChange = {})
 }
+
+@Preview()
+@Composable
+private fun SettingScreenItemClickablePreview() {
+    SettingItemClickable(
+        title = "Actualizar pedidos",
+        description = stringResource(id = R.string.lorem_min),
+        onClick = {}
+    )
+}
+
 
 @Composable
 fun SettingScreen(
@@ -70,39 +83,76 @@ fun SettingScreen(
 fun SettingBody(modifier: Modifier, settingViewModel: SettingViewModel) {
     Column(modifier = modifier.padding(horizontal = dimensionResource(id = R.dimen.screen_horizontal))) {
         val state = settingViewModel.darkMode
-        SettingItem(
-            title = "Modo oscuro",
-            description = "Alternar entre modo claro y oscuro visualmente",
+        SettingItemSwitch(
+            title = stringResource(R.string.dark_mode),
+            description = stringResource(R.string.dark_mode_description),
             checked = state.value,
             onCheckedChange = settingViewModel::updateDarkMode,
         )
+        SettingItemClickable(
+            title = stringResource(R.string.sync_products),
+            description = stringResource(R.string.sync_products_description)
+        ) {
+
+        }
     }
 }
 
 @Composable
-fun SettingItem(
+fun SettingItemSwitch(
     title: String,
     description: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit
 ) {
+    val modifier = Modifier.fillMaxWidth()
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.default_value))
+        modifier = modifier
+            .padding(vertical = dimensionResource(id = R.dimen.default_value))
     ) {
-        Column {
-            Text(text = title, style = MaterialTheme.typography.titleMedium)
+        Column(modifier = Modifier
+            .weight(1f)
+            .padding(end = dimensionResource(id = R.dimen.default_value))) {
+            Text(text = title, style = MaterialTheme.typography.titleMedium, modifier = modifier)
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.fillMaxWidth(0.8f)
+                textAlign = TextAlign.Justify,
+                modifier = modifier
             )
         }
-        Spacer(modifier = Modifier.weight(1f))
         Switch(checked = checked, onCheckedChange = onCheckedChange)
     }
-
+    HorizontalDivider()
 }
 
+@Composable
+fun SettingItemClickable(
+    title: String,
+    description: String,
+    onClick: () -> Unit
+) {
+    val modifier = Modifier.fillMaxWidth()
+    Column(
+        horizontalAlignment = Alignment.Start,
+        modifier = modifier
+            .padding(vertical = dimensionResource(id = R.dimen.default_value))
+            .clickable { onClick() }
+    ) {
+        Text(
+            text = title,
+            modifier = modifier,
+            style = MaterialTheme.typography.titleMedium
+        )
+        Text(
+            text = description,
+            textAlign = TextAlign.Justify,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = modifier
+        )
+    }
+    HorizontalDivider()
+}
 
 
