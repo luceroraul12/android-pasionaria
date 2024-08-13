@@ -91,10 +91,14 @@ fun SettingBody(modifier: Modifier, settingViewModel: SettingViewModel) {
         )
         SettingItemClickable(
             title = stringResource(R.string.sync_products),
-            description = stringResource(R.string.sync_products_description)
-        ) {
-
-        }
+            description = stringResource(R.string.sync_products_description),
+            onClick = {}
+        )
+        SettingItemClickable(
+            title = stringResource(R.string.sync_carts),
+            description = stringResource(R.string.sync_carts_description),
+            onClick = {}
+        )
     }
 }
 
