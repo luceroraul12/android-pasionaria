@@ -3,13 +3,11 @@ package com.example.pasionariastore.ui.screen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,7 +19,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,7 +47,6 @@ import com.example.pasionariastore.model.state.CartStatus
 import com.example.pasionariastore.ui.preview.ResumeViewModelFake
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.ResumeViewModel
-import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -139,7 +135,6 @@ fun ResumeScreenBody(
     navController: NavHostController,
     resumeViewModel: ResumeViewModel
 ) {
-    val darkMode = dataStore.getDarkMode.collectAsState(initial = false)
     val scope = rememberCoroutineScope();
     val state by resumeViewModel.state.collectAsState()
     val menuItems = resumeViewModel.menuItems
@@ -168,20 +163,7 @@ fun ResumeScreenBody(
             menuItems = menuItems,
             navController = navController
         )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(text = "Modo oscuro")
-            Switch(checked = darkMode.value, onCheckedChange = {
-                scope.launch {
-                    dataStore.saveDarkMode(!darkMode.value)
-                }
-            })
-        }
-
     }
-
 }
 
 @Composable

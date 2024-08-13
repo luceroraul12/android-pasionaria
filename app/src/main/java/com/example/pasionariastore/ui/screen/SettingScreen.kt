@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
@@ -46,7 +47,7 @@ private fun SettingScreenItemPreview() {
 fun SettingScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-    settingViewModel: SettingViewModel
+    settingViewModel: SettingViewModel = hiltViewModel()
 ) {
     Scaffold(
         topBar = {
@@ -67,11 +68,12 @@ fun SettingScreen(
 @Composable
 fun SettingBody(modifier: Modifier, settingViewModel: SettingViewModel) {
     Column(modifier = modifier.padding(horizontal = dimensionResource(id = R.dimen.screen_horizontal))) {
+        val state = settingViewModel.darkMode
         SettingItem(
             title = "Modo oscuro",
             description = "Alternar entre modo claro y oscuro visualmente",
-            checked = settingViewModel.darkMode.value,
-            onCheckedChange = settingViewModel::updateDarkMode
+            checked = state.value,
+            onCheckedChange = settingViewModel::updateDarkMode,
         )
     }
 }
@@ -88,7 +90,7 @@ fun SettingItem(
         modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.default_value))
     ) {
         Column {
-            Text(text = title, style = MaterialTheme.typography.headlineMedium)
+            Text(text = title, style = MaterialTheme.typography.titleMedium)
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodyMedium,

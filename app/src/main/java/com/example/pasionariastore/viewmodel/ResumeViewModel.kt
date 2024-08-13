@@ -45,8 +45,8 @@ open class ResumeViewModel @Inject constructor(
         MenuItem(
             name = "Ajustes",
             imageVector = Icons.Default.Settings,
-            onNavigatePath = MyScreens.CartList.name,
-            enable = false
+            onNavigatePath = MyScreens.Setting.name,
+            enable = true
         )
     )
 
