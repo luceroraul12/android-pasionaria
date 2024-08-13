@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -129,7 +130,7 @@ fun CartScreen(
     Scaffold(
         topBar = {
             MainTopBar(
-                title = "Edición de pedido",
+                title = stringResource(id = R.string.title_cart_screen),
                 onBackClicked = { navController.popBackStack() },
                 showBackIcon = true,
                 actions = {

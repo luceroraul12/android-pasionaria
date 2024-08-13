@@ -126,13 +126,6 @@ fun CartProductScreen(
 
     Scaffold(
         topBar = {
-//            MainTopBar(
-//                title = "Calculadora de producto",
-//                onBackClicked = { navController.popBackStack() },
-//                showBackIcon = true
-//            ) {
-//
-//            }
             ProductSearcher(
                 onSearchProducts = { cartProductViewModel.searchProducts(context) },
                 currentSearch = state.currentSearch,

@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -37,8 +38,8 @@ private fun SettingScreenPreview() {
 @Composable
 private fun SettingScreenItemPreview() {
     SettingItem(
-        title = "Configuraci[on",
-        description = "asdfljasdlfkjasldf  aldjflajd fl asdfljasldfjlasjdf alsdfj asdasda asdas asd",
+        title = "Configuración",
+        description = stringResource(id = R.string.lorem_min),
         true,
         onCheckedChange = {})
 }
@@ -52,7 +53,7 @@ fun SettingScreen(
     Scaffold(
         topBar = {
             MainTopBar(
-                title = "Configuración",
+                title = stringResource(id = R.string.title_setting_screen),
                 onBackClicked = { navController.popBackStack() },
                 showBackIcon = true
             ) {

@@ -11,4 +11,16 @@
     <string name="cart_route">cart</string>
     <string name="cart_product_route">cart_product/{id}</string>
     <string name="cart_resume_route">cart_resume</string>
+
+<!--    Textos de prueba-->
+    <string name="lorem_min">Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto.</string>
+    <string name="lorem">Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta)</string>
+
+<!--    Titulos de topBar-->
+    <string name="title_setting_screen">Configuración</string>
+    <string name="title_resume_screen">Resumen</string>
+    <string name="title_cart_list_screen">Lista de pedidos</string>
+    <string name="title_cart_screen">Pedido</string>
+    <string name="title_cart_product_screen_create">Adición de producto</string>
+    <string name="title_cart_product_screen_update">Actualización de producto</string>
 </resources>

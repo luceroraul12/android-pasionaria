@@ -24,12 +24,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,7 +39,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
 import com.example.pasionariastore.components.MainTopBar
-import com.example.pasionariastore.data.CustomDataStore
 import com.example.pasionariastore.model.CartWithData
 import com.example.pasionariastore.model.MenuItem
 import com.example.pasionariastore.model.state.CartStatus
@@ -86,7 +84,6 @@ fun PreviewResumeScreen() {
     PasionariaStoreTheme {
         ResumeScreen(
             modifier = Modifier,
-            dataStore = CustomDataStore(LocalContext.current),
             navController = rememberNavController(),
             resumeViewModel = ResumeViewModelFake()
         )
@@ -110,18 +107,18 @@ private fun ResumeActionButtonsPreview() {
 @Composable
 fun ResumeScreen(
     modifier: Modifier = Modifier,
-    dataStore: CustomDataStore,
     navController: NavHostController,
     resumeViewModel: ResumeViewModel = hiltViewModel()
 ) {
     Scaffold(topBar = {
-        MainTopBar(title = "Pasionaria", onBackClicked = { /*TODO*/ }) {
+        MainTopBar(
+            title = stringResource(id = R.string.title_resume_screen),
+            onBackClicked = { /*TODO*/ }) {
 
         }
     }) {
         ResumeScreenBody(
             modifier = modifier.padding(it),
-            dataStore = dataStore,
             navController = navController,
             resumeViewModel = resumeViewModel
         )
@@ -131,11 +128,9 @@ fun ResumeScreen(
 @Composable
 fun ResumeScreenBody(
     modifier: Modifier,
-    dataStore: CustomDataStore,
     navController: NavHostController,
     resumeViewModel: ResumeViewModel
 ) {
-    val scope = rememberCoroutineScope();
     val state by resumeViewModel.state.collectAsState()
     val menuItems = resumeViewModel.menuItems
 
