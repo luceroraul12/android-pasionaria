@@ -12,20 +12,24 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
 import com.example.pasionariastore.components.MainTopBar
+import com.example.pasionariastore.ui.preview.SettingScreenViewModelFake
 import com.example.pasionariastore.viewmodel.SettingViewModel
 
 @Preview
 @Composable
 private fun SettingScreenPreview() {
-    SettingScreen(navController = rememberNavController(), settingViewModel = viewModel())
+    SettingScreen(
+        navController = rememberNavController(), settingViewModel = SettingScreenViewModelFake(
+            LocalContext.current
+        )
+    )
 }
 
 @Preview()

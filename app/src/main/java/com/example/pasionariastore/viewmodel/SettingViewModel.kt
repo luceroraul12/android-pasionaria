@@ -7,7 +7,7 @@ import com.example.pasionariastore.data.CustomDataStore
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class SettingViewModel @Inject constructor(
+open class SettingViewModel @Inject constructor(
     private val dataStore: CustomDataStore
 ) : ViewModel() {
 
