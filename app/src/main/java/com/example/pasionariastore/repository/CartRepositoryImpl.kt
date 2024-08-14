@@ -2,6 +2,7 @@ package com.example.pasionariastore.repository
 
 import com.example.pasionariastore.model.Cart
 import com.example.pasionariastore.model.CartWithData
+import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.room.CartDatabaseDao
@@ -29,6 +30,11 @@ class CartRepositoryImpl @Inject constructor(private val cartDatabaseDao: CartDa
 
     override fun getCartProductWithDataById(productCartId: Long): Flow<ProductCartWithData> {
         return cartDatabaseDao.getProductCartWithDataById(productCartId).flowOn(Dispatchers.IO)
+            .conflate()
+    }
+
+    override fun getTopProducts(): Flow<List<Product>> {
+        return cartDatabaseDao.getTopProducts().flowOn(Dispatchers.IO)
             .conflate()
     }
 

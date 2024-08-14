@@ -9,6 +9,7 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.example.pasionariastore.model.Cart
 import com.example.pasionariastore.model.CartWithData
+import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithData
 import kotlinx.coroutines.flow.Flow
@@ -31,12 +32,21 @@ interface CartDatabaseDao {
     @Query("SELECT * FROM ProductCart WHERE product_cart_id = :productCartId")
     fun getProductCartWithDataById(productCartId: Long): Flow<ProductCartWithData>
 
+    @Query("""
+        SELECT p.*
+        FROM ProductCart pc
+            INNER JOIN product p ON p.product_id = pc.product_id
+        GROUP BY p.name 
+        ORDER BY COUNT(p.product_id) DESC
+        LIMIT 10
+    """)
+    fun getTopProducts(): Flow<List<Product>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCartProduct(product: ProductCart)
 
     @Update
     fun updateCartProduct(productCart: ProductCart)
-
 
     @Delete
     suspend fun deleteProductCart(product: ProductCart)

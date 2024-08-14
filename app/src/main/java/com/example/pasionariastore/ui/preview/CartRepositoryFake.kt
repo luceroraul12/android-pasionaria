@@ -3,6 +3,7 @@ package com.example.pasionariastore.ui.preview
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.Cart
 import com.example.pasionariastore.model.CartWithData
+import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithData
 import com.example.pasionariastore.repository.CartRepository
@@ -22,6 +23,10 @@ class CartRepositoryFake : CartRepository {
     }
 
     override fun getCartProductWithDataById(productCartId: Long): Flow<ProductCartWithData> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getTopProducts(): Flow<List<Product>> {
         TODO("Not yet implemented")
     }
 

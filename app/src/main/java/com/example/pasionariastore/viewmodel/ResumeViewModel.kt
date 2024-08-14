@@ -1,20 +1,16 @@
 package com.example.pasionariastore.viewmodel
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pasionariastore.model.CartWithData
-import com.example.pasionariastore.model.MenuItem
 import com.example.pasionariastore.model.state.CartStatus
 import com.example.pasionariastore.model.state.ResumeUIState
-import com.example.pasionariastore.navigation.MyScreens
 import com.example.pasionariastore.repository.CartRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -31,50 +27,31 @@ open class ResumeViewModel @Inject constructor(
     var state: MutableStateFlow<ResumeUIState> = MutableStateFlow(ResumeUIState())
         private set
 
-    val menuItems: List<MenuItem> = listOf(
-        MenuItem(
-            name = "Pedidos",
-            imageVector = Icons.Default.ShoppingCart,
-            onNavigatePath = MyScreens.CartList.name
-        ), MenuItem(
-            name = "Clientes",
-            imageVector = Icons.Default.Person,
-            onNavigatePath = MyScreens.CartList.name,
-            enable = false
-        ),
-        MenuItem(
-            name = "Ajustes",
-            imageVector = Icons.Default.Settings,
-            onNavigatePath = MyScreens.Setting.name,
-            enable = true
-        )
-    )
-
     fun initScreen() {
         val date = LocalDate.now()
         val monthName = date.month.getDisplayName(TextStyle.FULL, Locale("es", "ES"))
         val label = "$monthName - ${date.year}".uppercase()
-        var carts: List<CartWithData> = emptyList()
 
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
+            val carts = withContext(Dispatchers.IO) {
                 cartRepository.getCartsWithStatus(
                     listOf(
-                        CartStatus.FINALIZED.name, CartStatus.PENDING.name, CartStatus.SYNCHRONIZED .name
+                        CartStatus.FINALIZED.name,
+                        CartStatus.PENDING.name,
+                        CartStatus.SYNCHRONIZED.name
                     )
-                ).collect {
-                    carts = it
-                    state.update {
-                        ResumeUIState(
-                            label = label, cartsWithData = carts.toMutableList()
-                        )
-                    }
-                }
+                ).first()
+            }
+            val topProducts = withContext(Dispatchers.IO) {
+                cartRepository.getTopProducts().first()
             }
 
+            state.update {
+                ResumeUIState(
+                    label = label, cartsWithData = carts.toMutableList(), topProducts = topProducts.toMutableList()
+                )
+            }
         }
-
-
     }
 
     fun calculatePairResume(cartWithData: List<CartWithData>, status: String?): Pair<Int, Int> {
