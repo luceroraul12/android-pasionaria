@@ -3,6 +3,7 @@ package com.example.pasionariastore.ui.screen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -122,14 +123,15 @@ fun ResumeScreenBody(
                 vertical = dimensionResource(id = R.dimen.screen_vertical),
             )
             .fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = state.label, style = MaterialTheme.typography.titleLarge)
+        Text(text = state.label, style = MaterialTheme.typography.headlineLarge)
         ResumeMonthly(
             state.cartsWithData,
             calculate = resumeViewModel::calculatePairResume
         )
+        Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.default_value)))
         ResumeTopProducts(
             productNames = state.topProducts
         )
