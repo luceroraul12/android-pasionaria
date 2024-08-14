@@ -3,8 +3,7 @@ package com.example.pasionariastore.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pasionariastore.repository.BackendRepositoryImpl
-import com.example.pasionariastore.repository.ProductRepository
+import com.example.pasionariastore.repository.BackendRepository
 import com.example.pasionariastore.usecase.ProductSynchronizer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -14,29 +13,36 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CheckDatabaseViewModel @Inject constructor(
-    private val productRepository: ProductRepository,
-    private val backendRepositoryImpl: BackendRepositoryImpl,
+    private val backendRepository: BackendRepository,
     private val productSynchronizer: ProductSynchronizer
 ) : ViewModel() {
     init {
         checkBackendStates()
-        syncData()
+        syncProducts()
     }
 
-    private fun syncData() {
+    private fun syncProducts(onChangeLoading: (Boolean) -> Unit = {}) {
         viewModelScope.launch {
-            withContext(Dispatchers.IO){
+            onChangeLoading(true)
+            val result = withContext(Dispatchers.IO) {
                 productSynchronizer.syncSystem()
             }
+            onChangeLoading(false)
         }
     }
 
     private fun checkBackendStates() {
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.IO) {
-                val response = backendRepositoryImpl.getCustomerProducts()
+                val response = backendRepository.getCustomerProducts()
                 Log.i("backend", response.toString())
             }
         }
+    }
+
+    fun syncProductsWithLoading(
+        onChangeLoading: (Boolean) -> Unit
+    ) {
+        syncProducts(onChangeLoading = onChangeLoading)
     }
 }

@@ -30,4 +30,11 @@ open class SettingViewModel @Inject constructor(
             dataStore.saveDarkMode(darkMode.value)
         }
     }
+
+    fun updateLoading(value: Boolean) {
+        darkMode.value = value
+        viewModelScope.launch {
+            dataStore.saveDarkMode(darkMode.value)
+        }
+    }
 }

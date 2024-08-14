@@ -1,16 +1,24 @@
 package com.example.pasionariastore.ui.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -18,21 +26,35 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
 import com.example.pasionariastore.components.MainTopBar
+import com.example.pasionariastore.ui.preview.BackendRepositoryFake
+import com.example.pasionariastore.ui.preview.ProductRepositoryFake
 import com.example.pasionariastore.ui.preview.SettingScreenViewModelFake
+import com.example.pasionariastore.ui.preview.SharedViewModelFake
+import com.example.pasionariastore.usecase.ProductSynchronizer
+import com.example.pasionariastore.viewmodel.CheckDatabaseViewModel
 import com.example.pasionariastore.viewmodel.SettingViewModel
+import com.example.pasionariastore.viewmodel.SharedViewModel
+import kotlin.reflect.KFunction1
 
 @Preview
 @Composable
 private fun SettingScreenPreview() {
     SettingScreen(
-        navController = rememberNavController(), settingViewModel = SettingScreenViewModelFake(
+        navController = rememberNavController(),
+        settingViewModel = SettingScreenViewModelFake(
             LocalContext.current
-        )
+        ),
+        checkDatabaseViewModel = CheckDatabaseViewModel(
+            BackendRepositoryFake(),
+            ProductSynchronizer(BackendRepositoryFake(), ProductRepositoryFake())
+        ),
+        sharedViewModel = SharedViewModelFake(LocalContext.current)
     )
 }
 
@@ -61,26 +83,49 @@ private fun SettingScreenItemClickablePreview() {
 fun SettingScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-    settingViewModel: SettingViewModel = hiltViewModel()
+    settingViewModel: SettingViewModel = hiltViewModel(),
+    checkDatabaseViewModel: CheckDatabaseViewModel = hiltViewModel(),
+    sharedViewModel: SharedViewModel = hiltViewModel()
 ) {
-    Scaffold(
-        topBar = {
-            MainTopBar(
-                title = stringResource(id = R.string.title_setting_screen),
-                onBackClicked = { navController.popBackStack() },
-                showBackIcon = true
-            ) {
-
-            }
+    val isLoading by sharedViewModel.isLoading.collectAsState()
+    if (isLoading) {
+        Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator(
+                modifier = Modifier.width(64.dp),
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+            )
         }
-    ) {
-        SettingBody(modifier = modifier.padding(it), settingViewModel = settingViewModel)
+    } else {
+        Scaffold(
+            topBar = {
+                MainTopBar(
+                    title = stringResource(id = R.string.title_setting_screen),
+                    onBackClicked = { navController.popBackStack() },
+                    showBackIcon = true
+                ) {
+
+                }
+            }
+        ) {
+            SettingBody(
+                modifier = modifier.padding(it),
+                settingViewModel = settingViewModel,
+                checkDatabaseViewModel = checkDatabaseViewModel,
+                onChangeLoading = sharedViewModel::updateIsLoading
+            )
+        }
     }
 }
 
 
 @Composable
-fun SettingBody(modifier: Modifier, settingViewModel: SettingViewModel) {
+fun SettingBody(
+    modifier: Modifier,
+    settingViewModel: SettingViewModel,
+    checkDatabaseViewModel: CheckDatabaseViewModel,
+    onChangeLoading: (Boolean) -> Unit,
+) {
     Column(modifier = modifier.padding(horizontal = dimensionResource(id = R.dimen.screen_horizontal))) {
         val state = settingViewModel.darkMode
         SettingItemSwitch(
@@ -92,7 +137,9 @@ fun SettingBody(modifier: Modifier, settingViewModel: SettingViewModel) {
         SettingItemClickable(
             title = stringResource(R.string.sync_products),
             description = stringResource(R.string.sync_products_description),
-            onClick = {}
+            onClick = {
+                checkDatabaseViewModel.syncProductsWithLoading(onChangeLoading = { onChangeLoading(it) })
+            }
         )
         SettingItemClickable(
             title = stringResource(R.string.sync_carts),
@@ -115,9 +162,11 @@ fun SettingItemSwitch(
         modifier = modifier
             .padding(vertical = dimensionResource(id = R.dimen.default_value))
     ) {
-        Column(modifier = Modifier
-            .weight(1f)
-            .padding(end = dimensionResource(id = R.dimen.default_value))) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = dimensionResource(id = R.dimen.default_value))
+        ) {
             Text(text = title, style = MaterialTheme.typography.titleMedium, modifier = modifier)
             Text(
                 text = description,

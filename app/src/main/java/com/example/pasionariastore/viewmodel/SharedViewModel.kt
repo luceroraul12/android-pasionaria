@@ -18,7 +18,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -30,6 +32,9 @@ open class SharedViewModel @Inject constructor(
 ) : ViewModel() {
     val loginErrorFlow = MutableSharedFlow<Pair<Int, String>>()
     val navigationFlow = MutableSharedFlow<String>()
+
+    var isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
+        private set
 
     val menuItems: List<MenuItem> = listOf(
         MenuItem(
@@ -94,5 +99,9 @@ open class SharedViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun updateIsLoading(value: Boolean) {
+         isLoading.update { value }
     }
 }
