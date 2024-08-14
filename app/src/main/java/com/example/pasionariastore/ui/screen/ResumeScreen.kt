@@ -124,7 +124,7 @@ fun ResumeScreenBody(
                 vertical = dimensionResource(id = R.dimen.screen_vertical),
             )
             .fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceEvenly,
+        verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = state.label, style = MaterialTheme.typography.titleLarge)
