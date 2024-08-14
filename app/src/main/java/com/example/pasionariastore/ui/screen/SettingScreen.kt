@@ -141,11 +141,12 @@ fun SettingBody(
                 checkDatabaseViewModel.syncProductsWithLoading(onChangeLoading = { onChangeLoading(it) })
             }
         )
-        SettingItemClickable(
-            title = stringResource(R.string.sync_carts),
-            description = stringResource(R.string.sync_carts_description),
-            onClick = {}
-        )
+        // TODO. Comento la funcionalidad hasta que pueda incluirla
+//        SettingItemClickable(
+//            title = stringResource(R.string.sync_carts),
+//            description = stringResource(R.string.sync_carts_description),
+//            onClick = {}
+//        )
     }
 }
 

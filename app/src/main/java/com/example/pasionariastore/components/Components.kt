@@ -153,13 +153,14 @@ fun CustomScaffold(
                     HorizontalDivider()
                     LazyColumn {
                         items(sharedViewModel.menuItems) {
-                            NavigatorMenuItem(
-                                menuItem = it,
-                                navController = navController,
-                                onClick = {
-                                    scope.launch { drawerState.close() }
-                                }
-                            )
+                            if (it.enable)
+                                NavigatorMenuItem(
+                                    menuItem = it,
+                                    navController = navController,
+                                    onClick = {
+                                        scope.launch { drawerState.close() }
+                                    }
+                                )
                         }
                     }
                 }
