@@ -132,21 +132,17 @@ fun CartListScreen(
                 },
             )
         },
-        showBackIcon = true,
-        actions = {
-            CustomIconButton(
-                onClick = cartListViewModel::trySynchronize,
-                iconId = R.drawable.sync,
-                enabled = state.hasCartsToSynchronized.value
-            )
-        },
         topBar = {
             MainTopBar(
                 title = stringResource(id = R.string.title_cart_list_screen),
                 showBackIcon = true,
                 onBackClicked = { navController.popBackStack() },
                 actions = {
-
+                    CustomIconButton(
+                        onClick = cartListViewModel::trySynchronize,
+                        iconId = R.drawable.sync,
+                        enabled = state.hasCartsToSynchronized.value
+                    )
                 }
             )
         },

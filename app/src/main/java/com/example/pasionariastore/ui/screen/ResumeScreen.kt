@@ -58,8 +58,8 @@ import com.example.pasionariastore.viewmodel.SharedViewModel
 private fun ResumeMonthlyPreview() {
     PasionariaStoreTheme {
         ResumeMonthly(
-            emptyList(),
-            { cartWithData: List<CartWithData>, optionalString: String? -> Pair(2, 12324) })
+            cartsWithData = emptyList(),
+            calculate = { cartWithData: List<CartWithData>, optionalString: String? -> Pair(2, 12324) })
     }
 }
 
@@ -93,8 +93,6 @@ fun ResumeScreen(
                 resumeViewModel = resumeViewModel
             )
         },
-        showBackIcon = false,
-        actions = {},
         topBar = {
             MainTopBar(
                 title = stringResource(id = R.string.title_resume_screen),

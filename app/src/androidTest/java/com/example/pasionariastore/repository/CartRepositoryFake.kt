@@ -3,6 +3,7 @@ package com.example.pasionariastore.repository
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.Cart
 import com.example.pasionariastore.model.CartWithData
+import com.example.pasionariastore.model.Product
 import com.example.pasionariastore.model.ProductCart
 import com.example.pasionariastore.model.ProductCartWithData
 import kotlinx.coroutines.flow.Flow
@@ -17,6 +18,10 @@ class CartRepositoryFake : CartRepository {
     }
 
     override fun getCartProductWithDataById(productCartId: Long): Flow<ProductCartWithData> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getTopProducts(): Flow<List<Product>> {
         TODO("Not yet implemented")
     }
 
@@ -35,6 +40,14 @@ class CartRepositoryFake : CartRepository {
     }
 
     override suspend fun deleteCart(cart: Cart) {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateCartIdsAndStatus(cartId: Long, backendCartId: Long, status: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateCartProductIds(cartProductId: Long, backendCartProductId: Long) {
         TODO("Not yet implemented")
     }
 }

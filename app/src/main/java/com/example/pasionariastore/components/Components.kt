@@ -81,8 +81,6 @@ private fun CustomScaffoldPreview() {
     CustomScaffold(
         navController = rememberNavController(),
         content = { Text(text = "", modifier = Modifier.padding(it)) },
-        showBackIcon = true,
-        actions = {},
         sharedViewModel = SharedViewModelFake(LocalContext.current),
         topBar = {},
         floatingActionButton = {}
@@ -140,8 +138,6 @@ fun CustomIconButton(
 fun CustomScaffold(
     navController: NavController,
     content: @Composable (PaddingValues) -> Unit = {},
-    showBackIcon: Boolean,
-    actions: @Composable() (RowScope.() -> Unit),
     sharedViewModel: SharedViewModel = hiltViewModel(),
     topBar: @Composable () -> Unit,
     floatingActionButton: @Composable () -> Unit
@@ -172,7 +168,7 @@ fun CustomScaffold(
     ) {
         Scaffold(
             topBar = topBar,
-            floatingActionButton = floatingActionButton
+            floatingActionButton = floatingActionButton,
         ) {
             content(it)
         }
