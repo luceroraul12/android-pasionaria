@@ -18,7 +18,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,6 +37,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
+import com.example.pasionariastore.components.CustomScaffold
 import com.example.pasionariastore.components.MainTopBar
 import com.example.pasionariastore.model.CartWithData
 import com.example.pasionariastore.model.MenuItem
@@ -110,19 +110,25 @@ fun ResumeScreen(
     navController: NavHostController,
     resumeViewModel: ResumeViewModel = hiltViewModel()
 ) {
-    Scaffold(topBar = {
-        MainTopBar(
-            title = stringResource(id = R.string.title_resume_screen),
-            onBackClicked = { /*TODO*/ }) {
 
-        }
-    }) {
-        ResumeScreenBody(
-            modifier = modifier.padding(it),
-            navController = navController,
-            resumeViewModel = resumeViewModel
-        )
-    }
+    CustomScaffold(
+        navController = navController,
+        showBackIcon = false,
+        actions = {},
+        topBar = {
+            MainTopBar(
+                title = stringResource(id = R.string.title_resume_screen),
+                onBackClicked = { /*TODO*/ }) {
+            }
+        },
+        content = {
+            ResumeScreenBody(
+                modifier = modifier.padding(it),
+                navController = navController,
+                resumeViewModel = resumeViewModel
+            )
+        },
+    )
 }
 
 @Composable

@@ -29,6 +29,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,7 +37,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -47,6 +47,7 @@ import com.example.pasionariastore.model.MenuItem
 import com.example.pasionariastore.ui.preview.SharedViewModelFake
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.example.pasionariastore.viewmodel.SharedViewModel
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -78,11 +79,12 @@ private fun MainTopBarFinalizeOffPreview() {
 @Composable
 private fun CustomScaffoldPreview() {
     CustomScaffold(
-        sharedViewModel = SharedViewModelFake(LocalContext.current),
         navController = rememberNavController(),
         content = { Text(text = "", modifier = Modifier.padding(it)) },
         showBackIcon = true,
-        actions = {}
+        actions = {},
+        sharedViewModel = SharedViewModelFake(LocalContext.current),
+        topBar = {}
     )
 }
 
@@ -139,9 +141,11 @@ fun CustomScaffold(
     content: @Composable (PaddingValues) -> Unit = {},
     showBackIcon: Boolean,
     actions: @Composable() (RowScope.() -> Unit),
-    sharedViewModel: SharedViewModel = hiltViewModel()
+    sharedViewModel: SharedViewModel = hiltViewModel(),
+    topBar: @Composable () -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -151,7 +155,13 @@ fun CustomScaffold(
                     HorizontalDivider()
                     LazyColumn {
                         items(sharedViewModel.menuItems) {
-                            NavigatorMenuItem(it, navController)
+                            NavigatorMenuItem(
+                                menuItem = it,
+                                navController = navController,
+                                onClick = {
+                                    scope.launch { drawerState.close() }
+                                }
+                            )
                         }
                     }
                 }
@@ -159,14 +169,7 @@ fun CustomScaffold(
         },
     ) {
         Scaffold(
-            topBar = {
-                MainTopBar(
-                    title = stringResource(id = R.string.title_setting_screen),
-                    onBackClicked = { navController.popBackStack() },
-                    showBackIcon = showBackIcon,
-                    actions = actions
-                )
-            }
+            topBar = topBar
         ) {
             content(it)
         }
@@ -183,18 +186,23 @@ private fun NavigatorMenuItemScreen() {
             imageVector = Icons.Default.Close,
             onNavigatePath = "sd"
         ),
-        navController = rememberNavController()
+        navController = rememberNavController(),
+        onClick = {}
     )
 }
 
 @Composable
-fun NavigatorMenuItem(menuItem: MenuItem, navController: NavController) {
+fun NavigatorMenuItem(menuItem: MenuItem, navController: NavController, onClick: () -> Unit) {
     val modifier = Modifier
         .padding(dimensionResource(id = R.dimen.default_value))
-        .clickable { navController.navigate(menuItem.onNavigatePath) }
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier
-        .fillMaxWidth()
-        .clickable { }) {
+        .clickable {
+            navController.navigate(menuItem.onNavigatePath)
+            onClick()
+        }
+    Row(
+        verticalAlignment = Alignment.CenterVertically, modifier = modifier
+            .fillMaxWidth()
+    ) {
         Icon(imageVector = menuItem.imageVector, contentDescription = "")
         Text(
             text = menuItem.name,
