@@ -2,11 +2,16 @@ package com.example.pasionariastore.viewmodel
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import com.example.pasionariastore.interceptor.ErrorInterceptor
+import com.example.pasionariastore.model.MenuItem
 import com.example.pasionariastore.navigation.MyScreens
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -23,9 +28,28 @@ open class SharedViewModel @Inject constructor(
     private val errorInterceptor: ErrorInterceptor,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
-
     val loginErrorFlow = MutableSharedFlow<Pair<Int, String>>()
     val navigationFlow = MutableSharedFlow<String>()
+
+    val menuItems: List<MenuItem> = listOf(
+        MenuItem(
+            name = "Pedidos",
+            imageVector = Icons.Default.ShoppingCart,
+            onNavigatePath = MyScreens.CartList.name
+        ), MenuItem(
+            name = "Clientes",
+            imageVector = Icons.Default.Person,
+            onNavigatePath = MyScreens.CartList.name,
+            enable = false
+        ),
+        MenuItem(
+            name = "Ajustes",
+            imageVector = Icons.Default.Settings,
+            onNavigatePath = MyScreens.Setting.name,
+            enable = true
+        )
+    )
+
 
     init {
         viewModelScope.launch {

@@ -3,26 +3,50 @@ package com.example.pasionariastore.components
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
+import com.example.pasionariastore.model.MenuItem
+import com.example.pasionariastore.ui.preview.SharedViewModelFake
 import com.example.pasionariastore.ui.theme.PasionariaStoreTheme
+import com.example.pasionariastore.viewmodel.SharedViewModel
 
 @Preview
 @Composable
@@ -48,6 +72,18 @@ private fun MainTopBarFinalizeOffPreview() {
                 CustomIconButton(onClick = {}, iconId = R.drawable.cart_finalize)
             })
     }
+}
+
+@Preview
+@Composable
+private fun CustomScaffoldPreview() {
+    CustomScaffold(
+        sharedViewModel = SharedViewModelFake(LocalContext.current),
+        navController = rememberNavController(),
+        content = { Text(text = "", modifier = Modifier.padding(it)) },
+        showBackIcon = true,
+        actions = {}
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -93,6 +129,77 @@ fun CustomIconButton(
             painter = painterResource(id = iconId),
             contentDescription = "cartFinalize",
             tint = Color.White
+        )
+    }
+}
+
+@Composable
+fun CustomScaffold(
+    navController: NavController,
+    content: @Composable (PaddingValues) -> Unit = {},
+    showBackIcon: Boolean,
+    actions: @Composable() (RowScope.() -> Unit),
+    sharedViewModel: SharedViewModel = hiltViewModel()
+) {
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet {
+                Column(modifier = Modifier.padding(dimensionResource(id = R.dimen.navigator_drawer))) {
+                    Text(text = "Modulos", style = MaterialTheme.typography.titleLarge)
+                    HorizontalDivider()
+                    LazyColumn {
+                        items(sharedViewModel.menuItems) {
+                            NavigatorMenuItem(it, navController)
+                        }
+                    }
+                }
+            }
+        },
+    ) {
+        Scaffold(
+            topBar = {
+                MainTopBar(
+                    title = stringResource(id = R.string.title_setting_screen),
+                    onBackClicked = { navController.popBackStack() },
+                    showBackIcon = showBackIcon,
+                    actions = actions
+                )
+            }
+        ) {
+            content(it)
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun NavigatorMenuItemScreen() {
+    NavigatorMenuItem(
+        MenuItem(
+            name = "Accion",
+            enable = true,
+            imageVector = Icons.Default.Close,
+            onNavigatePath = "sd"
+        ),
+        navController = rememberNavController()
+    )
+}
+
+@Composable
+fun NavigatorMenuItem(menuItem: MenuItem, navController: NavController) {
+    val modifier = Modifier
+        .padding(dimensionResource(id = R.dimen.default_value))
+        .clickable { navController.navigate(menuItem.onNavigatePath) }
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier
+        .fillMaxWidth()
+        .clickable { }) {
+        Icon(imageVector = menuItem.imageVector, contentDescription = "")
+        Text(
+            text = menuItem.name,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = modifier.weight(1f)
         )
     }
 }
