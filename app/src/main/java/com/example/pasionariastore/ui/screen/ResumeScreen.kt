@@ -113,6 +113,13 @@ fun ResumeScreen(
 
     CustomScaffold(
         navController = navController,
+        content = {
+            ResumeScreenBody(
+                modifier = modifier.padding(it),
+                navController = navController,
+                resumeViewModel = resumeViewModel
+            )
+        },
         showBackIcon = false,
         actions = {},
         topBar = {
@@ -121,13 +128,9 @@ fun ResumeScreen(
                 onBackClicked = { /*TODO*/ }) {
             }
         },
-        content = {
-            ResumeScreenBody(
-                modifier = modifier.padding(it),
-                navController = navController,
-                resumeViewModel = resumeViewModel
-            )
-        },
+        floatingActionButton = {
+            
+        }
     )
 }
 
@@ -192,9 +195,7 @@ fun MenuButton(
                 )
                 Text(text = name, style = MaterialTheme.typography.headlineMedium)
             }
-
         }
-
     }
 }
 

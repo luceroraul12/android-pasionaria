@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,10 +23,8 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -47,6 +44,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.pasionariastore.R
 import com.example.pasionariastore.components.CustomIconButton
+import com.example.pasionariastore.components.CustomScaffold
 import com.example.pasionariastore.components.MainTopBar
 import com.example.pasionariastore.data.Datasource
 import com.example.pasionariastore.model.Cart
@@ -121,20 +119,37 @@ fun CartListScreen(
     navController: NavHostController
 ) {
     val state by cartListViewModel.state.collectAsState()
-    Scaffold(topBar = {
-        MainTopBar(
-            title = stringResource(id = R.string.title_cart_list_screen),
-            showBackIcon = true,
-            onBackClicked = { navController.popBackStack() },
-            actions = {
-                CustomIconButton(
-                    onClick = cartListViewModel::trySynchronize,
-                    iconId = R.drawable.sync,
-                    enabled = state.hasCartsToSynchronized.value
-                )
-            }
-        )
-    },
+    CustomScaffold(
+        navController = navController,
+        content = {
+            CartListBody(
+                state = state,
+                modifier = modifier.padding(it),
+                onUpdateChip = { cartListViewModel.updateChipStatus(it) },
+                onDeleteCart = { cartListViewModel.deleteCart(it) },
+                onGoToCartClicked = {
+                    navController.navigate("${MyScreens.Cart.name}/${it.id}")
+                },
+            )
+        },
+        showBackIcon = true,
+        actions = {
+            CustomIconButton(
+                onClick = cartListViewModel::trySynchronize,
+                iconId = R.drawable.sync,
+                enabled = state.hasCartsToSynchronized.value
+            )
+        },
+        topBar = {
+            MainTopBar(
+                title = stringResource(id = R.string.title_cart_list_screen),
+                showBackIcon = true,
+                onBackClicked = { navController.popBackStack() },
+                actions = {
+
+                }
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = cartListViewModel::createNewCart,
@@ -143,18 +158,8 @@ fun CartListScreen(
             ) {
                 Icon(painter = painterResource(id = R.drawable.cart_new), "New Cart")
             }
-        }) {
-        CartListBody(
-            state = state,
-            modifier = modifier.padding(it),
-            onUpdateChip = { cartListViewModel.updateChipStatus(it) },
-            onDeleteCart = { cartListViewModel.deleteCart(it) },
-            onGoToCartClicked = {
-                navController.navigate("${MyScreens.Cart.name}/${it.id}")
-            },
-        )
-
-    }
+        }
+    )
 }
 
 @Composable

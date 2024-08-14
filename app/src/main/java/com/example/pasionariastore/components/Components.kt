@@ -84,7 +84,8 @@ private fun CustomScaffoldPreview() {
         showBackIcon = true,
         actions = {},
         sharedViewModel = SharedViewModelFake(LocalContext.current),
-        topBar = {}
+        topBar = {},
+        floatingActionButton = {}
     )
 }
 
@@ -142,7 +143,8 @@ fun CustomScaffold(
     showBackIcon: Boolean,
     actions: @Composable() (RowScope.() -> Unit),
     sharedViewModel: SharedViewModel = hiltViewModel(),
-    topBar: @Composable () -> Unit
+    topBar: @Composable () -> Unit,
+    floatingActionButton: @Composable () -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -169,7 +171,8 @@ fun CustomScaffold(
         },
     ) {
         Scaffold(
-            topBar = topBar
+            topBar = topBar,
+            floatingActionButton = floatingActionButton
         ) {
             content(it)
         }
