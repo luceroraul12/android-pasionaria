@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.pasionariastore"
+    namespace = "com.luceroraul.pasionariastore"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.pasionariastore"
+        applicationId = "com.luceroraul.pasionariastore"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
