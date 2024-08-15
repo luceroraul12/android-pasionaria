@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.pasionariastore.R
+import com.luceroraul.pasionariastore.R
 import com.luceroraul.pasionariastore.components.CustomIconButton
 import com.luceroraul.pasionariastore.components.MainTopBar
 import com.luceroraul.pasionariastore.data.Datasource
