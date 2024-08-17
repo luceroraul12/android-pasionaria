@@ -22,6 +22,14 @@ fun ProductCartWithData.toBackendData(): BackendCartProduct {
     )
 }
 
-fun ProductCartWithData.getCopyWithBackendId(backendCartProduct: BackendCartProduct): ProductCartWithData {
-    return this.copy(productCart = productCart.copy(backendProductCartId = backendCartProduct.backendCartProductId))
+fun ProductCartWithData.getCartProductWithTotalPriceUpdate(): ProductCart {
+    this.productWithUnit.let {
+        val priceList = it.product.priceList
+        val quantity = this.productCart.quantity.toDouble()
+        val isUnit = it.unit.value == 1.0
+        var newPrice = priceList * quantity
+        if (!isUnit)
+            newPrice = newPrice / 1000
+        return this.productCart.copy(totalPrice = newPrice)
+    }
 }

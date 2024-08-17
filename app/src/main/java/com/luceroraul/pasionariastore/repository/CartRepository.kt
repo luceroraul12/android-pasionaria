@@ -22,4 +22,5 @@ interface CartRepository {
     suspend fun deleteCart(cart: Cart)
     fun updateCartIdsAndStatus(cartId: Long, backendCartId: Long, status: String)
     fun updateCartProductIds(cartProductId: Long, backendCartProductId: Long)
+    fun updateProductCarts(cartProductsToUpdate: MutableList<ProductCart>)
 }

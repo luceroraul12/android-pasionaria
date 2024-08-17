@@ -33,6 +33,7 @@ import androidx.navigation.compose.rememberNavController
 import com.luceroraul.pasionariastore.R
 import com.luceroraul.pasionariastore.components.MainTopBar
 import com.luceroraul.pasionariastore.ui.preview.BackendRepositoryFake
+import com.luceroraul.pasionariastore.ui.preview.CartRepositoryFake
 import com.luceroraul.pasionariastore.ui.preview.ProductRepositoryFake
 import com.luceroraul.pasionariastore.ui.preview.SettingScreenViewModelFake
 import com.luceroraul.pasionariastore.ui.preview.SharedViewModelFake
@@ -52,7 +53,11 @@ private fun SettingScreenPreview() {
         ),
         checkDatabaseViewModel = CheckDatabaseViewModel(
             BackendRepositoryFake(),
-            ProductSynchronizer(BackendRepositoryFake(), ProductRepositoryFake())
+            ProductSynchronizer(
+                backendRepository = BackendRepositoryFake(),
+                productRepository = ProductRepositoryFake(),
+                cartRepository = CartRepositoryFake()
+            )
         ),
         sharedViewModel = SharedViewModelFake(LocalContext.current)
     )

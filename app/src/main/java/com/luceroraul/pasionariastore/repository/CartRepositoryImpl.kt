@@ -78,4 +78,8 @@ class CartRepositoryImpl @Inject constructor(private val cartDatabaseDao: CartDa
         )
     }
 
+    override fun updateProductCarts(cartProductsToUpdate: MutableList<ProductCart>) {
+        cartDatabaseDao.updateCartProducts(cartProductsToUpdate)
+    }
+
 }

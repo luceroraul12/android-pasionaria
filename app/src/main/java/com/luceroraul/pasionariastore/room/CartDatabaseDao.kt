@@ -66,4 +66,7 @@ interface CartDatabaseDao {
     @Query("UPDATE productcart SET backend_product_cart_id = :backendCartProductId WHERE product_cart_id = :cartProductId ")
     fun updateCartProductIds(cartProductId: Long, backendCartProductId: Long)
 
+    @Update
+    fun updateCartProducts(cartProducts: MutableList<ProductCart>)
+
 }
