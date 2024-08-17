@@ -41,7 +41,7 @@ import com.luceroraul.pasionariastore.usecase.ProductSynchronizer
 import com.luceroraul.pasionariastore.viewmodel.CheckDatabaseViewModel
 import com.luceroraul.pasionariastore.viewmodel.SettingViewModel
 import com.luceroraul.pasionariastore.viewmodel.SharedViewModel
-import kotlin.reflect.KFunction1
+
 
 @Preview
 @Composable
@@ -94,7 +94,9 @@ fun SettingScreen(
 ) {
     val isLoading by sharedViewModel.isLoading.collectAsState()
     if (isLoading) {
-        Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center) {
             CircularProgressIndicator(
                 modifier = Modifier.width(64.dp),
                 color = MaterialTheme.colorScheme.primary,
