@@ -11,7 +11,7 @@ import com.luceroraul.pasionariastore.model.Unit
 
 @Database(
     entities = [Product::class, Unit::class, Cart::class, ProductCart::class],
-    version = 6,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

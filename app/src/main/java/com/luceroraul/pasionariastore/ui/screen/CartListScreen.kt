@@ -229,7 +229,8 @@ fun CartFormFilterStates(
                     Text(
                         text = it.label,
                         modifier = modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.labelMedium
                     )
                 },
                 shape = RoundedCornerShape(0.dp),
@@ -288,11 +289,12 @@ fun CartItem(
             Column(modifier = modifier.padding(10.dp)) {
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = modifier.fillMaxWidth()
                 ) {
                     Text(
                         text = "#${cartWithData.cart.id}",
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.titleMedium
                     )
                     Text(
                         text = cartWithData.calculateTotalPriceLabel(),
@@ -303,15 +305,16 @@ fun CartItem(
                 }
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = modifier.fillMaxWidth()
                 ) {
                     Text(
                         text = cartWithData.cart.dateCreated.format(),
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
                         text = "${cartWithData.productCartWithData.size} Productos",
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
             }
@@ -335,7 +338,6 @@ fun CartItemStatusLabel(modifier: Modifier, cart: CartStatus) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .fillMaxWidth()
-            .height(20.dp)
             .background(colorResource(id = cart.backgroundColorActive))
     ) {
         Text(
@@ -343,7 +345,7 @@ fun CartItemStatusLabel(modifier: Modifier, cart: CartStatus) {
             textAlign = TextAlign.Center,
             modifier = modifier,
             color = Color.White,
-            style = MaterialTheme.typography.labelLarge
+            style = MaterialTheme.typography.labelMedium,
         )
     }
 

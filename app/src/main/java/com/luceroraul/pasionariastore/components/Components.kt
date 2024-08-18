@@ -96,7 +96,7 @@ fun MainTopBar(
     actions: @Composable() (RowScope.() -> Unit)
 ) {
     TopAppBar(
-        title = { Text(text = title, fontWeight = FontWeight.Bold, color = Color.White) },
+        title = { Text(text = title, style = MaterialTheme.typography.headlineMedium,color = Color.White) },
         colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary),
         navigationIcon = {
             if (showBackIcon) {

@@ -13,6 +13,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -140,7 +141,7 @@ fun LoginBody(
                 .fillMaxWidth(),
             enabled = state.enableLoginButton
         ) {
-            Text(text = "Ingresar")
+            Text(text = "Ingresar", style = MaterialTheme.typography.bodyMedium)
         }
     }
 
@@ -159,7 +160,7 @@ fun LoginField(
     TextField(
         value = value,
         onValueChange = onChange,
-        label = { Text(text = label) },
+        label = { Text(text = label, style = MaterialTheme.typography.labelMedium) },
         shape = RoundedCornerShape(dimensionResource(id = R.dimen.rounded)),
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,

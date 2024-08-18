@@ -23,7 +23,7 @@ object Datasource {
 
     val products: List<Product> = listOf(
         Product(
-            name = "Aceitunas", description = "Libanti x 500g", priceList = 1595.0, unitId = 1
+            name = "Aceitunas", description = "Libanti x 500g con mucha mas informaci[on para mostrar y ver como queda", priceList = 1595.0, unitId = 1
         ), Product(
             name = "Pera", description = "tiras x 500g", priceList = 232.0, unitId = 2
         ), Product(

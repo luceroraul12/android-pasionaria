@@ -61,6 +61,7 @@ import com.luceroraul.pasionariastore.R
 import com.luceroraul.pasionariastore.model.ProductCart
 import com.luceroraul.pasionariastore.model.ProductWithUnit
 import com.luceroraul.pasionariastore.model.format
+import com.luceroraul.pasionariastore.ui.preview.CartProductViewModelFake
 import com.luceroraul.pasionariastore.ui.preview.CartRepositoryFake
 import com.luceroraul.pasionariastore.ui.preview.ProductRepositoryFake
 import com.luceroraul.pasionariastore.ui.theme.PasionariaStoreTheme
@@ -68,16 +69,13 @@ import com.luceroraul.pasionariastore.viewmodel.CartProductViewModel
 import kotlinx.coroutines.launch
 
 
-@Preview(device = Devices.PIXEL_3A_XL)
+@Preview
 @Composable
 fun ProductScreenPreview() {
     PasionariaStoreTheme {
         CartProductScreen(
             navController = rememberNavController(),
-            cartProductViewModel = CartProductViewModel(
-                CartRepositoryFake(),
-                ProductRepositoryFake()
-            ),
+            cartProductViewModel = CartProductViewModelFake(),
             cartId = 2L,
             productCartId = 5L
         )
@@ -235,7 +233,10 @@ fun ProductDescription(
                     .align(
                         Alignment.TopCenter
                     )
-                    .padding(vertical = 2.dp)
+                    .padding(vertical = dimensionResource(id = R.dimen.default_value))
+                    .fillMaxWidth(),
+                style = MaterialTheme.typography.labelMedium,
+                textAlign = TextAlign.Center
             )
             Column(
                 modifier = modifier.fillMaxSize(),
@@ -291,17 +292,16 @@ fun DescriptionItem(
         Text(
             text = title,
             fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            modifier = modifier.fillMaxWidth()
+            modifier = modifier.fillMaxWidth(),
+            style = MaterialTheme.typography.titleLarge
         )
         Text(
-            text = description,
-            fontStyle = if (focusDescription) null else FontStyle.Italic,
+            text = description.ifEmpty { "SIN DESCRIPCIÓN" },
             textAlign = TextAlign.Center,
             color = if (focusDescription) MaterialTheme.colorScheme.tertiary else Color.Unspecified,
-            fontWeight = if (focusDescription) FontWeight.ExtraBold else null,
-            modifier = modifier.fillMaxWidth()
+            modifier = modifier.fillMaxWidth(),
+            style = MaterialTheme.typography.displaySmall
         )
 
     }
@@ -322,7 +322,12 @@ fun ProductSearcher(
 ) {
     SearchBar(
         enabled = enabled,
-        placeholder = { Text(text = "Buscador de productos...") },
+        placeholder = {
+            Text(
+                text = "Buscador de productos...",
+                style = MaterialTheme.typography.labelLarge
+            )
+        },
         query = currentSearch,
         onQueryChange = { updateCurrentSearch(it) },
         onSearch = { onSearchProducts() },
@@ -422,7 +427,12 @@ fun ProductFormCalculator(
                     .focusRequester(focusRequester),
                 singleLine = true,
                 enabled = canEditQuantity,
-                label = { Text(text = "Cantidad del producto") },
+                label = {
+                    Text(
+                        text = "Cantidad del producto",
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                },
             )
         }
     }

@@ -217,7 +217,7 @@ fun CartHeader(modifier: Modifier = Modifier, cartWithData: CartWithData) {
     ) {
         CartStatusLabel(modifier = modifier, cart = CartStatus.valueOf(cartWithData.cart.status))
         Column(modifier = modifier.padding(10.dp)) {
-            CartHeaderRow("Identificador de producto", cartWithData.cart.id.toString(), modifier)
+            CartHeaderRow("Identificador de pedido", cartWithData.cart.id.toString(), modifier)
             CartHeaderRow("Fecha de creación", cartWithData.cart.dateCreated.format(), modifier)
             CartHeaderRow(
                 "Precio total",
@@ -234,13 +234,14 @@ fun CartHeaderRow(
     firstLabel: String, secondLabel: String, modifier: Modifier, resultFocus: Boolean = false
 ) {
     Row(
-        horizontalArrangement = Arrangement.SpaceBetween, modifier = modifier.fillMaxWidth()
+        horizontalArrangement = Arrangement.SpaceBetween, modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = firstLabel, fontStyle = FontStyle.Italic)
+        Text(text = firstLabel, style = MaterialTheme.typography.labelLarge)
         Text(
             text = secondLabel,
-            fontWeight = FontWeight.Bold,
-            color = if (resultFocus) MaterialTheme.colorScheme.tertiary else Color.Unspecified
+            color = if (resultFocus) MaterialTheme.colorScheme.tertiary else Color.Unspecified,
+            style = MaterialTheme.typography.headlineSmall
         )
     }
 }
@@ -329,22 +330,27 @@ fun CartProductItem(
                 ) {
                     Text(
                         text = data.productWithUnit.product.name,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
+                        style = MaterialTheme.typography.titleMedium
                     )
                 }
-                Row(modifier = modifier.padding(horizontal = 15.dp)) {
-                    Text(text = "${data.productCart.quantity} ${data.productWithUnit.unit.nameType}")
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = modifier.padding(horizontal = 15.dp)
+                ) {
+                    Text(
+                        text = "${data.productCart.quantity} ${data.productWithUnit.unit.nameType}",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
                         text = formatValue(data.productCart.totalPrice),
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.tertiary
+                        color = MaterialTheme.colorScheme.tertiary,
+                        style = MaterialTheme.typography.headlineMedium
                     )
                 }
                 Text(
                     text = data.productWithUnit.product.description,
-                    modifier = modifier.padding(vertical = 5.dp)
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
             CardActionButtons(
@@ -384,7 +390,7 @@ fun CardActionButtons(
                     .weight(1f)
                     .height(IntrinsicSize.Max)
             ) {
-                Text(text = labelDelete, modifier = modifier)
+                Text(text = labelDelete, modifier = modifier, style = MaterialTheme.typography.bodyMedium)
             }
         }
         if (canNext) {
@@ -403,7 +409,7 @@ fun CardActionButtons(
                     .weight(1f)
                     .height(IntrinsicSize.Max),
             ) {
-                Text(text = labelEdit)
+                Text(text = labelEdit, style = MaterialTheme.typography.bodyMedium)
             }
 
         }
@@ -417,7 +423,6 @@ fun CartStatusLabel(modifier: Modifier, cart: CartStatus) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .fillMaxWidth()
-            .height(20.dp)
             .background(colorResource(id = cart.backgroundColorActive))
     ) {
         Text(

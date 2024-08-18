@@ -1,26 +1,16 @@
 package com.luceroraul.pasionariastore.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,23 +19,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.luceroraul.pasionariastore.R
 import com.luceroraul.pasionariastore.components.CustomScaffold
 import com.luceroraul.pasionariastore.components.MainTopBar
 import com.luceroraul.pasionariastore.model.CartWithData
-import com.luceroraul.pasionariastore.model.MenuItem
 import com.luceroraul.pasionariastore.model.Product
 import com.luceroraul.pasionariastore.model.state.CartStatus
 import com.luceroraul.pasionariastore.ui.preview.ResumeViewModelFake
@@ -60,7 +46,12 @@ private fun ResumeMonthlyPreview() {
     PasionariaStoreTheme {
         ResumeMonthly(
             cartsWithData = emptyList(),
-            calculate = { cartWithData: List<CartWithData>, optionalString: String? -> Pair(2, 12324) })
+            calculate = { cartWithData: List<CartWithData>, optionalString: String? ->
+                Pair(
+                    2,
+                    12324
+                )
+            })
     }
 }
 
@@ -126,7 +117,7 @@ fun ResumeScreenBody(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = state.label, style = MaterialTheme.typography.headlineLarge)
+        Text(text = state.label, style = MaterialTheme.typography.displayMedium)
         ResumeMonthly(
             state.cartsWithData,
             calculate = resumeViewModel::calculatePairResume
@@ -147,13 +138,30 @@ fun ResumeTopProducts(productNames: MutableList<Product>) {
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Productos más vendidos", style = MaterialTheme.typography.titleLarge)
+            Text(text = "Productos más vendidos", style = MaterialTheme.typography.headlineSmall)
             HorizontalDivider()
             LazyColumn {
-                itemsIndexed(productNames){ index, item ->
-                    Text(text = "${index+1} - ${item.name} ${item.description}")
+                itemsIndexed(productNames) { index, item ->
+                    TopProductItem(item, index)
                 }
             }
+        }
+    }
+
+}
+
+@Composable
+fun TopProductItem(product: Product, index: Int) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start,
+        modifier = Modifier.padding(dimensionResource(id = R.dimen.default_value)).fillMaxWidth()
+    ) {
+        Text(text = "${index + 1}", style = MaterialTheme.typography.headlineSmall, modifier = Modifier.padding(
+            dimensionResource(id = R.dimen.default_value)))
+        Column {
+            Text(text = product.name, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.tertiary)
+            Text(text = product.description, style = MaterialTheme.typography.labelMedium)
         }
     }
 
@@ -173,7 +181,7 @@ fun ResumeMonthly(
             modifier = Modifier.padding(15.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Pedidos por estado", style = MaterialTheme.typography.titleLarge)
+            Text(text = "Pedidos por estado", style = MaterialTheme.typography.headlineSmall)
             ResumeCartStatusItem(
                 status = "Pendiente",
                 count = pairPending.first,
@@ -203,16 +211,34 @@ private fun ResumeCartStatusItemPreview() {
 @Composable
 fun ResumeCartStatusItem(modifier: Modifier = Modifier, status: String, count: Int, price: Int) {
     Column(
-        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier.padding(dimensionResource(id = R.dimen.default_value))
     ) {
-        HorizontalDivider(modifier = Modifier.padding(dimensionResource(id = R.dimen.default_value)))
-        Text(text = "$status: $count", style = MaterialTheme.typography.titleMedium)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = status,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = modifier.padding(
+                    dimensionResource(id = R.dimen.default_value)
+                )
+            )
+            Text(
+                text = "(${count})",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = modifier.padding(
+                    dimensionResource(id = R.dimen.default_value)
+                )
+            )
+        }
         Text(
             text = "ARS $price",
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Bold
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.tertiary
         )
     }
 }

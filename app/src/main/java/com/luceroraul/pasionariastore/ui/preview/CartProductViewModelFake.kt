@@ -11,7 +11,8 @@ class CartProductViewModelFake : CartProductViewModel(
 ) {
     init {
         state.update { CartProductUIState(
-            productsFound = Datasource.productsWithUnit
-        ) }
+//            productsFound = Datasource.productsWithUnit
+        )
+        }
     }
 }

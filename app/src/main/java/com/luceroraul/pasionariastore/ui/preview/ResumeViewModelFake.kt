@@ -9,8 +9,9 @@ class ResumeViewModelFake : ResumeViewModel(CartRepositoryFake()) {
     init {
         state.update {
             it.copy(
-                label = "MES - 2024",
-                cartsWithData = Datasource.cartWithData.toMutableList()
+                label = "Mes - 2024",
+                cartsWithData = Datasource.cartWithData.toMutableList(),
+                topProducts = Datasource.products.toMutableList()
             )
         }
     }

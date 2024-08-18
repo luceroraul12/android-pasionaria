@@ -2,6 +2,7 @@ package com.luceroraul.pasionariastore.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -165,6 +166,7 @@ fun SettingItemSwitch(
     val modifier = Modifier.fillMaxWidth()
     Row(
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
         modifier = modifier
             .padding(vertical = dimensionResource(id = R.dimen.default_value))
     ) {
@@ -173,10 +175,10 @@ fun SettingItemSwitch(
                 .weight(1f)
                 .padding(end = dimensionResource(id = R.dimen.default_value))
         ) {
-            Text(text = title, style = MaterialTheme.typography.titleMedium, modifier = modifier)
+            Text(text = title, style = MaterialTheme.typography.titleSmall, modifier = modifier)
             Text(
                 text = description,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Justify,
                 modifier = modifier
             )
@@ -202,12 +204,12 @@ fun SettingItemClickable(
         Text(
             text = title,
             modifier = modifier,
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleSmall
         )
         Text(
             text = description,
             textAlign = TextAlign.Justify,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodySmall,
             modifier = modifier
         )
     }
