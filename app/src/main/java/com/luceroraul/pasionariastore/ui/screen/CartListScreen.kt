@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -55,8 +56,10 @@ import com.luceroraul.pasionariastore.model.state.CartListUIState
 import com.luceroraul.pasionariastore.model.state.CartStatus
 import com.luceroraul.pasionariastore.navigation.MyScreens
 import com.luceroraul.pasionariastore.ui.preview.CartListViewModelFake
+import com.luceroraul.pasionariastore.ui.preview.SharedViewModelFake
 import com.luceroraul.pasionariastore.ui.theme.PasionariaStoreTheme
 import com.luceroraul.pasionariastore.viewmodel.CartListViewModel
+import com.luceroraul.pasionariastore.viewmodel.SharedViewModel
 
 @Composable
 @Preview
@@ -102,11 +105,12 @@ fun CartItemPreview(modifier: Modifier = Modifier) {
 
 @Composable
 @Preview(showBackground = true)
-fun ScreenPreivew(modifier: Modifier = Modifier) {
+fun CartListScreenPreview(modifier: Modifier = Modifier) {
     PasionariaStoreTheme(darkTheme = false) {
         CartListScreen(
             navController = rememberNavController(),
-            cartListViewModel = CartListViewModelFake()
+            cartListViewModel = CartListViewModelFake(),
+            sharedViewModel = SharedViewModelFake(LocalContext.current)
         )
     }
 }
@@ -116,10 +120,12 @@ fun ScreenPreivew(modifier: Modifier = Modifier) {
 fun CartListScreen(
     modifier: Modifier = Modifier,
     cartListViewModel: CartListViewModel = hiltViewModel(),
-    navController: NavHostController
+    navController: NavHostController,
+    sharedViewModel: SharedViewModel = hiltViewModel()
 ) {
     val state by cartListViewModel.state.collectAsState()
     CustomScaffold(
+        sharedViewModel = sharedViewModel,
         navController = navController,
         content = {
             CartListBody(

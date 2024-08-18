@@ -130,6 +130,7 @@ fun LoginBody(
             imageId = R.drawable.password,
             imeAction = ImeAction.Done,
         )
+        Spacer(modifier = modifier.weight(1f))
         Button(
             onClick = {
                 loginViewModel.login(context = context, sharedViewModel.navigationFlow)

@@ -50,4 +50,8 @@ class CartRepositoryFake : CartRepository {
     override fun updateCartProductIds(cartProductId: Long, backendCartProductId: Long) {
         TODO("Not yet implemented")
     }
+
+    override fun updateProductCarts(cartProductsToUpdate: MutableList<ProductCart>) {
+        TODO("Not yet implemented")
+    }
 }

@@ -2,6 +2,7 @@ package com.luceroraul.pasionariastore.usecase
 
 import com.luceroraul.pasionariastore.model.BackendLookup
 import com.luceroraul.pasionariastore.repository.BackendRepositoryFake
+import com.luceroraul.pasionariastore.repository.CartRepositoryFake
 import com.luceroraul.pasionariastore.repository.ProductRepositoryFake
 import org.junit.Assert
 import org.junit.Test
@@ -9,7 +10,11 @@ import org.junit.Test
 class ProductSynchronizerTest {
 
     val syncronizer: ProductSynchronizer =
-        ProductSynchronizer(BackendRepositoryFake(), ProductRepositoryFake())
+        ProductSynchronizer(
+            BackendRepositoryFake(),
+            ProductRepositoryFake(),
+            cartRepository = CartRepositoryFake()
+        )
 
     @Test
     fun unitType_1U_success() {
