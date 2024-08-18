@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -30,6 +29,7 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -102,7 +102,6 @@ fun CartProductScreen(
         }
     }
 
-
     LaunchedEffect(key1 = cartProductViewModel.operationCompleted) {
         cartProductViewModel.operationCompleted.collect { completed ->
             if (completed) {
@@ -122,6 +121,10 @@ fun CartProductScreen(
                 }
             }
         }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose { cartProductViewModel.cleanState() }
     }
 
     Scaffold(
@@ -183,16 +186,11 @@ fun CartProductBody(
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.default_value)))
         Card {
             ProductFormCalculator(
-                modifier = Modifier,
                 quantity = state.currentProductCart.quantity,
-                updateQuantity = { cartProductViewModel.updateCurrentQuantity(it) },
+                modifier = Modifier,
                 priceCalculated = state.currentProductCart.totalPrice.toString(),
+                updateQuantity = { cartProductViewModel.updateCurrentQuantity(it) },
                 focusRequester = focusRequester,
-                onAddButtonClicked = {
-                    cartProductViewModel.createOrUpdateProductCart(
-                        context,
-                    )
-                },
                 canEditQuantity = state.canUpdateQuantity
             )
             CartProductActionButtons(
@@ -396,7 +394,6 @@ fun ProductFormCalculator(
     priceCalculated: String,
     updateQuantity: (String) -> Unit,
     focusRequester: FocusRequester,
-    onAddButtonClicked: () -> Unit,
     canEditQuantity: Boolean
 ) {
     Card(modifier = modifier.padding(10.dp)) {
@@ -416,7 +413,6 @@ fun ProductFormCalculator(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
                 ),
-                keyboardActions = KeyboardActions(onDone = { onAddButtonClicked() }),
                 value = quantity,
                 onValueChange = {
                     updateQuantity(it)

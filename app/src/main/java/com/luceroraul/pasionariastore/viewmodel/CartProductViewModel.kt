@@ -35,16 +35,15 @@ open class CartProductViewModel @Inject constructor(
     private val _operationCompleted = MutableStateFlow(false)
     val operationCompleted = _operationCompleted.asStateFlow()
 
-    private var searchJob: Job? = null
-    private var focusJob: Job? = null
-    private var initJob: Job? = null
-    private var createUpdateJob: Job? = null
+    private var jobs: MutableList<Job> = mutableListOf()
 
     fun emitFocus(value: Boolean, delayTime: Long = 500): Unit {
-        focusJob = viewModelScope.launch {
+        val job =
+        viewModelScope.launch {
             delay(delayTime)
             state.value.lastSearch.emit(value = value)
         }
+        jobs.add(job)
     }
 
     fun showMessage(message: String, context: Context) {
@@ -62,16 +61,8 @@ open class CartProductViewModel @Inject constructor(
     }
 
     fun cleanState(): Unit {
-        Log.d("CartProductViewModel", "Me fijo el job de busqueda ${searchJob?.isActive}")
-        Log.d("CartProductViewModel", "intento cancelarlo ${searchJob?.cancel()}")
-        searchJob = null
-        focusJob?.cancel()
-        focusJob = null
-        initJob?.cancel()
-        initJob = null
-        createUpdateJob?.cancel()
-        createUpdateJob = null
-
+        jobs.forEach{it.cancel()}
+        jobs = mutableListOf()
         updateState(CartProductUIState())
     }
 
@@ -93,7 +84,7 @@ open class CartProductViewModel @Inject constructor(
     fun initScreen(cartId: Long, productCartId: Long): Unit {
         // Si cuenta con ProductCartId, significa que previamente se habia guardado el producto y no necesita volver a buscar productos
         // Busco el producto
-        initJob = viewModelScope.launch(Dispatchers.IO) {
+        val job = viewModelScope.launch(Dispatchers.IO) {
             if (productCartId > 0) {
                 cartRepository.getCartProductWithDataById(productCartId)
                     .collect { productCartWithData ->
@@ -122,6 +113,7 @@ open class CartProductViewModel @Inject constructor(
             }
             emitFocus(true, 0)
         }
+        jobs.add(job)
     }
 
     fun updateCurrentSearch(newValue: String): Unit {
@@ -134,7 +126,7 @@ open class CartProductViewModel @Inject constructor(
         if (state.value.currentSearch.isEmpty()) {
             Toast.makeText(context, "Debe escribir algo para buscar", Toast.LENGTH_SHORT).show()
         } else {
-            searchJob = viewModelScope.launch(Dispatchers.IO) {
+            val job = viewModelScope.launch(Dispatchers.IO) {
                 productRepository.getProductsWithUnitBySearch(
                     search = state.value.currentSearch,
                     cartId = state.value.initCartId
@@ -153,12 +145,13 @@ open class CartProductViewModel @Inject constructor(
 
                     }
             }
+            jobs.add(job)
         }
     }
 
     fun selectProductSearched(productWithUnit: ProductWithUnit): Unit {
         // Finalizo el job de busqueda
-        searchJob?.cancel()
+        jobs.forEach{it.cancel()}
         // Actualizo el productCart que se esta generando y seteo lo que se tiene que mostrar y dejo de mostrar el modal
         updateState(
             state.value.copy(
@@ -195,7 +188,7 @@ open class CartProductViewModel @Inject constructor(
     }
 
     fun createOrUpdateProductCart(context: Context): Unit {
-        createUpdateJob = viewModelScope.launch(Dispatchers.IO) {
+        val job = viewModelScope.launch(Dispatchers.IO) {
             state.value.let {
                 var message = "El producto fue agregado al pedido"
                 if (it.isNew) {
@@ -213,6 +206,7 @@ open class CartProductViewModel @Inject constructor(
                 }
             }
         }
+        jobs.add(job)
     }
 
     fun cancelCurrentSearch() {
