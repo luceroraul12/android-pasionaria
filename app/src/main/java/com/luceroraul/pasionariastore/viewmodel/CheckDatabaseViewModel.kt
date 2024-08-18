@@ -17,11 +17,10 @@ class CheckDatabaseViewModel @Inject constructor(
     private val productSynchronizer: ProductSynchronizer
 ) : ViewModel() {
     init {
-        checkBackendStates()
         syncProducts()
     }
 
-    private fun syncProducts(onChangeLoading: (Boolean) -> Unit = {}) {
+    fun syncProducts(onChangeLoading: (Boolean) -> Unit = {}) {
         viewModelScope.launch {
             onChangeLoading(true)
             val result = withContext(Dispatchers.IO) {
@@ -29,20 +28,5 @@ class CheckDatabaseViewModel @Inject constructor(
             }
             onChangeLoading(false)
         }
-    }
-
-    private fun checkBackendStates() {
-        viewModelScope.launch(Dispatchers.IO) {
-            withContext(Dispatchers.IO) {
-                val response = backendRepository.getCustomerProducts()
-                Log.i("backend", response.toString())
-            }
-        }
-    }
-
-    fun syncProductsWithLoading(
-        onChangeLoading: (Boolean) -> Unit
-    ) {
-        syncProducts(onChangeLoading = onChangeLoading)
     }
 }

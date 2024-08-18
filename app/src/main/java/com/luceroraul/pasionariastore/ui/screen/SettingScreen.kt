@@ -145,7 +145,7 @@ fun SettingBody(
             title = stringResource(R.string.sync_products),
             description = stringResource(R.string.sync_products_description),
             onClick = {
-                checkDatabaseViewModel.syncProductsWithLoading(onChangeLoading = { onChangeLoading(it) })
+                checkDatabaseViewModel.syncProducts(onChangeLoading = { onChangeLoading(it) })
             }
         )
         // TODO. Comento la funcionalidad hasta que pueda incluirla
