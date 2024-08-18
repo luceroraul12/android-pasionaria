@@ -28,12 +28,12 @@ android {
             buildConfigField("String", "API_BASE", "\"http://192.168.0.17:8080\"")
         }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "API_BASE", "\"http://192.168.0.17:8080\"")
+            buildConfigField("String", "API_BASE", "\"http://93.188.167.225:8080\"")
         }
     }
     compileOptions {
