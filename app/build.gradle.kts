@@ -34,6 +34,7 @@ android {
                 "proguard-rules.pro"
             )
             buildConfigField("String", "API_BASE", "\"http://93.188.167.225:8080\"")
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {

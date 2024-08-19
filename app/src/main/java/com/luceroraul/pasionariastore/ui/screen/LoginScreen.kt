@@ -3,15 +3,17 @@ package com.luceroraul.pasionariastore.ui.screen
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -65,20 +67,30 @@ fun LoginScreen(
     sharedViewModel: SharedViewModel = hiltViewModel(),
     navController: NavController
 ) {
+    val isLoading by sharedViewModel.isLoading.collectAsState()
     LaunchedEffect(key1 = Unit) {
         sharedViewModel.initSubscriptionScreens(
             coroutineScope = this,
             navController = navController
         )
     }
-    Scaffold {
-        LoginBody(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(it),
-            loginViewModel = loginViewModel,
-            sharedViewModel = sharedViewModel
-        )
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+        if (isLoading)
+            CircularProgressIndicator(
+                modifier = Modifier.width(64.dp),
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+            )
+        else
+            Scaffold {
+                LoginBody(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .padding(it),
+                    loginViewModel = loginViewModel,
+                    sharedViewModel = sharedViewModel
+                )
+            }
     }
 }
 
@@ -134,7 +146,11 @@ fun LoginBody(
         Spacer(modifier = modifier.weight(1f))
         Button(
             onClick = {
-                loginViewModel.login(context = context, sharedViewModel.navigationFlow)
+                loginViewModel.login(
+                    context = context,
+                    sharedViewModel.navigationFlow,
+                    updateIsLoading = sharedViewModel::updateIsLoading
+                )
             },
             shape = RoundedCornerShape(dimensionResource(id = R.dimen.rounded)),
             modifier = Modifier

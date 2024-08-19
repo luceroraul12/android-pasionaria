@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.reflect.KFunction1
 
 @HiltViewModel
 open class LoginViewModel @Inject constructor(
@@ -38,7 +39,12 @@ open class LoginViewModel @Inject constructor(
         state.update { it.copy(password = value, enableLoginButton = checkEnableLoginButton()) }
     }
 
-    fun login(context: Context, navigationFlow: MutableSharedFlow<String>) {
+    fun login(
+        context: Context,
+        navigationFlow: MutableSharedFlow<String>,
+        updateIsLoading: (Boolean) -> Unit
+    ) {
+        updateIsLoading(true)
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 state.value.run {
@@ -51,6 +57,7 @@ open class LoginViewModel @Inject constructor(
                     }
                 }
             }
+            updateIsLoading(false)
         }
     }
 

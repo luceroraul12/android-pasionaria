@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="PasionariaStore">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-08-18T14:40:28.540533773Z">
+        <DropdownSelection timestamp="2024-08-19T10:37:07.020991128Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=/home/homitowen/.android/avd/Pixel_3a_API_34_extension_level_7_x86_64.avd" />
