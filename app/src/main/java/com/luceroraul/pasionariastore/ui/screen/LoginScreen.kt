@@ -119,7 +119,7 @@ fun LoginBody(
     ) {
         Image(
             painter = painterResource(id = R.drawable.pasionaria_fixed),
-            contentDescription = "",
+            contentDescription = "Logo de Pasionaria",
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(25.dp),
